@@ -1,0 +1,866 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>884</width>
+    <height>677</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>8</pointsize>
+    <weight>75</weight>
+    <italic>false</italic>
+    <bold>true</bold>
+    <underline>false</underline>
+    <stylestrategy>PreferDefault</stylestrategy>
+    <kerning>true</kerning>
+   </font>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::DefaultContextMenu</enum>
+  </property>
+  <property name="acceptDrops">
+   <bool>false</bool>
+  </property>
+  <property name="windowTitle">
+   <string>GOKCE CNC Torna Simülasyonu</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="discretesim.qrc">
+    <normaloff>:/toolbar/images/toolbar_icons/DS-LogoTransparant-Small.png</normaloff>:/toolbar/images/toolbar_icons/DS-LogoTransparant-Small.png</iconset>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonIconOnly</enum>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="minimumSize">
+    <size>
+     <width>800</width>
+     <height>600</height>
+    </size>
+   </property>
+   <widget class="QDockWidget" name="toolWindow">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>482</y>
+      <width>200</width>
+      <height>200</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>200</width>
+      <height>200</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>400</width>
+      <height>524287</height>
+     </size>
+    </property>
+    <property name="windowTitle">
+     <string>Tool Window</string>
+    </property>
+    <widget class="QWidget" name="tooldockWidget"/>
+   </widget>
+   <widget class="QDockWidget" name="ToolPathWindow">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>200</width>
+      <height>200</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>200</width>
+      <height>200</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>400</width>
+      <height>524287</height>
+     </size>
+    </property>
+    <property name="floating">
+     <bool>false</bool>
+    </property>
+    <property name="features">
+     <set>QDockWidget::AllDockWidgetFeatures</set>
+    </property>
+    <property name="windowTitle">
+     <string>Tool Path Window</string>
+    </property>
+    <widget class="QWidget" name="toolpathdockWidget"/>
+   </widget>
+   <widget class="QDockWidget" name="propertyWindow">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>320</y>
+      <width>200</width>
+      <height>200</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>200</width>
+      <height>200</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>400</width>
+      <height>524287</height>
+     </size>
+    </property>
+    <property name="windowTitle">
+     <string>Property Window</string>
+    </property>
+    <widget class="QWidget" name="propertydockWidget"/>
+   </widget>
+   <widget class="QDockWidget" name="CodeWindow">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>60</y>
+      <width>200</width>
+      <height>200</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>200</width>
+      <height>200</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>400</width>
+      <height>524287</height>
+     </size>
+    </property>
+    <property name="baseSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="windowTitle">
+     <string>NC Code Editor</string>
+    </property>
+    <widget class="QWidget" name="EditordockWidget"/>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_New"/>
+   <addaction name="action_Open"/>
+   <addaction name="action_Save"/>
+   <addaction name="separator"/>
+   <addaction name="actionUndo"/>
+   <addaction name="actionRedo"/>
+   <addaction name="action_Print"/>
+   <addaction name="actionClose"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_2">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonFollowStyle</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionAction_Rewind"/>
+   <addaction name="actionRun"/>
+   <addaction name="actionPause"/>
+   <addaction name="actionNext"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_3">
+   <property name="windowTitle">
+    <string>toolBar_3</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionZoomIn"/>
+   <addaction name="actionZoomOut"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_4">
+   <property name="windowTitle">
+    <string>toolBar_4</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionFront_View"/>
+   <addaction name="actionTop_View"/>
+   <addaction name="actionSide_View"/>
+   <addaction name="actionIso_View"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_5">
+   <property name="windowTitle">
+    <string>toolBar_5</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>884</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>MS Reference Sans Serif</family>
+     <pointsize>9</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>&amp;Window</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionFront_View"/>
+    <addaction name="actionTop_View"/>
+    <addaction name="actionSide_View"/>
+    <addaction name="actionIso_View"/>
+    <addaction name="separator"/>
+    <addaction name="actionTool_Bar"/>
+    <addaction name="actionStatus_Bar"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <widget class="QMenu" name="menuHelp">
+     <property name="title">
+      <string>Help</string>
+     </property>
+     <addaction name="actionGCODE"/>
+     <addaction name="actionMCODE"/>
+     <addaction name="actionM_C_STATUS"/>
+    </widget>
+    <addaction name="actionAbout_CNC_Simulator"/>
+    <addaction name="menuHelp"/>
+   </widget>
+   <widget class="QMenu" name="menu_File">
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <widget class="QMenu" name="menuStock_Export">
+     <property name="title">
+      <string>Stock Export</string>
+     </property>
+     <addaction name="actionDXF"/>
+     <addaction name="actionIGES"/>
+     <addaction name="actionSTL"/>
+    </widget>
+    <widget class="QMenu" name="menuFile_Export">
+     <property name="title">
+      <string>Export</string>
+     </property>
+     <addaction name="actionFanuc_OTA"/>
+     <addaction name="actionSiemens"/>
+    </widget>
+    <addaction name="action_New"/>
+    <addaction name="action_Open"/>
+    <addaction name="action_Save"/>
+    <addaction name="action_Save_as"/>
+    <addaction name="action_Print"/>
+    <addaction name="actionClose"/>
+    <addaction name="separator"/>
+    <addaction name="menuStock_Export"/>
+    <addaction name="menuFile_Export"/>
+    <addaction name="separator"/>
+    <addaction name="action_Quit"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menu_Simulation">
+    <property name="title">
+     <string>&amp;Simulation</string>
+    </property>
+    <addaction name="actionWorkpiece_Setup"/>
+    <addaction name="actionRun"/>
+    <addaction name="actionPause"/>
+    <addaction name="separator"/>
+    <addaction name="actionNext"/>
+    <addaction name="separator"/>
+    <addaction name="actionCycle_2"/>
+    <addaction name="actionBlock_By_Block"/>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionBackground"/>
+   </widget>
+   <widget class="QMenu" name="menuSetup">
+    <property name="title">
+     <string>Setup</string>
+    </property>
+    <addaction name="actionTool_Setup"/>
+    <addaction name="actionMachine_Setup"/>
+   </widget>
+   <widget class="QMenu" name="menuMDI_Mode">
+    <property name="title">
+     <string>MDI Mode</string>
+    </property>
+    <addaction name="actionStart_MDI_Mode"/>
+   </widget>
+   <widget class="QMenu" name="menuJOG_Mode">
+    <property name="title">
+     <string>JOG Mode</string>
+    </property>
+    <addaction name="actionStart_Jog_Mode"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_View"/>
+   <addaction name="menuMDI_Mode"/>
+   <addaction name="menuJOG_Mode"/>
+   <addaction name="menuSetup"/>
+   <addaction name="menu_Simulation"/>
+   <addaction name="menuSettings"/>
+   <addaction name="menuWindow"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <action name="action_New">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/new.xpm</normaloff>:/toolbar/images/toolbar_icons/new.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="action_Open">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/folder_orange_open.xpm</normaloff>:/toolbar/images/toolbar_icons/folder_orange_open.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+  </action>
+  <action name="action_Save">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/save.xpm</normaloff>:/toolbar/images/toolbar_icons/save.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_Save_as">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/SaveAs.png</normaloff>:/toolbar/images/toolbar_icons/SaveAs.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save &amp;As</string>
+   </property>
+  </action>
+  <action name="action_Print">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/print.xpm</normaloff>:/toolbar/images/toolbar_icons/print.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Print</string>
+   </property>
+  </action>
+  <action name="actionSend_to_CNC">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../../../../../.designer/backup/images/forward.png</normaloff>../../../../../../.designer/backup/images/forward.png</iconset>
+   </property>
+   <property name="text">
+    <string>Send to CNC</string>
+   </property>
+  </action>
+  <action name="action_Quit">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/exit.xpm</normaloff>:/toolbar/images/toolbar_icons/exit.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/undo.xpm</normaloff>:/toolbar/images/toolbar_icons/undo.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/Redo.xpm</normaloff>:/toolbar/images/toolbar_icons/Redo.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+  </action>
+  <action name="actionCu_t">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/cut.png</normaloff>:/toolbar/images/toolbar_icons/cut.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cu&amp;t</string>
+   </property>
+  </action>
+  <action name="action_Copy_2">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/copy.png</normaloff>:/toolbar/images/toolbar_icons/copy.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+  </action>
+  <action name="action_Paste_2">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/paste.png</normaloff>:/toolbar/images/toolbar_icons/paste.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Paste</string>
+   </property>
+  </action>
+  <action name="actionFront_View">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/FrontView.png</normaloff>:/toolbar/images/toolbar_icons/FrontView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Front View</string>
+   </property>
+  </action>
+  <action name="actionTop_View">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/TopView.png</normaloff>:/toolbar/images/toolbar_icons/TopView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Top View</string>
+   </property>
+  </action>
+  <action name="actionSide_View">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/BackView.png</normaloff>:/toolbar/images/toolbar_icons/BackView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Side View</string>
+   </property>
+  </action>
+  <action name="actionPlot">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../../../../../.designer/backup/images/file print.png</normaloff>../../../../../../.designer/backup/images/file print.png</iconset>
+   </property>
+   <property name="text">
+    <string>Plot</string>
+   </property>
+  </action>
+  <action name="actionLogin">
+   <property name="text">
+    <string>Login</string>
+   </property>
+  </action>
+  <action name="actionChange_password">
+   <property name="text">
+    <string>Change password</string>
+   </property>
+  </action>
+  <action name="actionSave_Machine_Settings">
+   <property name="text">
+    <string>Save Machine Settings</string>
+   </property>
+  </action>
+  <action name="actionEdit">
+   <property name="text">
+    <string>Edit Tools</string>
+   </property>
+  </action>
+  <action name="actionLoad_Tools">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../../../../../.designer/run/images/toolbar_icons/load_tools.xpm</normaloff>../../../../../../.designer/run/images/toolbar_icons/load_tools.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Load Tools</string>
+   </property>
+  </action>
+  <action name="actionSave_Tools">
+   <property name="text">
+    <string>Save Tools</string>
+   </property>
+  </action>
+  <action name="actionGraphics_Window">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Graphics Window</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/ZoomOut.png</normaloff>:/toolbar/images/toolbar_icons/ZoomOut.png</iconset>
+   </property>
+   <property name="text">
+    <string>ZoomOut</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/ZoomIn.png</normaloff>:/toolbar/images/toolbar_icons/ZoomIn.png</iconset>
+   </property>
+   <property name="text">
+    <string>ZoomIn</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/fileclose.xpm</normaloff>:/toolbar/images/toolbar_icons/fileclose.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="actionAbout_CNC_Simulator">
+   <property name="text">
+    <string>About CNC Simulator</string>
+   </property>
+  </action>
+  <action name="actionRun">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/player_play.xpm</normaloff>:/toolbar/images/toolbar_icons/player_play.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Run</string>
+   </property>
+  </action>
+  <action name="actionPause">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/player_pause.xpm</normaloff>:/toolbar/images/toolbar_icons/player_pause.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Pause</string>
+   </property>
+  </action>
+  <action name="actionNC_Program_Window">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>NC Program Window</string>
+   </property>
+  </action>
+  <action name="actionGCODE">
+   <property name="text">
+    <string>GCODE</string>
+   </property>
+  </action>
+  <action name="actionIso_View">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/IsoView.png</normaloff>:/toolbar/images/toolbar_icons/IsoView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Iso View</string>
+   </property>
+  </action>
+  <action name="actionBlocks">
+   <property name="text">
+    <string>Blocks</string>
+   </property>
+  </action>
+  <action name="actionFeed_Rate">
+   <property name="text">
+    <string>Feed Rate</string>
+   </property>
+  </action>
+  <action name="actionPart_Diameter">
+   <property name="text">
+    <string>Part Diameter</string>
+   </property>
+  </action>
+  <action name="actionWork_Offsets">
+   <property name="text">
+    <string>Work Offsets</string>
+   </property>
+  </action>
+  <action name="actionTool_Offsets">
+   <property name="text">
+    <string>Tool Offsets</string>
+   </property>
+  </action>
+  <action name="actionMCODE">
+   <property name="text">
+    <string>MCODE</string>
+   </property>
+  </action>
+  <action name="actionM_C_STATUS">
+   <property name="text">
+    <string>M/C_STATUS</string>
+   </property>
+  </action>
+  <action name="actionRapid_Motion_Formula">
+   <property name="text">
+    <string>Rapid Motion Formula</string>
+   </property>
+  </action>
+  <action name="actionMinimum_Dwell">
+   <property name="text">
+    <string>Minimum Dwell</string>
+   </property>
+  </action>
+  <action name="actionMachinability_Rating">
+   <property name="text">
+    <string>Machinability Rating</string>
+   </property>
+  </action>
+  <action name="actionFirst_Thread_Dia">
+   <property name="text">
+    <string>First Thread Dia</string>
+   </property>
+  </action>
+  <action name="actionDXF">
+   <property name="text">
+    <string>DXF</string>
+   </property>
+  </action>
+  <action name="actionIGES">
+   <property name="text">
+    <string>IGES</string>
+   </property>
+  </action>
+  <action name="actionSTL">
+   <property name="text">
+    <string>STL</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/load_tools.xpm</normaloff>:/toolbar/images/toolbar_icons/load_tools.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Find</string>
+   </property>
+  </action>
+  <action name="actionFanuc_OTA">
+   <property name="text">
+    <string>Fanuc OTA</string>
+   </property>
+  </action>
+  <action name="actionSiemens">
+   <property name="text">
+    <string>Siemens</string>
+   </property>
+  </action>
+  <action name="actionNext">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/player_fwd.xpm</normaloff>:/toolbar/images/toolbar_icons/player_fwd.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>Next</string>
+   </property>
+  </action>
+  <action name="actionTool_Path_Window">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Tool Path Window</string>
+   </property>
+  </action>
+  <action name="actionProperty_Window">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Property Window</string>
+   </property>
+  </action>
+  <action name="actionTool_Window">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Tool Window</string>
+   </property>
+  </action>
+  <action name="actionBackground">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/background.png</normaloff>:/toolbar/images/toolbar_icons/background.png</iconset>
+   </property>
+   <property name="text">
+    <string>Background ...</string>
+   </property>
+  </action>
+  <action name="actionTool_Bar">
+   <property name="text">
+    <string>Tool Bar</string>
+   </property>
+  </action>
+  <action name="actionStatus_Bar">
+   <property name="text">
+    <string>Status Bar</string>
+   </property>
+  </action>
+  <action name="actionCycle_2">
+   <property name="text">
+    <string>Cycle</string>
+   </property>
+  </action>
+  <action name="actionBlock_By_Block">
+   <property name="text">
+    <string>Block By Block</string>
+   </property>
+  </action>
+  <action name="actionTool_Setup">
+   <property name="text">
+    <string>Tool Setup</string>
+   </property>
+  </action>
+  <action name="actionMachine_Setup">
+   <property name="text">
+    <string>Machine Setup</string>
+   </property>
+  </action>
+  <action name="actionWorkpiece_Setup">
+   <property name="text">
+    <string>Workpiece Setup</string>
+   </property>
+  </action>
+  <action name="actionStart_MDI_Mode">
+   <property name="text">
+    <string>Start MDI Mode</string>
+   </property>
+  </action>
+  <action name="actionStart_Jog_Mode">
+   <property name="text">
+    <string>Start Jog Mode</string>
+   </property>
+  </action>
+  <action name="actionAction_Rewind">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/player_rew.xpm</normaloff>:/toolbar/images/toolbar_icons/player_rew.xpm</iconset>
+   </property>
+   <property name="text">
+    <string>action_Rewind</string>
+   </property>
+   <property name="toolTip">
+    <string>Restart</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="discretesim.qrc"/>
+ </resources>
+ <connections/>
+</ui>

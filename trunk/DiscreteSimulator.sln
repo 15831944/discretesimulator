@@ -1,0 +1,71 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DiscreteSimulator", "DiscreteSimulator\DiscreteSimulator.vcxproj", "{10EA9C5F-6A75-4ADC-ACD8-66C5644D2DF9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NcDisplay", "NcDisplay\NcDisplay.vcxproj", "{E4C77943-4EB8-4E57-A300-B71E59CDB5D9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NcFileIO", "NcFileIO\NcFileIO.vcxproj", "{0102807C-7597-4B0F-8F66-3421FC8F659D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NcGeomKernel", "NcGeomKernel\NcGeomKernel.vcxproj", "{44E6A8E9-050F-4046-AFAD-E348FA960732}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NcSimulationController", "NcSimulationController\NcSimulationController.vcxproj", "{393AE835-CEEA-4267-8280-A36EBD8BEFD0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NcStateMachine", "NcStateMachine\NcStateMachine.vcxproj", "{D1F306EF-F325-498E-A307-306EDC150C42}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NcUi", "NcUi\NcUi.vcxproj", "{80C3454F-00F8-47DD-A0D9-06C88A32C133}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NcUIComponents", "NcUIComponents\NcUIComponents.vcxproj", "{D4A43C62-3CD8-46A0-BFD9-69E25BD69776}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NcUtility", "NcUtility\NcUtility.vcxproj", "{A2E79058-BFE2-4F18-82F1-10C911282101}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{10EA9C5F-6A75-4ADC-ACD8-66C5644D2DF9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{10EA9C5F-6A75-4ADC-ACD8-66C5644D2DF9}.Debug|Win32.Build.0 = Debug|Win32
+		{10EA9C5F-6A75-4ADC-ACD8-66C5644D2DF9}.Release|Win32.ActiveCfg = Release|Win32
+		{10EA9C5F-6A75-4ADC-ACD8-66C5644D2DF9}.Release|Win32.Build.0 = Release|Win32
+		{E4C77943-4EB8-4E57-A300-B71E59CDB5D9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E4C77943-4EB8-4E57-A300-B71E59CDB5D9}.Debug|Win32.Build.0 = Debug|Win32
+		{E4C77943-4EB8-4E57-A300-B71E59CDB5D9}.Release|Win32.ActiveCfg = Release|Win32
+		{E4C77943-4EB8-4E57-A300-B71E59CDB5D9}.Release|Win32.Build.0 = Release|Win32
+		{0102807C-7597-4B0F-8F66-3421FC8F659D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0102807C-7597-4B0F-8F66-3421FC8F659D}.Debug|Win32.Build.0 = Debug|Win32
+		{0102807C-7597-4B0F-8F66-3421FC8F659D}.Release|Win32.ActiveCfg = Release|Win32
+		{0102807C-7597-4B0F-8F66-3421FC8F659D}.Release|Win32.Build.0 = Release|Win32
+		{44E6A8E9-050F-4046-AFAD-E348FA960732}.Debug|Win32.ActiveCfg = Debug|Win32
+		{44E6A8E9-050F-4046-AFAD-E348FA960732}.Debug|Win32.Build.0 = Debug|Win32
+		{44E6A8E9-050F-4046-AFAD-E348FA960732}.Release|Win32.ActiveCfg = Release|Win32
+		{44E6A8E9-050F-4046-AFAD-E348FA960732}.Release|Win32.Build.0 = Release|Win32
+		{393AE835-CEEA-4267-8280-A36EBD8BEFD0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{393AE835-CEEA-4267-8280-A36EBD8BEFD0}.Debug|Win32.Build.0 = Debug|Win32
+		{393AE835-CEEA-4267-8280-A36EBD8BEFD0}.Release|Win32.ActiveCfg = Release|Win32
+		{393AE835-CEEA-4267-8280-A36EBD8BEFD0}.Release|Win32.Build.0 = Release|Win32
+		{D1F306EF-F325-498E-A307-306EDC150C42}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D1F306EF-F325-498E-A307-306EDC150C42}.Debug|Win32.Build.0 = Debug|Win32
+		{D1F306EF-F325-498E-A307-306EDC150C42}.Release|Win32.ActiveCfg = Release|Win32
+		{D1F306EF-F325-498E-A307-306EDC150C42}.Release|Win32.Build.0 = Release|Win32
+		{80C3454F-00F8-47DD-A0D9-06C88A32C133}.Debug|Win32.ActiveCfg = Debug|Win32
+		{80C3454F-00F8-47DD-A0D9-06C88A32C133}.Debug|Win32.Build.0 = Debug|Win32
+		{80C3454F-00F8-47DD-A0D9-06C88A32C133}.Release|Win32.ActiveCfg = Release|Win32
+		{80C3454F-00F8-47DD-A0D9-06C88A32C133}.Release|Win32.Build.0 = Release|Win32
+		{D4A43C62-3CD8-46A0-BFD9-69E25BD69776}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D4A43C62-3CD8-46A0-BFD9-69E25BD69776}.Debug|Win32.Build.0 = Debug|Win32
+		{D4A43C62-3CD8-46A0-BFD9-69E25BD69776}.Release|Win32.ActiveCfg = Release|Win32
+		{D4A43C62-3CD8-46A0-BFD9-69E25BD69776}.Release|Win32.Build.0 = Release|Win32
+		{A2E79058-BFE2-4F18-82F1-10C911282101}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A2E79058-BFE2-4F18-82F1-10C911282101}.Debug|Win32.Build.0 = Debug|Win32
+		{A2E79058-BFE2-4F18-82F1-10C911282101}.Release|Win32.ActiveCfg = Release|Win32
+		{A2E79058-BFE2-4F18-82F1-10C911282101}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		QtVersion = 4.8.1
+	EndGlobalSection
+EndGlobal
