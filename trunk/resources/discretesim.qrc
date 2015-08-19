@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/toolbar" >
+    <qresource prefix="/toolbar">
         <file>images/toolbar_icons/DS-LogoTransparant-Small.png</file>
         <file>images/toolbar_icons/background.png</file>
         <file>images/toolbar_icons/Linux.PNG</file>
@@ -56,7 +56,7 @@
         <file>images/toolbar_icons/undo.xpm</file>
         <file>images/toolbar_icons/wireframe.xpm</file>
     </qresource>
-    <qresource prefix="/tools" >
+    <qresource prefix="/tools">
         <file>images/tool_icons/Singlepoint.xpm</file>
         <file>images/tool_icons/centerdrill.png</file>
         <file>images/tool_icons/centerdrill_shaft.png</file>
@@ -72,6 +72,5 @@
         <file>images/tool_icons/Drill.xpm</file>
         <file>images/splash.png</file>
         <file>images/splash1.png</file>
-        <file>images/splash2.png</file>
     </qresource>
 </RCC>
