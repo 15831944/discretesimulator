@@ -3,12 +3,11 @@
 
 #include <stdio.h>
 #include "NcGeomKernel\NcGeomKernelGlobal.h"
-#include "NcUtility\NcGlobalDefinitions.h"
-
-
 
 namespace DiscreteSimulator
 {
+	class polygon;
+	class line;
 	class vector2d
 	{
 
@@ -17,37 +16,16 @@ namespace DiscreteSimulator
 
 	};
 
-	class line
-	{
-	public:
-		vector2d		*start_pt;
-		vector2d		*end_pt;
-		
-		line			*next;
-		line			*prev;
-	};
-
-
-
-	class polygon
-	{
-	public:
-		int			num_vertex;
-		vector2d	*vertex;
-		line		*start;
-		line		*edge;
-
-	};
-
 
 	class NCGEOMKERNELEXPORT NcPolygonBoolean
 	{
 		
 	public:
-		NcPolygonBoolean();
-		~NcPolygonBoolean();
-
 		STATUS	boolean_main(double **dTargetPoly, int iTargetPoints, double **, int iToolPoints, double [][2], int &);
+		/*NcPolygonBoolean();*/
+		/*~NcPolygonBoolean();*/
+	private:
+		
 		STATUS	construct_polygon(polygon &poly, double **dInputPoly, int iPoint);
 		STATUS	fill_edges(line *, vector2d *, int ,int );
 		INT_STATUS intersect_line(line *p, line *q, double t[2]);

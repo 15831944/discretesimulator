@@ -1,6 +1,6 @@
 #include "NcStateMachine\NcMachine.h"
 #include "NcGeomKernel\NcProfile.h"
-#include "NcGeomKernel\NcRevolve.h"
+//#include "NcGeomKernel\NcRevolve.h"
 #include "NcGeomKernel\NcPolygonBoolean.h"
 #include "NcSimulationController\NcSimulationController.h"
 #include "NcUtility\NcVector.h"

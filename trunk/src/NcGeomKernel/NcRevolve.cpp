@@ -1,17 +1,17 @@
-#include "NcGeomKernel\NcRevolve.h"
-#include "NcGeomKernel\NcProfile.h"
+//#include "NcGeomKernel\NcRevolve.h"
+//#include "NcGeomKernel\NcProfile.h"
 
-using namespace DiscreteSimulator;
+//using namespace DiscreteSimulator;
 
-NcRevolve::NcRevolve(Profile* _part, Profile* _stock)
-{
+//NcRevolve::NcRevolve(Profile* _part, Profile* _stock)
+//{
+//
+//}
 
-}
+//NcRevolve::~NcRevolve()
+//{
+//
+//}
 
-NcRevolve::~NcRevolve()
-{
-
-}
-
-
+//              !! Dead code!!              //
 

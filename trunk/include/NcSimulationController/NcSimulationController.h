@@ -23,8 +23,11 @@ namespace DiscreteSimulator
 		void			setSimulationMode(SimulationMode mode);
 		SimulationMode	getSimulationMode();
 		bool			runSimulation();
-		void			callToolPathDL();
-		void			callDeformedBodyDL(GLuint id);
+
+		// !!!!  Dead code !! Functions not defined anywhere for this class  !!!! //
+
+		//void			callToolPathDL();
+		//void			callDeformedBodyDL(GLuint id);s
 		
 		inline void		setSimulationState(SimulationState simulationstate);
 		void			setOpIndexForNEXTState();

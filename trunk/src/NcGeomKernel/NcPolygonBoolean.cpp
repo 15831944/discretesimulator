@@ -1,7 +1,39 @@
-#include "NcGeomKernel\NcPolygonBoolean.h"
 #include <cassert>
 #include <math.h>
+#include "NcUtility\NcGlobalDefinitions.h"
+#include "NcGeomKernel\NcPolygonBoolean.h"
+
+
+namespace DiscreteSimulator
+{
+
+
+	class line
+	{
+	public:
+		vector2d		*start_pt;
+		vector2d		*end_pt;
+		
+		line			*next;
+		line			*prev;
+	};
+
+
+
+	class polygon
+	{
+	public:
+		int			num_vertex;
+		vector2d	*vertex;
+		line		*start;
+		line		*edge;
+
+	};
+
+}
+
 using namespace DiscreteSimulator;
+
 
 vector2d midPoint(line l)
 {	
@@ -25,11 +57,11 @@ line* new_edge(vector2d *v1, vector2d *v2)
 }
 
 
-NcPolygonBoolean::NcPolygonBoolean()
-{}
-
-NcPolygonBoolean::~NcPolygonBoolean()
-{}
+//NcPolygonBoolean::NcPolygonBoolean()
+//{}
+//
+//NcPolygonBoolean::~NcPolygonBoolean()
+//{}
 
 
 

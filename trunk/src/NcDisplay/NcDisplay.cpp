@@ -1,7 +1,7 @@
 
 #include "NcStateMachine\NcMachine.h"
 #include "NcGeomKernel\NcProfile.h"
-#include "NcGeomKernel\NcRevolve.h"
+//#include "NcGeomKernel\NcRevolve.h"
 #include "NcGeomKernel\NcPolygonBoolean.h"
 #include "NcUtility\NcVector.h"
 #include "NcUtility\NcStlImport.h"
@@ -20,11 +20,29 @@
 #include <iostream>
 #include <QMessageBox>
 
+
+
+//namespace DiscreteSimulator
+//{
+//	inline double maximum(double a, double b) 
+//	{
+//		return (a >= b) ? a : b;                        // Replaced with std::max  //
+//	}
+//
+//	inline  double minimum(double a, double b)
+//	{
+//		return (a <= b) ? a : b;
+//	}
+//}
+
 using namespace std;
 using namespace DiscreteSimulator;
 
+
 NcDisplay	*NcDisplay::mNcDisplayInstance = 0;
 int NcDisplay::dllistcount = -1;
+
+
 
 NcDisplay::NcDisplay() : stock(0)
 {
@@ -136,32 +154,32 @@ void	NcDisplay::setStockBBInitialValues()
 
 void	NcDisplay::updateStockBoundingBox()
 {
-	minXval = minimum(minXval, NcMachine::NcMachineInstance()->mLastMachineXPos);
+	minXval = min(minXval, NcMachine::NcMachineInstance()->mLastMachineXPos);
 
-	mStockBoundingBox.xmin = minimum(minXval, NcMachine::NcMachineInstance()->mEndOfMotionX);
+	mStockBoundingBox.xmin = min(minXval, NcMachine::NcMachineInstance()->mEndOfMotionX);
 
 	if(firstcode == true)
 	{
-		maxXval = minimum(maxXval, NcMachine::NcMachineInstance()->mLastMachineXPos);
+		maxXval = min(maxXval, NcMachine::NcMachineInstance()->mLastMachineXPos);
 	}
 	else
 	{
-		maxXval = maximum(maxXval, NcMachine::NcMachineInstance()->mLastMachineXPos);
+		maxXval = max(maxXval, NcMachine::NcMachineInstance()->mLastMachineXPos);
 	}
-	mStockBoundingBox.xmax = maximum(maxXval, NcMachine::NcMachineInstance()->mEndOfMotionX);
+	mStockBoundingBox.xmax = max(maxXval, NcMachine::NcMachineInstance()->mEndOfMotionX);
 		
-	minZval = minimum(minZval, NcMachine::NcMachineInstance()->mLastMachineZPos);
-	mStockBoundingBox.zmin = minimum(minZval, NcMachine::NcMachineInstance()->mEndOfMotionZ);
+	minZval = min(minZval, NcMachine::NcMachineInstance()->mLastMachineZPos);
+	mStockBoundingBox.zmin = min(minZval, NcMachine::NcMachineInstance()->mEndOfMotionZ);
 
 	if(firstcode == true)
 	{
-		maxZval = minimum(maxZval, NcMachine::NcMachineInstance()->mLastMachineZPos);
+		maxZval = min(maxZval, NcMachine::NcMachineInstance()->mLastMachineZPos);
 	}
 	else
 	{
-		maxZval = maximum(maxZval, NcMachine::NcMachineInstance()->mLastMachineZPos);
+		maxZval = max(maxZval, NcMachine::NcMachineInstance()->mLastMachineZPos);
 	}
-	mStockBoundingBox.zmax = maximum(maxZval, NcMachine::NcMachineInstance()->mEndOfMotionZ);
+	mStockBoundingBox.zmax = max(maxZval, NcMachine::NcMachineInstance()->mEndOfMotionZ);
 
 #ifdef debug
 	std::cout << mStockBoundingBox.xmin << " " << mStockBoundingBox.xmax <<  " "
@@ -230,6 +248,7 @@ STATUS	NcDisplay::createSurfaceOfRotation(int t)
 				for(k = 0; k < 3; k++)
 					stock->S[no][i][j] += stock->P[i][k] * R[k][j];
 		no++;
+
 	}
 	return OK;
 }
@@ -811,7 +830,7 @@ void	NcDisplay::callDeformedBodyDL(GLuint id)
 void	NcDisplay::material_stock()
 {
 	GLfloat mat_shininess[] = { 100.0 };
-	GLfloat mat_solid[] = { 0.75, 0.75, 0.0, 1.0 };
+	GLfloat mat_solid[] = { 0.75, 0.75, 0.1, 1.0 };
 	GLfloat mat_zero[] = { 0.0, 0.0, 0.0, 1.0 };
 
 	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
