@@ -16,8 +16,8 @@ namespace DiscreteSimulator
 		Q_OBJECT
 
 	public:
-		G28();
-		~G28();
+	/*	G28();
+		~G28();*/
 		bool			executeCode(SimulationState simstate, NcCode *code = 0);
 
 	};

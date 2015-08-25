@@ -15,11 +15,11 @@ NcStartupStockDisplay*	NcStartupStockDisplay::getStockDisplayInstance()
 }
 
 
-NcStartupStockDisplay::NcStartupStockDisplay()
-{}
-
-NcStartupStockDisplay::~NcStartupStockDisplay()
-{}
+//NcStartupStockDisplay::NcStartupStockDisplay()
+//{}
+//
+//NcStartupStockDisplay::~NcStartupStockDisplay()
+//{}
 
 
 bool	NcStartupStockDisplay::executeCode(SimulationState simstate, NcCode *code)

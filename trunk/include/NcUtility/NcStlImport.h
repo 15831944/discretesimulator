@@ -22,7 +22,7 @@ namespace DiscreteSimulator
 	{
 	public:
 	NcStlImport();
-	virtual				~NcStlImport();
+	/*virtual				~NcStlImport();*/
 	STATUS				stl_read_triangulation (triangulation *);
 	STATUS				stl_display_triangulation (triangulation *);
 	STATUS				stl_main(char *filename,triangulation* patch);

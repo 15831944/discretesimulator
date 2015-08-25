@@ -10,8 +10,8 @@ namespace DiscreteSimulator
 	class NCSTATEMACHINEEXPORT T08 : public NcCode
 	{
 	public:
-		T08();
-		~T08();
+		/*T08();
+		~T08();*/
 		static	void	setToolXOffset(double xoffset)	{mToolXOffset = xoffset;}
 		static	void	setToolZOffset(double zoffset)	{mToolZOffset = zoffset;}
 

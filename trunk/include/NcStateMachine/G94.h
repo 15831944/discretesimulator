@@ -13,7 +13,7 @@ namespace DiscreteSimulator
 		
 	public:
 		G94();
-		virtual ~G94();
+	/*	virtual ~G94();*/
 		STATUS			generateDisplayList();
 		bool			executeCode(SimulationState simstate, NcCode *code = 0);
 		bool			executeLastDLForCode();

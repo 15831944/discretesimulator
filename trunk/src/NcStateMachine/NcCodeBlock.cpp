@@ -23,7 +23,7 @@ NcCode*	NcCodeBlock::getGCodeInBlock()
 			if((*itr)->isMachiningCode() == true)	//to avoid getting last machining code as G00(approach path of the canned cycles)
 			{										//when simulation reaches END state in simulation controller (fixes a display bug)
 				switch((*itr)->ctype)
-				{
+				{//no switch cases written
 				case CG00:
 				case CG01:
 				case CG02:

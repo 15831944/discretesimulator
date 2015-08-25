@@ -6,11 +6,11 @@ using namespace DiscreteSimulator;
 double	T07::mToolXOffset = 0.0;
 double	T07::mToolZOffset = 0.0;
 
-T07::T07()
-{}
-
-T07::~T07()
-{}
+//T07::T07()
+//{}
+//
+//T07::~T07()
+//{}
 
 bool	T07::executeCode(SimulationState simstate, NcCode *code)
 {

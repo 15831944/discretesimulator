@@ -28,9 +28,9 @@ void	G94::reinitializeCode()
 }
 
 
-G94::~G94()
-{
-}
+//G94::~G94()
+//{
+//}
 
 
 

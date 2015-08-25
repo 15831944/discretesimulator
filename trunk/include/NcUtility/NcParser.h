@@ -153,7 +153,7 @@ namespace DiscreteSimulator
 	{
 		public:
 								NcParser();
-			virtual				~NcParser();
+			/*virtual				~NcParser();*/
 			void				error(char msg[]);						/*For Error Reporting*/
 			Hashtab*			create_htab(int estimate);				/*Create a lookup table*/
 			int					enter_htab( Hashtab*	ht,				/*Add an entry to lookup table*/

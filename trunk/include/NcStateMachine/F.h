@@ -11,7 +11,7 @@ namespace DiscreteSimulator
 
 	public:
 		F();
-		~F();
+		/*~F();*/
 		bool			executeCode(SimulationState simstate, NcCode *code = 0);
 		void			reinitializeCode();
 

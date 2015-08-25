@@ -15,7 +15,7 @@ namespace DiscreteSimulator
 		Q_OBJECT
 
 	public:
-		~NcToolController();
+		/*~NcToolController();*/
 		static NcToolController*	getToolControllerInstance();
 	
 		void						display_toolholder(double X, double Y, double Z);

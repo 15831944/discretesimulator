@@ -13,7 +13,7 @@ namespace DiscreteSimulator
 
 	public:
 		G04();	
-		~G04();
+		/*~G04();*/
 		void			setDwellTime(int time)
 		{
 			mDwellTime = time;

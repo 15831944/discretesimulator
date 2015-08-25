@@ -31,8 +31,8 @@ void	G90::reinitializeCode()
 	mPartProfileIndex = 0;
 }
 
-G90::~G90()
-{}
+//G90::~G90()
+//{}
 
 void G90::setI(double i)
 {	

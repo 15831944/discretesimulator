@@ -10,8 +10,8 @@ M03::M03()
 		NcToolController::getToolControllerInstance(), SLOT(updateNcSpindleStatus(bool)));
 }
 
-M03::~M03()
-{}
+//M03::~M03()
+//{}
 
 bool	M03::executeCode(SimulationState simstate, NcCode *code)
 {
@@ -38,8 +38,8 @@ M05::M05()
 		NcToolController::getToolControllerInstance(), SLOT(updateNcSpindleStatus(bool)));
 }
 
-M05::~M05()
-{}
+//M05::~M05()
+//{}
 
 bool	M05::executeCode(SimulationState simstate, NcCode *code)
 {
@@ -49,11 +49,11 @@ bool	M05::executeCode(SimulationState simstate, NcCode *code)
 
 
 
-M30::M30()
-{}
-
-M30::~M30()
-{}
+////M30::M30()
+//{}
+//
+//M30::~M30()
+//{}
 
 bool	M30::executeCode(SimulationState simstate, NcCode *code)
 {

@@ -21,7 +21,7 @@ namespace DiscreteSimulator
 	{
 	public:
 		NcCode();
-		virtual ~NcCode();
+	/*	virtual ~NcCode();*/
 
 		virtual void				setX(double x);
 		virtual double				getX();
