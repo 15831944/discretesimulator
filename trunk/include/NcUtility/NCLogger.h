@@ -4,9 +4,9 @@
 class NcLogger
 {
 	
-public:
-	NcLogger();
-	~NcLogger();
+//public:
+//	NcLogger();
+//	~NcLogger();
 
 };
 

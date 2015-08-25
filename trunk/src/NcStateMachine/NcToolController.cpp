@@ -23,8 +23,8 @@ NcToolController::NcToolController()
 	mToolsLoaded = false;
 }
 
-NcToolController::~NcToolController()
-{}
+//NcToolController::~NcToolController()
+//{}
 
 NcToolController*	NcToolController::getToolControllerInstance()
 {

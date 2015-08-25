@@ -11,7 +11,7 @@ public:
 	NcVector() {vx = 0.0; vy = 0.0; vz = 0.0;}
 	NcVector(double x, double y, double z) {vx = x; vy = y; vz = z; }
 
-	~NcVector();
+	/*~NcVector();*/
 	inline double x() const;
 	inline double y() const;
 	inline double z() const;

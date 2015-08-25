@@ -10,8 +10,8 @@ F::F()
 
 }
 
-F::~F()
-{}
+//F::~F()
+//{}
 
 void	F::reinitializeCode()
 {

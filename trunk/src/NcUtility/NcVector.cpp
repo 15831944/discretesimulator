@@ -1,8 +1,8 @@
 #include <math.h>
 #include "NcUtility\NcVector.h"
 
-NcVector::~NcVector()
-{}
+//NcVector::~NcVector()
+//{}
 
 const NcVector NcVector::operator - (const NcVector &rhs) const					//vector subtraction
 {

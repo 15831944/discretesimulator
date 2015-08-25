@@ -8,8 +8,8 @@ G04::G04()
 	mLocalIndex = mListIndex;
 }
 
-G04::~G04()
-{}
+//G04::~G04()
+//{}
 
 
 bool G04::executeCode(SimulationState simstate, NcCode *code)

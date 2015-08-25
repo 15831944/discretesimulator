@@ -21,9 +21,9 @@ NcParser::NcParser()
 	keywords		=	NULL;
 	ht				=	NULL;
 }
-NcParser::~NcParser()
-{
-}
+//NcParser::~NcParser()
+//{
+//}
 
 int NcParser::read_ch (void)
 {

@@ -12,9 +12,9 @@ NcStlImport::NcStlImport()
 	parser = new NcParser();
 }
 
-NcStlImport::~NcStlImport()
-{
-}
+//NcStlImport::~NcStlImport()
+//{
+//}
 
 STATUS NcStlImport::stl_main(char *filename,triangulation* patch)
 {

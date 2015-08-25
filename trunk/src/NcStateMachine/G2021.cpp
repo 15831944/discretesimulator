@@ -2,11 +2,11 @@
 #include "NcStateMachine\NcStartupStockDisplay.h"
 using namespace DiscreteSimulator;
 
-G20::G20()	//english unit, inch
-{}
-
-G20::~G20()
-{}
+//G20::G20()	//english unit, inch
+//{}
+//
+//G20::~G20()
+//{}
 
 void	G20::reinitializeCode()
 {
@@ -29,11 +29,11 @@ bool G20::executeCode(SimulationState simstate, NcCode *code)
 }
 
 
-G21::G21()	//metric unit, mm, meter
-{}
-
-G21::~G21()
-{}
+//G21::G21()	//metric unit, mm, meter
+//{}
+//
+//G21::~G21()
+//{}
 
 void	G21::reinitializeCode()
 {

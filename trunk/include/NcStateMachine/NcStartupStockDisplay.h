@@ -17,8 +17,8 @@ namespace DiscreteSimulator
 		void	setDLForStartupStock(GLuint dlid)	{mStartupStockDLId = dlid;}
 
 	private:
-		NcStartupStockDisplay(); 
-		~NcStartupStockDisplay();
+	/*	NcStartupStockDisplay(); 
+		~NcStartupStockDisplay();*/
 		GLuint							mStartupStockDLId;
 		static	NcStartupStockDisplay	*mStockDisplayInstance;
 	};

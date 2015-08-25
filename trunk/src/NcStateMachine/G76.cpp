@@ -21,7 +21,7 @@ G76::G76()
 }
 
 void	G76::initializePath()
-{}
+{}//no code written
 
 void G76::setK(double k)
 {

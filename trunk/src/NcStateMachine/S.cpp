@@ -9,8 +9,8 @@ S::S()
 		NcToolController::getToolControllerInstance(), SLOT(updateSpeed(double)));
 }
 
-S::~S()
-{}
+//S::~S()
+//{}
 
 void	S::reinitializeCode()
 {

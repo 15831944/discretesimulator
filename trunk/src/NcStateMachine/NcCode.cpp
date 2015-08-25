@@ -22,10 +22,10 @@ NcCode::NcCode()
 	mIsMachiningCode = false;
 }
 
-NcCode::~NcCode()
-{
-
-}
+//NcCode::~NcCode()
+//{
+//
+//}
 
 void NcCode::setX(double x)
 {
