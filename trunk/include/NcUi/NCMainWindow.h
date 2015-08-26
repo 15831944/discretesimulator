@@ -11,6 +11,8 @@ class 	QProgressBar;
 class	QFile;
 class	QTimer;
 class	QSlider;
+class	QWidget;
+class	QPushButton;
 namespace Ui{
 	class MainWindow;
 }
@@ -56,6 +58,15 @@ namespace DiscreteSimulator
 		void					updateFeedRate(int feed);
 		void					updateSpeed(double);
 		void					updateSpindleStatus(bool status);
+		
+		/****************Pranit*************************/
+		void					updateCoolantState(bool status);
+		void					buildEditorText();
+		void					userDefinedStockValues(double stockDiameter, double stockLength);
+		void					updateStockProperties();
+		void					updateBgcolor(QColor bgcolor);
+
+
 		void					OpenBackgroundColorDialog();
 		void					updateToolPDis(int index);
 
@@ -87,7 +98,7 @@ namespace DiscreteSimulator
 		void					updateRecentFileActions();
 		void					readSettings();
 		void					writeSettings();
-		
+		void					cleanUpData();
 	private:
 		Ui::MainWindow*			mMainWindowUI;
 		QString					curFileName;
@@ -103,7 +114,9 @@ namespace DiscreteSimulator
 		QAction					*separatorAct;
 		bool					mSimulationRunning;
 		bool					mIsNewFile;
-
+		QWidget*				mCodeWindowBaseWidget;
+		QPushButton*			mPbCodeWindowOK;
+		QPushButton*			mPbCodeWindowCancel;
 	protected:
 		void				keyPressEvent(QKeyEvent *event ); 
 		

@@ -22,11 +22,11 @@ namespace DiscreteSimulator
 		static					NcBackGroundDialog* backgroundDialogInstance();
 		Ui::BackgroundDialog*	mDialog;
 		virtual					~NcBackGroundDialog();
-		void					resizeEvent(QResizeEvent *event);
-		void					updateImageLabelPreview();
 		friend class	cleanupStaticWindowInstances;
 		
 	private:
+		void					updateImageLabelPreview();
+		void					resizeEvent(QResizeEvent *event);
 		static NcBackGroundDialog*	mBackGroundDiaInstance;
 		QColor						m_backgroundColor;
 		QPixmap						m_previewPixmap;
@@ -37,6 +37,9 @@ namespace DiscreteSimulator
 		NcBackGroundDialog& operator=(const NcBackGroundDialog &);		
 
 		void		initValues();
+	/****Pranit***/
+signals:
+		void	bgColorUpdated(QColor bgcolor);
 
 	public slots:
 		void		changeColor();

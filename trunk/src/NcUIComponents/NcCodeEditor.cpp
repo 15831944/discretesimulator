@@ -9,10 +9,10 @@ NcCodeEditor::NcCodeEditor(QWidget *parent) : QTextEdit(parent)
 	 mBlockHighlighter = new NcBlockHighlighter(document());
 }
 
-NcCodeEditor::~NcCodeEditor()
-{
-	
-}
+//NcCodeEditor::~NcCodeEditor()
+//{
+//	
+//}
 
 NcCodeEditor* NcCodeEditor::NcCodeEditorInstance()
 {

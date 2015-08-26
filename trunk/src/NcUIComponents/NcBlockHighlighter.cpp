@@ -126,10 +126,10 @@ NcBlockHighlighter::NcBlockHighlighter(QTextDocument *parent) : QSyntaxHighlight
 }
 
 
-NcBlockHighlighter::~NcBlockHighlighter()
-{
-
-}
+//NcBlockHighlighter::~NcBlockHighlighter()
+//{
+//
+//}
 
 
 void NcBlockHighlighter::highlightBlock(const QString &text)

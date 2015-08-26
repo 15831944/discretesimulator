@@ -55,6 +55,7 @@ void NcBackGroundDialog::changeColor()
         m_backgroundColor = color;
 		mDialog->imageLabelPreview->clear();
 		mDialog->imageLabelPreview->setPalette(QPalette(m_backgroundColor));			
+		emit bgColorUpdated(color);
 	}
  }
 

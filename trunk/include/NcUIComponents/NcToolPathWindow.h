@@ -4,6 +4,7 @@
 #include <QGLWidget>
 #include "NcUiComponents\NcUIComponentsGlobal.h"
 
+
 class QWidget;
 namespace DiscreteSimulator
 {
@@ -16,7 +17,7 @@ namespace DiscreteSimulator
 		NcToolPathWindow(QWidget *parent = 0, QGLWidget *shareWidget = 0);
 
 		void		initializeGL();
-		virtual		~NcToolPathWindow();
+		/*virtual		~NcToolPathWindow();*/
 		void		updateToolPathWindow();
 		void		reinitializeSimVariables();
 		

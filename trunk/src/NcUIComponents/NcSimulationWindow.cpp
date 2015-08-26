@@ -30,10 +30,10 @@ void	NcSimulationWindow::setIsNewFile( bool isnewfile)
 }
 
 
-NcSimulationWindow::~NcSimulationWindow()
-{
-	/*glDeleteLists(backgroundDL, 1);*/
-}
+//NcSimulationWindow::~NcSimulationWindow()
+//{
+//	/*glDeleteLists(backgroundDL, 1);*/
+//}
 
 
 
@@ -454,3 +454,31 @@ void NcSimulationWindow::ViewHandle::genBackgroundDL()
 		glDisable(GL_POLYGON_OFFSET_FILL);
 	glEndList();	
 }
+
+
+void NcSimulationWindow::ViewHandle::updateBackgroundDL(QColor bgcolor)
+{
+	//glClear()
+	mBackgroundDL = glGenLists(1);
+	glNewList(mBackgroundDL, GL_COMPILE);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glBegin(GL_QUADS);
+	glColor3d(1,1,1);//
+	//glColor3d(0.99, 0.99, 0.99);
+	glVertex3d(-1.0, -1.0, 0.0);
+	glVertex3d(1.0, -1.0, 0.0);
+	glColor3d(bgcolor.red(),bgcolor.green(),bgcolor.blue());
+	//glColor3d(0.44, 0.56, 0.89);
+	glVertex3d(1.0, 1.0, 0.0);
+	glVertex3d(-1.0, 1.0, 0.0);
+	glEnd();
+	glDisable(GL_POLYGON_OFFSET_FILL);
+	glEndList();	
+}
+
+void NcSimulationWindow::callUpdateBg(QColor colorId)
+{
+	mViewHandle.updateBackgroundDL(colorId);
+}	
+

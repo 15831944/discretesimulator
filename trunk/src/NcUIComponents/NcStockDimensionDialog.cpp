@@ -30,6 +30,7 @@ NcStockDimensionDialog::NcStockDimensionDialog()
 
 	connect(mDialog->buttonBox, SIGNAL(accepted()), this, SLOT(acceptvalues()));
 	connect(mDialog->buttonBox, SIGNAL(rejected()), this, SLOT(rejectvalues()));
+	//connect(this, SIGNAL(userDefinedStock(double,double)),NCMainWindow:: , SLOT(rejectvalues()));
 }
 
 
@@ -86,6 +87,8 @@ void	NcStockDimensionDialog::acceptvalues()
 	QSettings settings;
 	settings.setValue(StockDiameter, mDialog->stockdia->text().toDouble());
 	settings.setValue(StockLength, mDialog->stockLength->text().toDouble());
+
+	emit userDefinedStock(mStockDiameter,mStockLength);
 }
 
 void	NcStockDimensionDialog::rejectvalues()

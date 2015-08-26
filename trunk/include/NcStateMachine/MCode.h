@@ -43,16 +43,59 @@ namespace DiscreteSimulator
 		void	updateSpindleStatus(bool);
 	};
 
-	//class M07 : public NcCode	//coolant 1 on
-	//{};
 
-	//class M08 : public NcCode	//coolant 2 on
-	//{};
+	/*********************************Pranit**********************************/
+	class NCSTATEMACHINEEXPORT M06 :public QObject, public NcCode	// Tool Change
+	{
+		Q_OBJECT
+	public:
+		M06();
+		~M06();
 
-	//class M09 : public NcCode	//stop both the coolants
-	//{};	
-	//
-	class M30 :  public QObject,  public NcCode	//end of program
+	bool	executeCode(SimulationState simstate, NcCode *code = 0);
+	
+	signals:
+		void	updateTool(bool);
+
+	};
+
+	class NCSTATEMACHINEEXPORT M07 :public QObject, public NcCode	//coolant 1 on
+	{
+		Q_OBJECT
+	public:
+		M07();
+		~M07();
+	};
+
+	class NCSTATEMACHINEEXPORT M08 : public QObject,public NcCode	//coolant 2 on
+	{	
+		Q_OBJECT
+	public:
+		M08();
+		~M08();
+		
+		bool	executeCode(SimulationState simstate, NcCode *code = 0);
+	
+	signals:
+		void	updateCoolantStatus(bool);
+	};
+
+	class NCSTATEMACHINEEXPORT M09 : public QObject,public NcCode	//stop both the coolants
+	{
+		Q_OBJECT
+	public:
+		M09();
+		~M09();
+		bool	executeCode(SimulationState simstate, NcCode *code = 0);
+
+	signals:
+		void	updateCoolantStatus(bool);
+	};	
+	/********************************************************************************/
+	
+	
+	
+	class NCSTATEMACHINEEXPORT M30 :  public QObject,  public NcCode	//end of program
 	{
 		Q_OBJECT
 

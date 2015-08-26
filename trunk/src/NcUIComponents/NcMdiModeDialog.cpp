@@ -90,7 +90,8 @@ void NcMdiModeDialog::validateInputAndExecute()
 	{
 		switch(code.at(0).toAscii())
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				if(GCodeValidator->validate(code, pos) == QValidator::Acceptable)
 				{
@@ -104,7 +105,8 @@ void NcMdiModeDialog::validateInputAndExecute()
 				}
 				break;
 			}
-		case 'M':
+		case 'M':  
+		case 'm':
 			{
 				if(MCodeValidator->validate(code, pos) == QValidator::Acceptable)
 				{
@@ -118,7 +120,8 @@ void NcMdiModeDialog::validateInputAndExecute()
 				}
 				break;
 			}
-		case 'T':
+		case 'T':  
+		case 't':
 			{
 				if(TCodeValidator->validate(code, pos) == QValidator::Acceptable)
 				{
@@ -132,7 +135,8 @@ void NcMdiModeDialog::validateInputAndExecute()
 				}
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
 				if(NCodeValidator->validate(code, pos) == QValidator::Acceptable)
 				{
@@ -140,7 +144,8 @@ void NcMdiModeDialog::validateInputAndExecute()
 				}
 				break;
 			}
-		case 'X':
+		case 'X': 
+		case 'x' :
 			{
 				if(XCodeValidator->validate(code, pos) == QValidator::Acceptable)
 				{
@@ -149,6 +154,7 @@ void NcMdiModeDialog::validateInputAndExecute()
 				break;
 			}
 		case 'Z':
+		case 'z' :
 			{
 				if(ZCodeValidator->validate(code, pos) == QValidator::Acceptable)
 				{
@@ -156,7 +162,8 @@ void NcMdiModeDialog::validateInputAndExecute()
 				}
 				break;
 			}
-		case 'U':
+		case 'U': 
+		case 'u':
 			{
 				if(UCodeValidator->validate(code, pos) == QValidator::Acceptable)
 				{
@@ -164,7 +171,8 @@ void NcMdiModeDialog::validateInputAndExecute()
 				}
 				break;
 			}
-		case 'W':
+		case 'W': 
+		case 'w':
 			{
 				if(WCodeValidator->validate(code, pos) == QValidator::Acceptable)
 				{
@@ -172,7 +180,8 @@ void NcMdiModeDialog::validateInputAndExecute()
 				}
 				break;
 			}
-		case 'F':
+		case 'F':  
+		case 'f':
 			{
 				if(FCodeValidator->validate(code, pos) == QValidator::Acceptable)
 				{
@@ -181,6 +190,7 @@ void NcMdiModeDialog::validateInputAndExecute()
 				break;
 			}
 		case 'S':
+		case 's':
 			{
 				if(SCodeValidator->validate(code, pos) == QValidator::Acceptable)
 				{
@@ -188,7 +198,9 @@ void NcMdiModeDialog::validateInputAndExecute()
 				}
 				break;
 			}
-		case 'I':
+
+		case 'I': 
+		case 'i':
 			{
 				if(ICodeValidator->validate(code, pos) == QValidator::Acceptable)
 				{
@@ -196,7 +208,8 @@ void NcMdiModeDialog::validateInputAndExecute()
 				}
 				break;
 			}
-		case 'K':
+		case 'K':  
+		case 'k':
 			{
 				if(KCodeValidator->validate(code, pos) == QValidator::Acceptable)
 				{

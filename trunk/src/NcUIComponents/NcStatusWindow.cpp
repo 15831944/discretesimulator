@@ -2,6 +2,7 @@
 
 #include "ui_statusWindow.h"
 #include "NcUIComponents\NcStatusWindow.h"
+#include "NcUi\NCMainWindow.h"
 
 using namespace DiscreteSimulator;
 
@@ -21,6 +22,7 @@ NcStatusWindow::NcStatusWindow()
 {
 	mStatusWidget = new Ui::Form();
 	mStatusWidget->setupUi(this);	
+	connect(mStatusWidget->stockMaterailComboBox,SIGNAL(activated(int)),this,SLOT(updateStockProperties()));
 }
 
 NcStatusWindow::~NcStatusWindow()
@@ -88,10 +90,45 @@ void	NcStatusWindow::updateCycleTime(int hr, int min, int sec)
 	QTextStream(&time) << sec;
 
 	mStatusWidget->sec->setText(time);
+  }
 
 
-
-
-
-
+void        NcStatusWindow::clear()
+{
+	mStatusWidget->xcoord->setText("");
+	mStatusWidget->zcoord->setText("");
+	mStatusWidget->feed->setText("");
+	mStatusWidget->speed->setText("");
+	mStatusWidget->hour->setText("");
+	mStatusWidget->min->setText("");
+	mStatusWidget->sec->setText("");
+	mStatusWidget->spindle_OFF->setChecked(true);
 }
+
+/**************************Pranit*****************************************/
+void NcStatusWindow::updateNCCoolantStat( bool status )
+{
+	if(status == true)
+	{
+		mStatusWidget->coolant_ON->setChecked(true);
+		mStatusWidget->coolant_OFF->setChecked(false);
+	}
+	else
+	{
+		mStatusWidget->coolant_ON->setChecked(false);
+		mStatusWidget->coolant_OFF->setChecked(true);
+	}
+}
+
+QString NcStatusWindow::getmaterialName()
+{
+	return mStatusWidget->stockMaterailComboBox->currentText();
+}
+
+void DiscreteSimulator::NcStatusWindow::updateStockProperties()
+{
+	emit propertyChanged();
+}
+
+
+

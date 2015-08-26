@@ -4,6 +4,7 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <math.h>
+#include <gl/GLU.h>
 
 using namespace DiscreteSimulator;
 
@@ -20,9 +21,9 @@ QGLWidget(parent, shareWidget)
 	mStartSimulation = false;
 }
 
-NcToolPathWindow::~NcToolPathWindow()
-{
-}
+//NcToolPathWindow::~NcToolPathWindow()
+//{
+//}
 
 void NcToolPathWindow::setOrthographicProjection()
 {
@@ -40,6 +41,7 @@ void NcToolPathWindow::setOrthographicProjection()
 
 void NcToolPathWindow::initializeGL()
 {
+	makeCurrent();
 	glClearColor(0, 0, 0, 1.0);
    	glEnable (GL_BLEND);
    	glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
@@ -54,6 +56,7 @@ void NcToolPathWindow::initializeGL()
 
 void NcToolPathWindow::paintGL()
 {	
+	makeCurrent();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	glMatrixMode(GL_MODELVIEW);
@@ -76,10 +79,19 @@ void NcToolPathWindow::paintGL()
 	
 	if(mStartSimulation == true)
 		NcDisplay::getNcDisplayInstance()->callToolPathDL();
+
+	
+	GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR) {
+        qDebug() << "OpenGL error: " << err << gluErrorString(err)<<  endl;
+    }
+
+
 }
 
 void NcToolPathWindow::resizeGL(int width, int height)
 {
+	makeCurrent();
 	mAspectRatio = (float) width / (float) height;
 	glViewport(0, 0, width, height);
 	

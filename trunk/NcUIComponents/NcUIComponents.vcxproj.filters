@@ -33,6 +33,11 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Generated Files\Template">
+      <UniqueIdentifier>{1c116a5e-e844-4eff-bfa5-7cab2eeeecb8}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\NcUIComponents\cleanupStaticWindowInstances.cpp">
@@ -125,6 +130,15 @@
     <ClCompile Include="GeneratedFiles\Debug\moc_NcVideoCapture.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_NcStatusWindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_NcStatusWindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Template\moc_NcStatusWindow.cpp">
+      <Filter>Generated Files\Template</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\NcUIComponents\cleanupStaticWindowInstances.h">
@@ -134,9 +148,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\NcUIComponents\NcCodeEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\NcUIComponents\NcStatusWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\NcUIComponents\NcUIComponentsGlobal.h">
@@ -212,6 +223,9 @@
     </CustomBuild>
     <CustomBuild Include="..\resources\ToolOffsetsDialog.ui">
       <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\include\NcUIComponents\NcStatusWindow.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

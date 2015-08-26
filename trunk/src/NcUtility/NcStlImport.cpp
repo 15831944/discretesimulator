@@ -137,9 +137,12 @@ int NcStlImport::importLatheTools()
 
 	glNewList(parting_tool_list, GL_COMPILE);
 		glPushMatrix();
-		glRotatef(0,-90,1,0);
-		glPopMatrix();
+		glRotated(0,-90,1,0);
+		//glRotated(90,0,1,0);
+		//glRotated(90,0,0,1);
+		//glScaled(0.5,0.5,0.5);
 		stl_display_triangulation(patch);	
+		glPopMatrix();
 	glEndList();
 	delete patch;patch=0;
 	//---------------------------------------
@@ -154,11 +157,11 @@ int NcStlImport::importLatheTools()
 		qDebug()<<QObject::tr("new_drill.stl failed to read\n")<<endl;
 
 	glNewList(drill_tool_list,GL_COMPILE);
-		glPushMatrix();
-		glTranslatef(68,0,2);
-		glScalef(11.0,11.0,11.0);
-		stl_display_triangulation(patch);
-		glPopMatrix();
+		//glPushMatrix();
+			//glTranslatef(68,0,2);
+			//glScalef(11.0,11.0,11.0);
+			stl_display_triangulation(patch);
+		//glPopMatrix();
 	glEndList();
 	delete patch;patch=0;
 	//----------------------------------
@@ -173,12 +176,12 @@ int NcStlImport::importLatheTools()
 		qDebug()<<QObject::tr("new_threading.stl failed to read\n")<<endl;
 
 	glNewList(threading_tool_list, GL_COMPILE);
-		glPushMatrix();
-		glTranslatef(60,2,0);
-		glRotatef(-90,0,0,1);
-		glScalef(11.0,11.0,11.0);
-		stl_display_triangulation(patch);
-		glPopMatrix();
+		//glPushMatrix();
+			//glTranslatef(60,2,0);
+			//glRotatef(-90,0,0,1);
+			//glScalef(11.0,11.0,11.0);
+			stl_display_triangulation(patch);
+		//glPopMatrix();
 	glEndList();
 	delete patch;patch=0;
 	return 1;

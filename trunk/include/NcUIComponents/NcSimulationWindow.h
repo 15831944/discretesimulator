@@ -34,7 +34,8 @@ namespace DiscreteSimulator
 			void	resetAll			();
 			void	rotate				(double inX,double inY);
 			void	pan					(int fromX,int fromY,int toX,int toY);
-		
+	/***Pranit***/
+			void	updateBackgroundDL(QColor bgcolor);
 		
 		private:
 			void	drawBackground		();
@@ -61,12 +62,13 @@ namespace DiscreteSimulator
 		bool				updateSimulationWindow();
 		void				pause();
 		void				setBoolForSimControl(bool val) {mBoolForSimControl = val;}
-		virtual				~NcSimulationWindow();
+	/*	virtual				~NcSimulationWindow();*/
 		void				reinitializeSimControllers();
 	
 		void				setIsNewFile( bool isnewfile);
-		
-	public slots:
+		void				callUpdateBg(QColor colorId);
+
+     public slots:
 		void	zoomIn(){mViewHandle.zoom(-0.1);updateGL();}
 		void	zoomOut(){mViewHandle.zoom(0.1);updateGL();}
 		void	zoomToWindow(){mViewHandle.zoom(1);updateGL();}

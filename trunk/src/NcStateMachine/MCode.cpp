@@ -71,3 +71,64 @@ bool	M30::executeCode(SimulationState simstate, NcCode *code)
 	
 	return true;
 }
+
+M06::M06() //constructor for class M06 this function join the s
+{
+	//connect(this,SIGNAL(updateTool(bool)),NcToolController::getToolControllerInstance(),SLOT());
+
+}
+M06::~M06()
+{
+
+}
+
+bool DiscreteSimulator::M06::executeCode( SimulationState simstate, NcCode *code /*= 0*/ )
+{
+	emit updateTool(true);
+	return true;
+}
+
+M07::M07()
+{
+
+}
+
+M07::~M07() 
+{
+
+}
+
+
+M08::M08()
+{
+	connect(this,SIGNAL(updateCoolantStatus(bool)),NcToolController::getToolControllerInstance(),SLOT(updateNCCoolantStatus(bool)));
+
+}
+
+M08::~M08()
+{
+
+}
+
+bool DiscreteSimulator::M08::executeCode( SimulationState simstate, NcCode *code /*= 0*/ )
+{
+	emit updateCoolantStatus(true);
+	return true;
+}
+
+M09::M09()
+{
+	connect(this,SIGNAL(updateCoolantStatus(bool)),NcToolController::getToolControllerInstance(),SLOT(updateNCCoolantStatus(bool)));
+
+}
+
+M09::~M09()
+{
+
+}
+
+bool DiscreteSimulator::M09::executeCode( SimulationState simstate, NcCode *code /*= 0*/ )
+{
+	emit updateCoolantStatus(false);
+	return false;
+}

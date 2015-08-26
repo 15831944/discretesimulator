@@ -207,6 +207,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionBuild"/>
    <addaction name="actionAction_Rewind"/>
    <addaction name="actionRun"/>
    <addaction name="actionPause"/>
@@ -856,6 +857,38 @@
    </property>
    <property name="toolTip">
     <string>Restart</string>
+   </property>
+  </action>
+  <action name="actionWindow">
+   <property name="text">
+    <string>ToolBox List (Show/Hide)</string>
+   </property>
+  </action>
+  <action name="actionSimulation_Setup">
+   <property name="text">
+    <string>Simulation Setup</string>
+   </property>
+  </action>
+  <action name="actionOpen_Simulator">
+   <property name="text">
+    <string>Open Simulator</string>
+   </property>
+  </action>
+  <action name="actionOpen_Toolpath">
+   <property name="text">
+    <string>Open Toolpath</string>
+   </property>
+  </action>
+  <action name="actionBuild">
+   <property name="icon">
+    <iconset resource="discretesim.qrc">
+     <normaloff>:/toolbar/images/toolbar_icons/build.png</normaloff>:/toolbar/images/toolbar_icons/build.png</iconset>
+   </property>
+   <property name="text">
+    <string>actionBuild</string>
+   </property>
+   <property name="toolTip">
+    <string>Build code</string>
    </property>
   </action>
  </widget>

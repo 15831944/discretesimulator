@@ -19,7 +19,7 @@ namespace DiscreteSimulator
 		
 	public:
 		NcBlockHighlighter(QTextDocument *parent = 0);
-		~NcBlockHighlighter();
+		/*~NcBlockHighlighter();*/
 
 	protected:
 		void highlightBlock(const QString &text);

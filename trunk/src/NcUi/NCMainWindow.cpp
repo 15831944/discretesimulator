@@ -29,10 +29,12 @@
 #include "NcUIComponents\NcStatusWindow.h"
 #include "NcUIComponents\NcToolOffsetsDialog.h"
 #include "NcUIComponents\NcMachineSetupOptions.h"
-//#include "NcUIComponents\NcVideoCapture.h"
+#include "NcUIComponents\NcStockDimensionDialog.h"
 #include "NcStateMachine\cleanupNcMachineInstance.h"
+#include "NcStateMachine\NcStartupStockDisplay.h"
 #include "NcStateMachine\NcToolController.h"
 #include "NcDisplay\NcDisplay.h"
+#include "NcGeomKernel\NcProfile.h"
 
 #include "NcUi\NCMainWindow.h"
 
@@ -78,7 +80,7 @@ void NCMainWindow::init()
 	
     mMainWindowUI->statusbar->showMessage(tr("Ready"));
  	mMainWindowUI->propertyWindow->setWidget(NcStatusWindow::StatusWindowInstance());
-	mMainWindowUI->menuWindow->addAction(mMainWindowUI->propertyWindow->toggleViewAction());
+	//mMainWindowUI->menuWindow->addAction(mMainWindowUI->propertyWindow->toggleViewAction());
 
 	setupSimulationSpeedController();
 
@@ -88,6 +90,13 @@ void NCMainWindow::init()
 	createRecentFileActions();
 	mSimulationRunning = false;
 	mIsNewFile = true;
+
+	connect(mMainWindowUI->actionRun, SIGNAL(triggered()), this, SLOT(run()));
+
+	connect(mSpeedControllerSlider, SIGNAL(valueChanged(int)),
+		this, SLOT(changeSimulationSpeed(int)));
+
+	connect(mMainWindowUI->actionNext, SIGNAL(triggered()), this, SLOT(next()));
 
 	
 }
@@ -113,6 +122,12 @@ void	NCMainWindow::createConnections()
 	connect(mMainWindowUI->actionCycle_2, SIGNAL(triggered()), this, SLOT(setSimulationModeToByCycle()));
 	connect(mMainWindowUI->actionSTL, SIGNAL(triggered()), this, SLOT(export_STL()));
 	
+	/****Pranit***/
+	connect(mMainWindowUI->actionBuild, SIGNAL(triggered()), this, SLOT(buildEditorText()));
+	connect(NcStockDimensionDialog::StockDimDialogInstance(),SIGNAL(userDefinedStock(double,double)),this,SLOT(userDefinedStockValues(double,double)));
+
+	connect(mMainWindowUI->actionAction_Rewind,SIGNAL(enableRewind()),this,SLOT(enableRewind()));
+	
 
 
 	connect(NcSimulationController::getSimControllerInstance(), SIGNAL(codeEditorRequiresUpdate(int)),
@@ -132,6 +147,16 @@ void	NCMainWindow::createConnections()
 
 	connect(NcToolController::getToolControllerInstance(), SIGNAL(updateSpindleStat(bool)),
 			this, SLOT(updateSpindleStatus(bool)));
+
+/************************************Pranit*****************************************/
+	connect(NcToolController::getToolControllerInstance(),SIGNAL(updateNCCoolantStat(bool)),this,SLOT(updateCoolantState(bool)));
+
+	connect(NcStatusWindow::StatusWindowInstance(),SIGNAL(propertyChanged()),this,SLOT(updateStockProperties()));
+	
+	connect(NcBackGroundDialog::backgroundDialogInstance(),SIGNAL(bgColorUpdated(QColor)),this,SLOT(updateBgcolor(QColor)));
+
+
+
 
 	 connect(mMainWindowUI->actionBackground, SIGNAL(triggered()), this, SLOT(OpenBackgroundColorDialog()));
 
@@ -229,7 +254,11 @@ void	NCMainWindow::updateSpindleStatus(bool status)
 {
 	NcStatusWindow::StatusWindowInstance()->updateSpindleStatus(status);
 }
-
+/******Pranit**/ 
+void	NCMainWindow::updateCoolantState(bool status)
+{
+	NcStatusWindow::StatusWindowInstance()->updateNCCoolantStat(status);
+}
 
 void	NCMainWindow::updateSpeed(double speed)
 {
@@ -379,23 +408,27 @@ QString	NCMainWindow::strippedName(const QString &fullFileName)
 
 void	NCMainWindow::newFile()
 {
-	
+	mIsNewFile = true; // Pranit To fix the bug of crashing the app when exit is clicked and once again new is clicked
 	setupGLWidgetWindows();
 	setupNcCodeEditor();
-	setupVideoCaptureWindow();
 
+	//setupVideoCaptureWindow();
+	m_simulationWindow->setVisible(true);       //to show the simulation window after new project is clicked.
 	mMainWindowUI->CodeWindow->setVisible(true);
 	mMainWindowUI->ToolPathWindow->setVisible(true);
 	mMainWindowUI->propertyWindow->setVisible(true);
 	//mMainWindowUI->videoWindow->setVisible(true);
 
 	mMainWindowUI->actionBackground->setEnabled(true);
+	mMainWindowUI->actionBuild->setEnabled(true);
 	
 }
 
 void	NCMainWindow::open()
 {
+	newFile();
     openFile();
+
 }
 
 
@@ -404,7 +437,7 @@ bool	NCMainWindow::isSaved()
     if (NcCodeEditor::NcCodeEditorInstance()->document()->isModified())
      {
          QMessageBox::StandardButton ret;
-         ret = QMessageBox::warning(this, tr("Application"),
+		 ret = QMessageBox::warning(this, qApp->applicationName(),
                       tr("The document has been modified.\n"
                          "Do you want to save your changes?"),
                       QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
@@ -430,7 +463,7 @@ bool	NCMainWindow::save()
    
 bool	NCMainWindow::saveAs()
 {
-     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), tr("./defaultDS_"),
+     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), tr("Untitled"),
                             tr("Fanuc 10T/11T(*.f10t);;Fanuc 0T(*.f0t)"));
 
      	if (fileName.isEmpty())
@@ -445,7 +478,7 @@ bool	NCMainWindow::saveFile(const QString &fileName)
      QFile file(fileName);
      if (!file.open(QFile::WriteOnly | QFile::Text))
      {
-         QMessageBox::warning(this, tr("Application"),
+		 QMessageBox::warning(this, qApp->applicationName(),
                               tr("Cannot write file %1:\n%2.")
                               .arg(fileName)
                               .arg(file.errorString()));
@@ -477,7 +510,8 @@ void	NCMainWindow::openFile(QString fname)
 			{
                 filename = QFileDialog::getOpenFileName(this, tr("Open File"),
                         tr("./demotest/"),
-                        tr("Fanuc 10T/11T(*.f10t);;Fanuc 0T files(*.f0t);;Sinumerik files(*.sinu)"));
+                        tr("Fanuc 10T/11T(*.f10t);;Fanuc 0T files(*.f0t)"));
+                        //tr("Fanuc 10T/11T(*.f10t);;Fanuc 0T files(*.f0t);;Sinumerik files(*.sinu)"));
             }
             else
                 filename = fname;
@@ -496,7 +530,7 @@ void	NCMainWindow::openFile(QString fname)
 					QApplication::setOverrideCursor(Qt::WaitCursor);
 					NcFanuc10T11TFileReader::getReaderInstance()->setCurrentNcFile(filename);
 
-					newFile();
+					
 					NcFanuc10T11TFileReader::getReaderInstance()->checkCodeSyntax();
 					setCurrentFile(filename);
 
@@ -505,12 +539,12 @@ void	NCMainWindow::openFile(QString fname)
 					
 					mMainWindowUI->actionRun->setEnabled(true);
 					mMainWindowUI->actionNext->setEnabled(true);
-					connect(mMainWindowUI->actionRun, SIGNAL(triggered()), this, SLOT(run()));
-			        
-					connect(mSpeedControllerSlider, SIGNAL(valueChanged(int)),
-							this, SLOT(changeSimulationSpeed(int)));
+					/*connect(mMainWindowUI->actionRun, SIGNAL(triggered()), this, SLOT(run()));
 
-					connect(mMainWindowUI->actionNext, SIGNAL(triggered()), this, SLOT(next()));
+					connect(mSpeedControllerSlider, SIGNAL(valueChanged(int)),
+					this, SLOT(changeSimulationSpeed(int)));
+
+					connect(mMainWindowUI->actionNext, SIGNAL(triggered()), this, SLOT(next()));*/
 				                    
 					QApplication::restoreOverrideCursor();
 					
@@ -519,7 +553,7 @@ void	NCMainWindow::openFile(QString fname)
 				{
 					QApplication::setOverrideCursor(Qt::WaitCursor);
 					NcFanuc0TFileReader::getReaderInstance()->setCurrentNcFile(filename);
-					newFile();
+					
 					NcFanuc0TFileReader::getReaderInstance()->checkCodeSyntax();
 					
 					setCurrentFile(filename);
@@ -529,18 +563,19 @@ void	NCMainWindow::openFile(QString fname)
 
 					mMainWindowUI->actionRun->setEnabled(true);
 					mMainWindowUI->actionNext->setEnabled(true);
-					connect(mMainWindowUI->actionRun, SIGNAL(triggered()), this, SLOT(run()));
+					/*connect(mMainWindowUI->actionRun, SIGNAL(triggered()), this, SLOT(run()));
 			        
 					connect(mSpeedControllerSlider, SIGNAL(valueChanged(int)),
 							this, SLOT(changeSimulationSpeed(int)));
 
-					connect(mMainWindowUI->actionNext, SIGNAL(triggered()), this, SLOT(next()));
+					connect(mMainWindowUI->actionNext, SIGNAL(triggered()), this, SLOT(next()));*/
+
 				                    
 					QApplication::restoreOverrideCursor();
 					
 
 				}
-				else if(ext.compare(tr("sinu")) == 0)
+				/*else if(ext.compare(tr("sinu")) == 0)
 				{
 					QApplication::setOverrideCursor(Qt::WaitCursor);
 					NcSinumerikFileReader::getReaderInstance()->setCurrentNcFile(filename);
@@ -564,14 +599,13 @@ void	NCMainWindow::openFile(QString fname)
 					QApplication::restoreOverrideCursor();
 					
 
-				}
+				}*/
                 else
 				{
-                    QMessageBox::about(this, tr("About Application"), tr("File Reading Failed"));
+					QMessageBox::about(this, qApp->applicationName(), tr("File Reading Failed"));
                 }
            }
 	}
-
 	m_simulationWindow->setIsoView();
 }
 
@@ -579,7 +613,7 @@ void	NCMainWindow::openFile(QString fname)
 
 bool	NCMainWindow::export_STL()
 {	
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), tr("./STL"), tr("*.stl *.STL"));
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), tr("Untitled"), tr("*.stl *.STL"));
 	
 	if(fileName.isEmpty())
 		return false;
@@ -607,7 +641,7 @@ void    NCMainWindow::setupGLWidgetWindows()
 		m_toolPathWindow = new NcToolPathWindow(this, m_simulationWindow);
 	
 	mMainWindowUI->ToolPathWindow->setWidget(m_toolPathWindow);
-	mMainWindowUI->menuWindow->addAction(mMainWindowUI->ToolPathWindow->toggleViewAction());
+	//mMainWindowUI->menuWindow->addAction(mMainWindowUI->ToolPathWindow->toggleViewAction());
 
 
 	connect(mMainWindowUI->actionFront_View, SIGNAL(triggered()), m_simulationWindow, SLOT(setFrontView()));
@@ -623,6 +657,8 @@ void    NCMainWindow::setupGLWidgetWindows()
 
 void	NCMainWindow::setupNcCodeEditor()
 {
+	NcCodeEditor::NcCodeEditorInstance()->clear();
+
     QFont font;
     font.setFamily(tr("Courier"));
     font.setFixedPitch(true);
@@ -634,7 +670,7 @@ void	NCMainWindow::setupNcCodeEditor()
 
 	//adding the editor to the dockwidget
 	mMainWindowUI->CodeWindow->setWidget(NcCodeEditor::NcCodeEditorInstance());
-	mMainWindowUI->menuWindow->addAction(mMainWindowUI->CodeWindow->toggleViewAction());
+	//mMainWindowUI->menuWindow->addAction(mMainWindowUI->CodeWindow->toggleViewAction());
 }
 
 
@@ -801,7 +837,7 @@ void	NCMainWindow::closeFile()
         if(isSaved())
         {
 				QMessageBox::StandardButton ret;
-				ret = QMessageBox::warning(this, tr("Application"),
+				ret = QMessageBox::warning(this, qApp->applicationName(),
 										tr("Do you want to close?"),
 										QMessageBox::Ok | QMessageBox::Cancel);
 
@@ -837,6 +873,8 @@ void	NCMainWindow::closeFile()
 					mMainWindowUI->actionRun->setEnabled(false);
 					mMainWindowUI->actionPause->setEnabled(false);
 					mMainWindowUI->actionNext->setEnabled(false);
+
+					mMainWindowUI->actionBuild->setEnabled(false);// for disabling the Commit button 
 				}
         }
     } 
@@ -867,6 +905,8 @@ void	NCMainWindow::closeFile()
             mMainWindowUI->action_Copy_2->setEnabled(false);
             mMainWindowUI->action_Paste_2->setEnabled(false);
             mMainWindowUI->action_Print->setEnabled(false);
+
+			mMainWindowUI->actionBuild->setEnabled(false); // for disabling the Commit button 
         }
     }
 
@@ -976,5 +1016,69 @@ void	NCMainWindow::updateSimWinForBlockMode()
 		bybctrlbool = false;
 		m_simulationWindow->setBoolForSimControl(false);
 	}
+}
+
+/****Pranit**/
+//this function is used to to get all the text data from Nc code editor and send it to NcFanuc10T11TFileReader. 
+//This function also enables the run and next buttons.
+
+void NCMainWindow::buildEditorText()
+{
+
+
+	if( NcCodeEditor::NcCodeEditorInstance()->toPlainText().size()==0 )
+	{	QString message;
+		message += 	tr("Please Enter CNC code in Editor and then click on compile button");
+
+		QMessageBox::StandardButton ret;
+		ret = QMessageBox::warning(0, qApp->applicationName(),
+			(message), QMessageBox::Ok);
+
+		if(ret == QMessageBox::Ok)
+		return;
+	}
+
+	QString data = NcCodeEditor::NcCodeEditorInstance()->toPlainText();
+	NcFanuc10T11TFileReader::getReaderInstance()->compileExternalNcfile(data);
+	mMainWindowUI->actionRun->setEnabled(true);
+	mMainWindowUI->actionNext->setEnabled(true);
+	connect(mMainWindowUI->actionRun, SIGNAL(triggered()), this, SLOT(run()));
+
+	connect(mSpeedControllerSlider, SIGNAL(valueChanged(int)),
+		this, SLOT(changeSimulationSpeed(int)));
+
+	connect(mMainWindowUI->actionNext, SIGNAL(triggered()), this, SLOT(next()));
+	m_simulationWindow->setIsoView();
+
+}
+
+/****Pranit***/
+// this function is added to display user defined stock
+void NCMainWindow::userDefinedStockValues(double stockDiameter, double stockLength)
+{
+	NcDisplay::getNcDisplayInstance()->setUserDefinedStockValues(stockDiameter/2, stockLength);
+	NcDisplay::getNcDisplayInstance()->generateDisplayLists();
+	NcStartupStockDisplay::getStockDisplayInstance()
+		->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());
+
+	mMainWindowUI->actionRun->setEnabled(true);
+	mMainWindowUI->actionNext->setEnabled(true);
+
+	m_simulationWindow->setIsoView();
+	
+}
+/****Pranit***/
+
+//This function is added to change the stock material
+void NCMainWindow::updateStockProperties()
+{
+	QString materialName = NcStatusWindow::StatusWindowInstance()->getmaterialName();
+	
+}
+
+void NCMainWindow::updateBgcolor( QColor bgcolor )
+{
+//	NcSimulationWindow::ViewHandle::updateBackgroundDL(bgcolor);
+	m_simulationWindow->callUpdateBg(bgcolor);
 }
 

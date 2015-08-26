@@ -28,6 +28,10 @@ namespace DiscreteSimulator
 	public slots:
 		void			acceptvalues();
 		void			rejectvalues();
+	
+	/***Pranit***/
+	signals:
+		void			userDefinedStock(double,double);	
 
 	private:
 		static NcStockDimensionDialog*	mStockDimDiaInstance;
