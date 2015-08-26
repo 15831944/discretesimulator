@@ -170,7 +170,8 @@ void	NcFileReadWriteManager::intrepreteIndividualCodes(QString code)
 	char codeCharacter = code.at(0).toAscii();
 	switch(codeCharacter)
 	{
-	case 'G':
+	case 'G': 
+	case 'g':
 		{
 			interpreteGCode(code);
 			GCodeDetected = true;
@@ -181,61 +182,72 @@ void	NcFileReadWriteManager::intrepreteIndividualCodes(QString code)
 			}
 			break;
 		}
-	case 'M':
+	case 'M': 
+	case 'm':
 		{
 			MCodeDetected = true;
 			interpreteMCode(code);
 			break;
 		}
-	case 'S':
+	case 'S': 
+	case 's':
 		{
 			SCodeDetected = true;
 			interpreteSCode(code);
 			break;
 		}
-	case 'F':
+	case 'F':  
+	case 'f':
 		{
 			FCodeDetected = true;
 			interpreteFCode(code);
 			break;
 		}
 	case 'T':
+	case 't':
 		{
 			TCodeDetected = true;
 			interpreteTCode(code);			
 			break;
 		}
-	case 'X':
+	case 'X':  
+	case 'x' : 
 		{
 			interpreteXCode(code);
 			break;
 		}
-	case 'Z':
+	case 'Z': 
+	case 'z' :
 		{
 			interpreteZCode(code);
 			break;
 		}
 	case 'U':
+	case 'u':
 		{
 			interpreteUCode(code);
 			break;
 		}
-	case 'W':
+	case 'W': 
+	case 'w':
 		{
 			interpreteWCode(code);
 			break;
 		}
-	case 'I':
+	case 'I': 
+	case 'i':
 		{
 			interpreteICode(code);
 			break;
 		}
-	case 'K':
+	case 'K': 
+	case 'k':
 		{
 			interpreteKCode(code);
 			break;
 		}
-	case 'D':
+	case 'D': 
+	case 'd':
 		{
 			interpreteDCode(code);
 			break;

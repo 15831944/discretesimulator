@@ -13,7 +13,7 @@ Profile::Profile()
 		coolant1 = false;
 		coolant2 = false;
 		typeTool = UNKNOWNTOOL;
-
+		//mMaterial = UNKNOWN;
 		mAssocitedDBDLIndexes = new QList<GLuint>;
 		mAssociated2DDLIndexes = new QList<GLuint>;
 

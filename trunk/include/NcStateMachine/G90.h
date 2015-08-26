@@ -13,7 +13,7 @@ namespace DiscreteSimulator
 		
 	public:
 		G90();
-		/*virtual ~G90();*/
+		//virtual ~G90();
 		inline void		setI(double i);
 		inline double	getI();
 		STATUS			generateDisplayList();

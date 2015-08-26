@@ -36,6 +36,8 @@ NcFanuc10T11TFileReader::NcFanuc10T11TFileReader() : mFile(0)
 	mMachiningCodeDetected = false;
 	mRetractCodeDetected = false;
 
+	//mExternalNcCode = true;
+
 	Rvalue = 0.0;
 	PValue = 0.0;
 	QValue = 0.0;
@@ -48,7 +50,17 @@ NcFanuc10T11TFileReader::NcFanuc10T11TFileReader() : mFile(0)
 	KValue = 0.0;
 	TValue = -1;
 	DValue = 0.0;
+	
+	Uvalue = 0.0;
+	WValue = 0.0;
+	NValue = 0.0;
+	PValue = 0.0;
+	QValue = 0.0;
+	linecheck = 0;
+
 	mDwellTime = 0.0;
+	xtemp = 0.0;
+	ztemp = 0.0;
 
 	mLastExecutedCodeType  = UNKNOWN;
 }
@@ -84,7 +96,7 @@ bool	NcFanuc10T11TFileReader::openNcFileForReadWrite()
 		{
 			mFile = new QFile(mCurrentFileName);
 
-			if(mFile->open(QFile::ReadWrite | QFile::Text))
+			if(mFile->open(QIODevice::ReadOnly | QIODevice::Text))
 			{
 				return true;
 			}
@@ -94,7 +106,7 @@ bool	NcFanuc10T11TFileReader::openNcFileForReadWrite()
 			}
 		}
 	}
-	return false;
+	return true;
  }
 		
 STATUS	NcFanuc10T11TFileReader::checkCodeSyntax()
@@ -122,13 +134,17 @@ STATUS	NcFanuc10T11TFileReader::checkCodeSyntax()
 			NcMachine::NcMachineInstance()->initializeCodeBlockInTheMachine(mCodeBlockList.at(mLineCounter), mLineCounter);
 			checkEachLineForSyntax();			
 		}
-
-		NcDisplay::getNcDisplayInstance()->setStockBBFinalValues();
+		
+		if(NcDisplay::getNcDisplayInstance()->getUserDefinedStockFlag()==false)
+		{
+			NcDisplay::getNcDisplayInstance()->setStockBBFinalValues();
+		}
 		NcDisplay::getNcDisplayInstance()->generateDisplayLists();
 		NcStartupStockDisplay::getStockDisplayInstance()
 				->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());
+		return OK;
 	}
-	return OK;
+	return FAIL;
 }
 
 
@@ -140,10 +156,12 @@ void NcFanuc10T11TFileReader::checkEachLineForSyntax()
 	//for conflicting G codes
 	foreach(QString code, codelist)
 	{
+		bool ok = true;
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
 		case 'G':
+		case 'g':
 			{
 				int codenumber = code.right(code.size() - 1).toInt();
 				switch(codenumber)
@@ -192,6 +210,29 @@ void NcFanuc10T11TFileReader::checkEachLineForSyntax()
 						buildG28Code();
 						break;
 					}
+				
+				/*****Pranit**/
+				case 53:		//machine coordinate return --- X and Z co-ordinates in the code denotes the intermediate point
+					{
+						mMachiningCodeDetected = true;
+						buildG53Code(codelist);
+						break;
+					}
+				/*****Pranit**/
+				case 54:		//select work piece coordinate system.
+					{
+						mMachiningCodeDetected = true;
+						buildG54Code(codelist);
+						break;
+					}
+				/*****Pranit**/
+				case 71:		//canned turning cycle.
+					{
+						mMachiningCodeDetected = true;
+						checkSyntaxOfRoughTurningCycle(codelist);
+						break;
+					}
+
 				case 74:
 					{
 						mMachiningCodeDetected = true;
@@ -216,6 +257,14 @@ void NcFanuc10T11TFileReader::checkEachLineForSyntax()
 						checkSyntaxOfCannedTurning(codelist);
 						break;
 					}
+
+				case 91:
+					{
+						mMachiningCodeDetected = true;
+						checkSyntaxOfIncrementalMove(codelist);
+						break;
+					}
+
 				case 92:
 					{
 						mMachiningCodeDetected = true;
@@ -235,7 +284,7 @@ void NcFanuc10T11TFileReader::checkEachLineForSyntax()
 								tr("Please correct the NC file and restart the application");
  
 						QMessageBox::StandardButton ret;
-						ret = QMessageBox::warning(0,tr("Discrete Simulator V1.0"),
+						ret = QMessageBox::warning(0,qApp->applicationName(),
 													message, QMessageBox::Ok);
 
 						if(ret == QMessageBox::Ok)
@@ -246,32 +295,59 @@ void NcFanuc10T11TFileReader::checkEachLineForSyntax()
 				break;
 			}
 
-		case 'M':
+		case 'N': 
+		case 'n':
+			{
+				mNCodeDetected = true;
+
+				NValue = code.right(code.size() - 1).toDouble(&ok);
+				/*if (NValue == PValue)
+				{
+				linecheck = mLineCounter;
+				}
+				if (NValue == QValue)
+				{
+				for (int i=linecheck;i<mLineCounter;i++)
+				{
+
+				}
+				}*/
+
+				break;
+			}
+
+		case 'M': 
+		case 'm':
 			{
 				buildMCode(code);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				buildSCode(code);
 				break;
 			}
-		case 'F':	//need to handle F, S and T here only when they are not with the machining code
+		case 'F': 
+		case 'f':	//need to handle F, S and T here only when they are not with the machining code
 			{
 				buildFCode(code);
 				break;
 			}
-		case 'T':	//if machining code is detected, then F, S and T are handled in the respective code function
+		case 'T':
+		case 't':	//if machining code is detected, then F, S and T are handled in the respective code function
 			{
 				buildIndTCode(code);
 				break;
 			}
-		case 'X':
+		case 'X':  
+		case 'x' :
 			{
 				buildIndXCode(code);
 				break;
 			}
-		case 'Z':
+		case 'Z':  
+		case 'z' :
 			{
 				buildIndZCode(code);
 				break;
@@ -369,6 +445,10 @@ void NcFanuc10T11TFileReader::buildIndZCode(QString code)
 void NcFanuc10T11TFileReader::resetBoolValues()
 {
 	mTCodeDetected = false;
+	mPCodeDetected = false;
+	mQCodeDetected = false;
+	mUCodeDetected = false;
+	mWCodeDetected = false;
 	mFCodeDetected = false;
 	mSCodeDetected = false;
 	mXValueDetected = false;
@@ -400,6 +480,27 @@ void NcFanuc10T11TFileReader::buildMCode(QString code)		//building M Codes
 			NcMachine::NcMachineInstance()->mCurrentMCode = SPINDLESTOP;
 			break;
 		}
+
+/************************Pranit*************************/
+	case 6:
+		{
+			NcMachine::NcMachineInstance()->mCurrentMCode = TOOLCHANGE;
+			break;
+		}
+
+	case 8:
+		{ 
+			NcMachine::NcMachineInstance()->mCurrentMCode = COOLENTON;
+			break;
+		}
+	case 9:
+		{ 
+			NcMachine::NcMachineInstance()->mCurrentMCode = COOLENTOFF;
+			break;
+		}
+
+/********************************************************/
+	
 	case 30:
 		{
 			NcMachine::NcMachineInstance()->mCurrentMCode = PROGRAMSTOP;
@@ -491,7 +592,8 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfMultiPassThreading(QStringList code
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
 				if(codenumber != 76)
@@ -500,38 +602,46 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfMultiPassThreading(QStringList code
 				}
 				break;
 			}
-		case 'X':		//final thread diameter
+		case 'X': 
+		case 'x' :		//final thread diameter
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':				//thread end (total length of thread)
+		case 'Z':  
+		case 'z' :				//thread end (total length of thread)
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'K':
+		case 'K': 
+		case 'k':
 			{
 				mKCodeDetected = true;
 				KValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
 		case 'D':
+		case 'd':
 			{
 				mDCodeDetected = true;
 				DValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
-		case 'F':	//feed rate for thread cutting : pitch = feedrate for single start thread(in DS Pitch = Feedrate/2)
+		case 'F': 
+		case 'f':	//feed rate for thread cutting : pitch = feedrate for single start thread(in DS Pitch = Feedrate/2)
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
+				mNCodeDetected = true;
+				NValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'A':
@@ -567,6 +677,7 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfMultiPassThreading(QStringList code
 
 	mGCodeDetected = false;
 	mFCodeDetected = false;
+	mNCodeDetected = false;
 	mXValueDetected = false;
 	mZValueDetected = false;
 	mDCodeDetected = false;
@@ -607,7 +718,8 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfSinglePassThreading(QStringList cod
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G':  
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -617,32 +729,40 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfSinglePassThreading(QStringList cod
 				}
 				break;
 			}
-		case 'X':
+
+		  case 'X': 
+		  case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'Z':
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F': 
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'T':
+		case 'T': 
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
+				mNCodeDetected = true;
+				NValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		default:
@@ -663,6 +783,7 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfSinglePassThreading(QStringList cod
 		mLastExecutedCodeType = CG92;
 		mGCodeDetected = false;
 		mFCodeDetected = false;
+		mNCodeDetected = false;
 		mXValueDetected = false;
 		mZValueDetected = false;
 		mTCodeDetected = false;
@@ -702,7 +823,8 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfFacingCycle(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G':  
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -713,40 +835,49 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfFacingCycle(QStringList codelist)
 				break;
 			}
 		case 'X':
+		case 'x' :  
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F':  
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'T':
+		case 'T': 
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
 		case 'N':
+		case 'n':
 			{
+				mNCodeDetected = true;
+				NValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'K': //used for tapered facing : not implemented
+		case 'K': 
+		case 'k': //used for tapered facing : not implemented
 			{
 				break;
 			}
@@ -768,6 +899,7 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfFacingCycle(QStringList codelist)
 		mLastExecutedCodeType = CG94;
 		mGCodeDetected = false;
 		mSCodeDetected = false;
+		mNCodeDetected = false;
 		mFCodeDetected = false;
 		mXValueDetected = false;
 		mZValueDetected = false;
@@ -812,10 +944,27 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfCannedTurning(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G':  
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
+				
+				/****Pranit****/
+
+				//switch (codenumber) //added to deal with multiple g code on same line
+				//{
+				//	case 0 : buildG00Code();	
+				//			 break;
+				//	case 1:  buildG01Code();
+				//			 break;
+				//	case 54: buildG54Code(codelist);
+				//			 break;
+				//	case 90: 
+				//			 continue;
+				//	default: handleError(code);
+				//			 break;	
+				//}
 				if(codenumber != 90)
 				{
 					handleError(code);
@@ -823,43 +972,52 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfCannedTurning(QStringList codelist)
 				break;
 			}
 		case 'X':
+		case 'x' :  
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'Z':
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F': 
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'T':
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
-		case 'I':
+		case 'I': 
+		case 'i':
 			{
 				mICodeDetected = true;
 				IValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
 		case 'N':
+		case 'n':
 			{
+				mNCodeDetected = true;
+				NValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		default:
@@ -880,6 +1038,7 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfCannedTurning(QStringList codelist)
 		mLastExecutedCodeType = CG90;
 		mGCodeDetected = false;
 		mSCodeDetected = false;
+		mNCodeDetected = false;
 		mFCodeDetected = false;
 		mXValueDetected = false;
 		mZValueDetected = false;
@@ -929,7 +1088,8 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfDwellCode(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -939,14 +1099,18 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfDwellCode(QStringList codelist)
 				}
 				break;
 			}
-		case 'X':
+		case 'X': 
+		case 'x' :
 			{
 				mXValueDetected = true;
 				mDwellTime = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
+				mNCodeDetected = true;
+				NValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		default:
@@ -990,7 +1154,8 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfCCWCirInterpol(QStringList codelist
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -1000,50 +1165,60 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfCCWCirInterpol(QStringList codelist
 				}
 				break;
 			}
-		case 'X':
+		case 'X': 
+		case 'x' : 
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F':  
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'T':
+		case 'T': 
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
-		case 'I':
+		case 'I':  
+		case 'i':
 			{
 				mICodeDetected = true;
 				IValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
-		case 'K':
+		case 'K':  
+		case 'k':
 			{
 				mKCodeDetected = true;
 				KValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
+				mNCodeDetected = true;
+				NValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		default:
@@ -1062,6 +1237,7 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfCCWCirInterpol(QStringList codelist
 		buildG03Code();
 		mGCodeDetected = false;
 		mSCodeDetected = false;
+		mNCodeDetected = false;
 		mFCodeDetected = false;
 		mXValueDetected = false;
 		mZValueDetected = false;
@@ -1118,7 +1294,8 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfCWCirInterpol(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G':  
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -1129,48 +1306,56 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfCWCirInterpol(QStringList codelist)
 				break;
 			}
 		case 'X':
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F': 
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'T':
+		case 'T':  
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
-		case 'I':
+		case 'I': 
+		case 'i':
 			{
 				mICodeDetected = true;
 				IValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
-		case 'K':
+		case 'K': 
+		case 'k':
 			{
 				mKCodeDetected = true;
 				KValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
 		case 'N':
+		case 'n':
 			{
 				break;
 			}
@@ -1243,7 +1428,8 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfLinearInterpol(QStringList codelist
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -1253,38 +1439,46 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfLinearInterpol(QStringList codelist
 				}
 				break;
 			}
-		case 'X':
+		case 'X': 
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F': 
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'S':
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'T':
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
+				mNCodeDetected = true;
+				NValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		default:
@@ -1315,6 +1509,7 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfLinearInterpol(QStringList codelist
 	buildG01Code();
 	mGCodeDetected = false;
 	mSCodeDetected = false;
+	mNCodeDetected = false;
 	mFCodeDetected = false;
 	mXValueDetected = false;
 	mZValueDetected = false;
@@ -1362,48 +1557,67 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfRapidCode(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G':  
+		case 'g':
 			{
 				mGCodeDetected = true;
-				int codenumber = code.right(code.size() - 1).toInt(&ok);
-				if(codenumber != 0)
+				int codenumber = code.right(code.size() - 1).toInt(&ok); 
+				/***Pranit **/ //to handle multiple g code on same line.
+				
+				switch (codenumber)
 				{
-					handleError(code);
+					case 0:
+							 break;
+					case 54: buildG54Code(codelist);
+							 break;
+					case 90: buildG90Code();
+							 break;
+					default: handleError(code);
+							 break;		
 				}
-				break;
+					
+				
 			}
-		case 'X':
+		case 'X':  
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F':  
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'T':
+		case 'T': 
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
 		case 'N':
+		case 'n':
 			{
+				mNCodeDetected = true;
+				NValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		default:
@@ -1434,6 +1648,7 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfRapidCode(QStringList codelist)
 	buildG00Code();
 	mGCodeDetected = false;
 	mSCodeDetected = false;
+	mNCodeDetected = false;
 	mFCodeDetected = false;
 	mXValueDetected = false;
 	mZValueDetected = false;
@@ -1531,7 +1746,8 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfPeckDrillCycle(QStringList codelist
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
 				if(codenumber != 74)
@@ -1540,45 +1756,55 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfPeckDrillCycle(QStringList codelist
 				}
 				break;
 			}
-		case 'F':
+		case 'F': 
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'S':
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z':  
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'X':
+		case 'X': 
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'K':
+		case 'k':
 			{
 				mKCodeDetected = true;
 				KValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
 		case 'N':
+		case 'n':
+			{
+				mNCodeDetected = true;
+				NValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		case 'I': 
+		case 'i':	//depth of each cut : not implemented (usually not used)
 			{
 				break;
 			}
-		case 'I':	//depth of each cut : not implemented (usually not used)
-			{
-				break;
-			}
-		case 'D': //relief amount at the end of cut(must be 0 for face grooving) : not implemented
+		case 'D':  
+		case 'd': //relief amount at the end of cut(must be 0 for face grooving) : not implemented
 			{
 				break;
 			}
@@ -1609,6 +1835,7 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfPeckDrillCycle(QStringList codelist
 	buildG74Code(); //G74 code is correct: build the code here
 	mRCodeDetected = false;
 	mSCodeDetected = false;
+	mNCodeDetected = false;
 	mFCodeDetected = false;
 	mXValueDetected = false;
 	mZValueDetected = false;
@@ -1654,7 +1881,8 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfPartingGrooving(QStringList codelis
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G':  
+		case 'g':
 			{
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
 				if(codenumber != 75)
@@ -1663,45 +1891,53 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfPartingGrooving(QStringList codelis
 				}
 				break;
 			}
-		case 'F':
+		case 'F':  case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S':  case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'X':
+		case 'X': 
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'I':
+		case 'I': 
+		case 'i':
 			{
 				mICodeDetected = true;
 				IValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
+			{
+				mNCodeDetected = true;
+				NValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		case 'K': 
+		case 'k': //distance between grooves (for multiple grooves only) : not implemented
 			{
 				break;
 			}
-		case 'K': //distance between grooves (for multiple grooves only) : not implemented
-			{
-				break;
-			}
-		case 'D': //relief amount at the end of cut : not implemented
+		case 'D': 
+		case 'd': //relief amount at the end of cut : not implemented
 			{
 				break;
 			}
@@ -1733,6 +1969,7 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfPartingGrooving(QStringList codelis
 	buildG75Code(); 
 	mRCodeDetected = false;
 	mSCodeDetected = false;
+	mNCodeDetected = false;
 	mFCodeDetected = false;
 	mXValueDetected = false;
 	mZValueDetected = false;
@@ -1773,11 +2010,14 @@ void NcFanuc10T11TFileReader::handleError(QString code)
 			tr("Please correct the NC file and restart the application");
 
 	QMessageBox::StandardButton ret;
-	ret = QMessageBox::warning(0,tr("Discrete Simulator V1.0"),
+	ret = QMessageBox::warning(0,qApp->applicationName(),
 								message, QMessageBox::Ok);
 
 	if(ret == QMessageBox::Ok)
+	{	
 		exit(0);
+		//return;
+	}
 }
 
 void NcFanuc10T11TFileReader::handleError(QStringList codelist)
@@ -1792,9 +2032,476 @@ void NcFanuc10T11TFileReader::handleError(QStringList codelist)
 			tr("Please correct the NC file and restart the application");
 
 	QMessageBox::StandardButton ret;
-	ret = QMessageBox::warning(0, tr("Discrete Simulator V1.0"),
+	ret = QMessageBox::warning(0, qApp->applicationName(),
 								message, QMessageBox::Ok);
 
 	if(ret == QMessageBox::Ok)
+	{
 		exit(0);
+	}
+}
+void NcFanuc10T11TFileReader::setCurrentNcFile(QFile* file)
+{
+	mFile = file;
+	mCurrentFileName = mFile->fileName();
+}
+
+/****Pranit*****/
+//This function does the checking of the codeblock for G91 code
+STATUS NcFanuc10T11TFileReader::checkSyntaxOfIncrementalMove( QStringList codelist )
+{
+	bool ok = true;
+
+	foreach(QString code, codelist)
+	{
+		char codeCharacter = code.at(0).toAscii();
+		switch(codeCharacter)
+		{
+		case 'G':  
+		case 'g':
+			{
+				mGCodeDetected = true;
+				int codenumber = code.right(code.size() - 1).toInt(&ok);
+				if(codenumber != 91)
+				{
+					handleError(code);
+				}
+				break;
+			}
+		case 'X':
+		case 'x' :
+			{
+				mXValueDetected = true;
+				XValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		case 'Z': 
+		case 'z' :
+			{
+				mZValueDetected = true;
+				ZValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		case 'F': 
+		case 'f':
+			{
+				mFCodeDetected = true;
+				FValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		case 'S': 
+		case 's':
+			{
+				mSCodeDetected = true;
+				SValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		case 'T': 
+		case 't':
+			{
+				mTCodeDetected = true;
+				TValue = code.right(code.size() - 1).toInt(&ok);
+				break;
+			}
+		case 'I': 
+		case 'i':
+			{
+				mICodeDetected = true;
+				IValue = code.right(code.size() - 1).toDouble(&ok); 
+				break;
+			}
+		case 'N': 
+		case 'n':
+			{
+				mNCodeDetected = true;
+				NValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		default:
+			{
+				//invalid code on the line
+				//display error and abort file reading
+				handleError(codelist);
+			}
+		}
+
+		if(ok == false)
+		{
+			handleError(code);
+		}
+	}
+
+	buildG91Code();
+	mLastExecutedCodeType = CG91;
+	mGCodeDetected = false;
+	mSCodeDetected = false;
+	mNCodeDetected = false;
+	mFCodeDetected = false;
+	mXValueDetected = false;
+	mZValueDetected = false;
+	mTCodeDetected = false;
+	return OK;
+}
+
+//This function is callled to sent the tool to the reference position or to the absolute offset provided by user in the code.
+/****Pranit******/
+STATUS NcFanuc10T11TFileReader::buildG53Code(QStringList codelist)
+{
+		bool ok = true;
+		int flag = 0;
+
+		foreach(QString code, codelist)
+		{
+			char codeCharacter = code.at(0).toAscii();
+			switch(codeCharacter)
+			{
+			case 'G': 
+			case 'g':
+				{
+					mGCodeDetected = true;
+					int codenumber = code.right(code.size() - 1).toInt(&ok);
+					if(codenumber != 53)
+					{
+						switch(codenumber)
+						{
+							case 0:		flag = 0;  //build G00 code
+										break;
+							case 1:		flag = 1;  // build G01 code
+										break;
+							default:     handleError(code);
+										 break;
+ 						}
+								
+					}
+					break;
+				}
+			case 'X': 
+			case 'x' :
+				{
+					mXValueDetected = true;
+					XValue = code.right(code.size() - 1).toDouble(&ok);
+					break;
+				}
+			case 'Z':  
+			case 'z' :
+				{
+					mZValueDetected = true;
+					ZValue = code.right(code.size() - 1).toDouble(&ok);
+					break;
+				}
+			
+			case 'N': 
+			case 'n':
+				{
+					mNCodeDetected = true;
+					NValue = code.right(code.size() - 1).toDouble(&ok);
+					break;
+				}
+			default:
+				{
+					//invalid code on the line
+					//display error and abort file reading
+					handleError(codelist);
+				}
+			}
+
+			if(ok == false)
+			{
+				handleError(code);
+			}
+		}
+
+		if(mXValueDetected == false)
+		{
+			XValue = NcMachine::NcMachineInstance()->mEndOfMotionX;
+			mXValueDetected = true;
+		}
+		if(mZValueDetected == false)
+		{
+			ZValue = NcMachine::NcMachineInstance()->mEndOfMotionZ;
+			mZValueDetected = true;
+		}
+
+		if(flag== 0)
+			buildG00Code();
+		else if(flag ==1 )
+			buildG01Code();
+		mLastExecutedCodeType =CG53;
+		mGCodeDetected = false;
+		mNCodeDetected = false ;
+		mXValueDetected = false;
+		mZValueDetected = false;
+		return OK;
+	
+}
+
+//This function checks for the G91 code block. if the argument values are found the arguments block is also built.
+//This function also handles errors if not proper block code.
+void NcFanuc10T11TFileReader::buildG91Code()
+{
+	NcMachine::NcMachineInstance()->setMachineOperationalMode(INCREMENTALMOVE);
+
+	if(mTCodeDetected == true)
+		buildTCode();
+
+	if(mFCodeDetected == true)
+	{
+		NcMachine::NcMachineInstance()->mCurrentFeedRate = FValue;
+		NcMachine::NcMachineInstance()->buildFCodes();
+	}
+
+	if(mSCodeDetected == true)
+	{
+		NcMachine::NcMachineInstance()->mCurrentSpindleSpeed = SValue;
+		NcMachine::NcMachineInstance()->buildSCodes();
+	}
+
+	if(mXValueDetected == true)
+	{
+		xtemp =xtemp +XValue ;  //added for compensate the offset in incremental programming mode G91
+		NcMachine::NcMachineInstance()->setEndOfMotionXPosition(xtemp);
+	}
+	if(mZValueDetected == true)
+		{
+			ztemp = ztemp+ ZValue;    //added for compensate the offset in incremental programming mode G91
+			NcMachine::NcMachineInstance()->setEndOfMotionZPosition(ztemp);
+		}
+	if(mICodeDetected == true)
+		NcMachine::NcMachineInstance()->I = IValue;
+
+	NcMachine::NcMachineInstance()->buildGCodeList();
+}
+/****Pranit**/
+STATUS NcFanuc10T11TFileReader::buildG54Code( QStringList codelist )
+{
+	NcMachine::NcMachineInstance()->setMachineOperationalMode(WORKCOORDINATESYSTEM);
+	bool ok = true;
+
+	foreach(QString code, codelist)
+	{
+		char codeCharacter = code.at(0).toAscii();
+		switch(codeCharacter)
+		{
+		case 'G': 
+		case 'g':
+			{
+				mGCodeDetected = true;
+				int codenumber = code.right(code.size() - 1).toInt(&ok);
+				/*if(codenumber != 54)
+				{
+				handleError(code);
+				}*/
+
+				switch(codenumber)
+				{
+				case 0 : codelist.removeFirst();                               //added to handle G multiple code 
+						 break;
+				case 54: codelist.removeFirst();		
+						 break;
+
+				case 90: codelist.removeFirst();
+						 break;
+						
+				}
+
+				break;
+			}
+		case 'X': 
+		case 'x' :
+			{
+				mXValueDetected = true;
+				XValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		case 'Z':
+		case 'z' :
+			{
+				mZValueDetected = true;
+				ZValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		
+		case 'N':
+		case 'n':
+			{	
+				mNCodeDetected = true;
+				NValue = code.right(code.size() - 1).toDouble(&ok);
+				codelist.removeFirst();
+				break;
+			}
+		default:
+			{
+				//invalid code on the line
+				//display error and abort file reading
+				handleError(codelist);
+			}
+		}
+
+		if(ok == false)
+		{
+			handleError(code);
+		}
+	}
+
+	if(mXValueDetected == true)
+	{	NcMachine::NcMachineInstance()->setEndOfMotionXPosition(XValue);
+		codelist.removeFirst();		
+	}	
+	else 
+	{
+			NcMachine::NcMachineInstance()->setEndOfMotionXPosition(0.0); //setting default argument 0 if no argument specified in the code 
+			codelist.removeFirst();			
+	}
+	if(mZValueDetected == true)
+	{
+			NcMachine::NcMachineInstance()->setEndOfMotionZPosition(ZValue);
+			codelist.removeFirst();		
+	}
+	else
+	{
+		NcMachine::NcMachineInstance()->setEndOfMotionZPosition(0.0); //setting default argument 0 if no argument specified in the code
+		codelist.removeFirst();
+	}
+	mLastExecutedCodeType = CG54;
+	mGCodeDetected = false;
+	mNCodeDetected = false;
+	mXValueDetected = false;
+	mZValueDetected = false;
+	NcMachine::NcMachineInstance()->buildGCodeList();
+	return OK;
+
+}
+
+STATUS NcFanuc10T11TFileReader::checkSyntaxOfRoughTurningCycle( QStringList codelist )
+{
+	NcMachine::NcMachineInstance()->mOperationalMode = ROUGHTURNINGCYCLE;
+
+	bool ok = true;
+
+	foreach(QString code, codelist)
+	{
+		char codeCharacter = code.at(0).toAscii();
+		switch(codeCharacter)
+		{
+		case 'G':  
+		case 'g':
+			{
+				mGCodeDetected = true;
+				int codenumber = code.right(code.size() - 1).toInt(&ok);
+				if(codenumber != 71)
+				{
+					handleError(code);
+				}
+				break;
+			}
+		case 'P': 
+		case 'p':
+			{
+				mPCodeDetected = true;
+				PValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		case 'Q': 
+		case 'q':
+			{
+				mQCodeDetected = true;
+				QValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		case 'U': 
+		case 'u':
+			{
+				mUCodeDetected = true;
+				Uvalue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		case 'W': 
+		case 'w':
+			{
+				mWCodeDetected = true;
+				WValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		case 'F': 
+		case 'f':
+			{
+				mFCodeDetected = true;
+				FValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		case 'D': 
+		case 'd':
+			{
+				mDCodeDetected = true;
+				DValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		case 'N': 
+		case 'n':
+			{
+				mNCodeDetected = true;
+				NValue = code.right(code.size() - 1).toDouble(&ok);
+				break;
+			}
+		default:
+			{
+				//invalid code on the line
+				//display error and abort file reading
+				handleError(codelist);
+			}
+		}
+
+		if(ok == false)
+		{
+			handleError(code);
+		}
+	}
+	mUCodeDetected = false;
+	mWCodeDetected = false;
+	mNCodeDetected = false;
+	mFCodeDetected = false;
+	mPCodeDetected = false;
+	mQCodeDetected = false;
+	mTCodeDetected = false;
+	mDCodeDetected = false;
+	return OK;
+
+
+}
+
+void NcFanuc10T11TFileReader::buildG71Code()
+{
+
+}
+
+
+/***Pranit**/
+//This function is added to compile the the text inputted by user into Nccode Editor
+// This function splits the text data from code editor and convert it into codeblock.
+void NcFanuc10T11TFileReader::compileExternalNcfile( QString codelist )
+{
+      QStringList codeblock = codelist.split("\n");
+	   //for (auto itr =codeblock.begin();itr!= codeblock.end();itr++)
+		  {
+			  mCodeBlockList = codeblock; 
+		  }
+	 for(; mLineCounter < mCodeBlockList.size();)
+	  {
+		  if(mLineCounter == 0)
+			  NcDisplay::getNcDisplayInstance()->setStockBBInitialValues();
+
+		  NcMachine::NcMachineInstance()->initializeCodeBlockInTheMachine(mCodeBlockList.at(mLineCounter), mLineCounter);
+		  checkEachLineForSyntax();			
+	  }
+
+	 if(NcDisplay::getNcDisplayInstance()->getUserDefinedStockFlag()==false)
+	 {
+		   NcDisplay::getNcDisplayInstance()->setStockBBFinalValues();
+	 }
+
+	
+	  NcDisplay::getNcDisplayInstance()->generateDisplayLists();
+	  NcStartupStockDisplay::getStockDisplayInstance()
+		  ->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());
+	  
 }

@@ -67,7 +67,7 @@ bool	NcFanuc0TFileReader::openNcFileForReadWrite()
 		{
 			mFile = new QFile(mCurrentFileName);
 
-			if(mFile->open(QFile::ReadWrite | QFile::Text))
+			if(mFile->open(QIODevice::ReadOnly | QIODevice::Text))
 			{
 				return true;
 			}
@@ -77,7 +77,7 @@ bool	NcFanuc0TFileReader::openNcFileForReadWrite()
 			}
 		}
 	}
-	return false;
+	return true;
  }
 		
 static int linecount = 0;
@@ -127,7 +127,8 @@ void NcFanuc0TFileReader::checkEachLineForSyntax()
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G':  
+		case 'g':
 			{
 				int codenumber = code.right(code.size() - 1).toInt();
 				switch(codenumber)
@@ -226,22 +227,26 @@ void NcFanuc0TFileReader::checkEachLineForSyntax()
 				break;
 			}
 
-		case 'M':
+		case 'M': 
+		case 'm':
 			{
 				buildMCode(code);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				buildSCode(code);
 				break;
 			}
-		case 'F':	//need to handle F, S and T here only when they are not with the machining code
+		case 'F': 
+		case 'f':	//need to handle F, S and T here only when they are not with the machining code
 			{
 				buildFCode(code);
 				break;
 			}
-		case 'T':	//if machining code is detected, then F, S and T are handled in the respective code function
+		case 'T': 
+		case 't':	//if machining code is detected, then F, S and T are handled in the respective code function
 			{
 				buildIndTCode(code);
 				break;
@@ -271,7 +276,7 @@ void NcFanuc0TFileReader::handleError(QString code)
 			tr("Please correct the NC file and restart the application");
 
 	QMessageBox::StandardButton ret;
-	ret = QMessageBox::warning(0, QObject::tr("Discrete Simulator V1.0"),
+	ret = QMessageBox::warning(0, qApp->applicationName(),
 								(message), QMessageBox::Ok);
 
 	if(ret == QMessageBox::Ok)
@@ -290,7 +295,7 @@ void NcFanuc0TFileReader::handleError(QStringList codelist)
 			tr("Please correct the NC file and restart the application");
 
 	QMessageBox::StandardButton ret;
-	ret = QMessageBox::warning(0,tr("Discrete Simulator V1.0"),
+	ret = QMessageBox::warning(0,qApp->applicationName(),
 								message, QMessageBox::Ok);
 
 	if(ret == QMessageBox::Ok)
@@ -414,25 +419,30 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfMultiPassThreading(QStringList codelist
 			char codeCharacter = code.at(0).toAscii();
 			switch(codeCharacter)
 			{
-			case 'G':
+			case 'G': 
+			case 'g':
 				{
 					break;
 				}
-			case 'P':
+			case 'P': 
+			case 'p':
 				{
 					break;
 				}
-			case 'Q':
+			case 'Q':  
+			case 'q':
 				{
 					break;
 				}
 			case 'R':
+			case 'r':
 				{
 					/*mRCodeDetected = true;
 					Rvalue = code.right(code.size() - 1).toDouble();*/
 					break;
 				}
-			case 'N':
+			case 'N': 
+			case 'n':
 				{
 					break;
 				}
@@ -467,7 +477,8 @@ STATUS NcFanuc0TFileReader::checkSecondLineForG76()
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
 				if(codenumber != 76)
@@ -476,43 +487,50 @@ STATUS NcFanuc0TFileReader::checkSecondLineForG76()
 				}
 				break;
 			}
-		case 'P': //single depth of thread = k of single line format
+		case 'P': 
+		case 'p': //single depth of thread = k of single line format
 			{
 				mPCodeDetected = true;
 				PValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Q': //depth of the first threading pass = D of single line format
+		case 'Q': 
+		case 'q': //depth of the first threading pass = D of single line format
 			{
 				mQCodeDetected = true;
 				QValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'R':
+		case 'r':
 			{
 				mRetractCodeDetected = true;
 				RetractValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':	//feed rate for thread cutting : pitch = feedrate for single start thread(in DS Pitch = Feedrate/2)
+		case 'F': 
+		case 'f':	//feed rate for thread cutting : pitch = feedrate for single start thread(in DS Pitch = Feedrate/2)
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'X':		//final thread diameter
+		case 'X':
+		case 'x' :		//final thread diameter
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':				//thread end (total length of thread)
+		case 'Z':  
+		case 'z' :				//thread end (total length of thread)
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
 				break;
 			}
@@ -587,7 +605,8 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfSinglePassThreading(QStringList codelis
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -598,24 +617,28 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfSinglePassThreading(QStringList codelis
 				break;
 			}
 		case 'X':
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'Z':
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F': 
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
 				break;
 			}
@@ -671,7 +694,8 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfFacingCycle(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G':  
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -681,41 +705,48 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfFacingCycle(QStringList codelist)
 				}
 				break;
 			}
-		case 'X':
+		case 'X': 
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z':  
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F': 
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S':  
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'T':
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
 		case 'N':
+		case 'n':
 			{
 				break;
 			}
-		case 'K': //used for tapered facing : not implemented
+		case 'K': 
+		case 'k': //used for tapered facing : not implemented
 			{
 				break;
 			}
@@ -780,7 +811,8 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfCannedTurning(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				//if any other G code than G90 is present on the same line, then display the error and 
 				//stop reading the file. Only one machining / valid Auxillary G code could be present
@@ -793,43 +825,50 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfCannedTurning(QStringList codelist)
 				}
 				break;
 			}
-		case 'X':
+		case 'X': 
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'Z':
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F': 
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'T':
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
-		case 'I':
+		case 'I':  
+		case 'i':
 			{
 				mICodeDetected = true;
 				IValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
 				break;
 			}
@@ -899,7 +938,8 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfDwellCode(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -909,13 +949,15 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfDwellCode(QStringList codelist)
 				}
 				break;
 			}
-		case 'X':
+		case 'X':  
+		case 'x' :
 			{
 				mXValueDetected = true;
 				mDwellTime = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
 		case 'N':
+		case 'n':
 			{
 				break;
 			}
@@ -960,7 +1002,8 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfCCWCirInterpol(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G':  
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt();
@@ -970,49 +1013,57 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfCCWCirInterpol(QStringList codelist)
 				}
 				break;
 			}
-		case 'X':
+		case 'X': 
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'F':
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S':  
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'T':
+		case 'T': 
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
 		case 'I':
+		case 'i':
 			{
 				mICodeDetected = true;
 				IValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
 		case 'K':
+		case 'k':
 			{
 				mKCodeDetected = true;
 				KValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
 				break;
 			}
@@ -1089,7 +1140,8 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfCWCirInterpol(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G':  
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt();
@@ -1099,49 +1151,57 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfCWCirInterpol(QStringList codelist)
 				}
 				break;
 			}
-		case 'X':
+		case 'X': 
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F': 
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'T':
+		case 'T':  
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
 		case 'I':
+		case 'i':
 			{
 				mICodeDetected = true;
 				IValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
 		case 'K':
+		case 'k':
 			{
 				mKCodeDetected = true;
 				KValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
 				break;
 			}
@@ -1214,7 +1274,8 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfLinearInterpol(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt();
@@ -1224,37 +1285,43 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfLinearInterpol(QStringList codelist)
 				}
 				break;
 			}
-		case 'X':
+		case 'X': 
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F':  
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S':  
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'T':
+		case 'T': 
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
 				break;
 			}
@@ -1332,7 +1399,8 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfRapidCode(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -1342,37 +1410,43 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfRapidCode(QStringList codelist)
 				}
 				break;
 			}
-		case 'X':
+		case 'X': 
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F': 
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'T':
+		case 'T': 
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
 		case 'N':
+		case 'n':
 			{
 				break;
 			}
@@ -1505,7 +1579,8 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfPeckDrillCycle(QStringList codelist)
 			char codeCharacter = code.at(0).toAscii();
 			switch(codeCharacter)
 			{
-			case 'G':
+			case 'G':  
+			case 'g':
 				{
 					break;
 				}
@@ -1517,6 +1592,7 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfPeckDrillCycle(QStringList codelist)
 					break;
 				}
 			case 'N':
+			case 'n':
 				{
 					break;
 				}
@@ -1551,7 +1627,8 @@ STATUS NcFanuc0TFileReader::checkSecondLineForG74()
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G':  
+		case 'g':
 			{
 				int codenumber = code.right(code.size() - 1).toInt();
 				if(codenumber != 74)
@@ -1560,12 +1637,14 @@ STATUS NcFanuc0TFileReader::checkSecondLineForG74()
 				}
 				break;
 			}
-		case 'P':
+		case 'P': 
+		case 'p':
 			{
 				PValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Q':
+		case 'Q': 
+		case 'q':
 			{
 				//equal to K code in single line format
 				mQCodeDetected = true;
@@ -1573,36 +1652,42 @@ STATUS NcFanuc0TFileReader::checkSecondLineForG74()
 				break;
 			}
 		case 'R':
+		case 'r':
 			{
 				mRetractCodeDetected = true;
 				RetractValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F':  
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'X':
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'Z':
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'N':
+		case 'n':
 			{
 				break;
 			}
@@ -1685,11 +1770,13 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfPartingGrooving(QStringList codelist)
 			char codeCharacter = code.at(0).toAscii();
 			switch(codeCharacter)
 			{
-			case 'G':
+			case 'G': 
+			case 'g':
 				{
 					break;
 				}
 			case 'R':
+			case 'r':
 				{
 					mRCodeDetected = true;
 					Rvalue = code.right(code.size() - 1).toDouble(&ok);
@@ -1697,6 +1784,7 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfPartingGrooving(QStringList codelist)
 					break;
 				}
 			case 'N':
+			case 'n':
 				{
 					break;
 				}
@@ -1733,6 +1821,7 @@ STATUS NcFanuc0TFileReader::checkSecondLineForG75()
 		switch(codeCharacter)
 		{
 		case 'G':
+		case 'g':
 			{
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
 				if(codenumber != 75)
@@ -1741,12 +1830,14 @@ STATUS NcFanuc0TFileReader::checkSecondLineForG75()
 				}
 				break;
 			}
-		case 'P':
+		case 'P': 
+		case 'p':
 			{
 				PValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Q':
+		case 'Q':  
+		case 'q':
 			{
 				//equal to K code in single line format
 				mQCodeDetected = true;
@@ -1754,36 +1845,42 @@ STATUS NcFanuc0TFileReader::checkSecondLineForG75()
 				break;
 			}
 		case 'R':
+		case 'r':
 			{
 				mRetractCodeDetected = true;
 				RetractValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F':  
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S':  
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'X':
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
 				break;
 			}

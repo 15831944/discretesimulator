@@ -3,6 +3,9 @@
 
 #include <stdio.h>
 #include "NcGeomKernel\NcGeomKernelGlobal.h"
+#include "NcUtility\NcGlobalDefinitions.h"
+
+
 
 namespace DiscreteSimulator
 {

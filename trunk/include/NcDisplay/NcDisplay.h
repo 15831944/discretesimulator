@@ -63,6 +63,12 @@ namespace DiscreteSimulator
 		void			addDLIndexesToList(NcCode *code);
 		void			addProfilesToList(NcCode *code);
 
+  public:
+		/****Pranit***/
+		bool			setUserDefinedStockValues(double stockRadius,double stockLength );
+		bool			getUserDefinedStockFlag(){return mUserDefinedStock; }
+		void			setUserDefinedStockFlag(bool status ){ mUserDefinedStock = status; } // this function is added to check if user has defined stock dimentions
+	
 	private:
 		void			updateStockBoundingBox();
 		void			displayProfile(Profile *target);
@@ -78,12 +84,15 @@ namespace DiscreteSimulator
 		GLuint					mPartDisplayListIndexes;
 		SimulationState			mSimulationState;
 		int						mLastMachiningOpIndex;
-
-
+		GLuint					mStartupDLForStock;
 	protected:
 		NcDisplay();									
 		NcDisplay(const NcDisplay &){}									
 		NcDisplay&	operator=(const NcDisplay&);
+
+		/****Pranit***/
+	public:
+			bool			mUserDefinedStock;
 
 	};
 }

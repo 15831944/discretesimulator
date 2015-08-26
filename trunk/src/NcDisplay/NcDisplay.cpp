@@ -19,6 +19,7 @@
 #include <NcDisplay\NcDisplay.h>
 #include <iostream>
 #include <QMessageBox>
+#include "NcUIComponents\NcSimulationWindow.h"
 
 
 
@@ -47,7 +48,7 @@ int NcDisplay::dllistcount = -1;
 NcDisplay::NcDisplay() : stock(0)
 {
 	mSimulationState = PAUSED;
-
+	mUserDefinedStock =false;
 	mLastMachiningOpIndex = 0;
 
 	mTotalPartDisplayLists = 0;  //total number of part display lists to be generated
@@ -131,6 +132,19 @@ bool	NcDisplay::setStockBBFinalValues()
 	return true;
 }
 
+/****Pranit****/
+//this function is created to use user defined values for Stock dimensions
+
+bool NcDisplay::setUserDefinedStockValues(double stockRadius,double stockLength)
+{
+	mStockBoundingBox.xmin = mStockBoundingBox.xmin + 0.0001;		// This is to avoid zero area triangle in revolve
+	mStockBoundingBox.xmax = (stockRadius) + 1;		// This is to avoid final cut of zero length
+	mStockBoundingBox.zmax =  0 - 0.5;		   //  This is to avoid intersection on edge by tool
+	mStockBoundingBox.zmin = (-stockLength - 10.0);	       //  This is to avoid intersection on edge by tool
+	mUserDefinedStock =true ;
+	return true;
+}
+
 static double minXval;
 static double maxXval;
 static double minZval;
@@ -179,7 +193,10 @@ void	NcDisplay::updateStockBoundingBox()
 	{
 		maxZval = max(maxZval, NcMachine::NcMachineInstance()->mLastMachineZPos);
 	}
-	mStockBoundingBox.zmax = max(maxZval, NcMachine::NcMachineInstance()->mEndOfMotionZ);
+	
+	/***Pranit******/
+	//mStockBoundingBox.zmax = maximum(maxZval, NcMachine::NcMachineInstance()->mEndOfMotionZ);
+	mStockBoundingBox.zmax =0.0;// setting max z=0 
 
 #ifdef debug
 	std::cout << mStockBoundingBox.xmin << " " << mStockBoundingBox.xmax <<  " "
@@ -280,7 +297,7 @@ void	NcDisplay::displayProfile(Profile *target)
 
 	static double c = 0.1;
 	glBegin(GL_LINE_STRIP);
-		glColor3d(1.0, 0.0, c);
+		glColor3d(0.0, 1.0, 0.0);
 		for(int i = 0; i < target->no_pts; i++)
 			glVertex3d(target->P[i][0], target->P[i][1], 0.0);
 	glEnd();
@@ -642,13 +659,13 @@ STATUS	NcDisplay::load_CG00_Tool(double **tool, double *P, int i, int j)
 
 void	NcDisplay::generateStartupDLForStock()
 {
-	GLuint dlId1 = glGenLists(1);
+	mStartupDLForStock = glGenLists(1);
 	
 	mPartProfileList.push_back(stock);
 
-	stock->mAssocitedDBDLIndexes->push_back(dlId1);
+	stock->mAssocitedDBDLIndexes->push_back(mStartupDLForStock);
 
-	glNewList(dlId1, GL_COMPILE);
+	glNewList(mStartupDLForStock, GL_COMPILE);
 		displayStockProfile();
 	glEndList();
 }
@@ -829,15 +846,15 @@ void	NcDisplay::callDeformedBodyDL(GLuint id)
 
 void	NcDisplay::material_stock()
 {
-	GLfloat mat_shininess[] = { 100.0 };
-	GLfloat mat_solid[] = { 0.75, 0.75, 0.1, 1.0 };
+	GLfloat mat_shininess =  100.0 ;
+	GLfloat mat_solid[] = { 0.75, 0.75, 0.0, 1.0 };
 	GLfloat mat_zero[] = { 0.0, 0.0, 0.0, 1.0 };
 
-	glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+	glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_solid);
 	glMaterialfv(GL_FRONT, GL_EMISSION, mat_zero);
 
-	glMaterialfv(GL_BACK, GL_SHININESS, mat_shininess);
+	glMaterialf(GL_BACK, GL_SHININESS, mat_shininess * 128);
 	glMaterialfv(GL_BACK, GL_DIFFUSE, mat_solid);
 	glMaterialfv(GL_BACK, GL_EMISSION, mat_zero);
 }
@@ -883,5 +900,49 @@ STATUS	NcDisplay::normalvector(int t)
 	}
 	return OK;
 }
+
+
+/***Pranit*******/
+
+//This function assigns the material to the stock
+
+//void  NcDisplay::StockPropertyChanged(QString propertyName)
+//{
+//	if(propertyName =="Wooden")
+//		stock->mMaterial = StockProperties::Material::Wooden;
+//	if(propertyName =="Steel")
+//		stock->mMaterial = StockProperties::Material::Steel;
+//	if(propertyName =="Iron")
+//		stock->mMaterial = StockProperties::Material::Iron;
+//	if(propertyName =="Copper")
+//		stock->mMaterial = StockProperties::Material::Copper;
+//	
+//	if(propertyName =="Red")
+//		GLfloat mat_solid[] = { 1.0, 0.0, 0.0, 1.0 };  
+//		if(propertyName =="Blue")
+//	GLfloat mat_solid[] = { 0.0, 0.0, 1.0, 1.0 }; 	
+//	//if(propertyName =="Yellow")
+//	//	;
+//	if(propertyName =="Green")
+//		GLfloat mat_solid[] = { 0.0, 1.0, 1.0, 1.0 }; 	
+//}
+
+/*
+
+void	NcDisplay::UpdateProfileColor(Profile *target,QString colorname)
+{
+
+	static double c = 0.1;
+	glBegin(GL_LINE_STRIP);
+	glColor3d(0.0, 1.0, c);
+	for(int i = 0; i < target->no_pts; i++)
+		glVertex3d(target->P[i][0], target->P[i][1], 0.0);
+	glEnd();
+	c+= 0.01;
+
+}
+*/
+
+
 
 

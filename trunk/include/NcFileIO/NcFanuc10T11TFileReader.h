@@ -21,6 +21,7 @@ namespace DiscreteSimulator
 		~NcFanuc10T11TFileReader();
 
 		void		setCurrentNcFile(QString filename) {mCurrentFileName = filename;}
+		void		setCurrentNcFile(QFile* file);
 		QFile*		getCurrentNcFile();
 		bool		openNcFileForReadWrite();
 		STATUS		checkCodeSyntax();
@@ -37,6 +38,15 @@ namespace DiscreteSimulator
 		STATUS		checkSyntaxOfSinglePassThreading(QStringList codelist);
 		STATUS		checkSyntaxOfMultiPassThreading(QStringList codelist);
 		QString		getFullNcCodeText();
+
+		/**********Pranit******/
+		STATUS		buildG53Code(QStringList codelist);
+		STATUS		buildG54Code(QStringList codelist);
+		void		compileExternalNcfile(QString codelist);
+
+	
+		STATUS		checkSyntaxOfIncrementalMove( QStringList codelist );
+		STATUS		checkSyntaxOfRoughTurningCycle( QStringList codelist );
 
 		friend	class cleanupReadWriteInstance;
 
@@ -55,6 +65,12 @@ namespace DiscreteSimulator
 		void					buildG03Code();
 		void					buildG04Code();
 		void					buildG90Code();
+	
+		/****Pranit***/
+		void					buildG71Code();
+		void					buildG91Code();	
+		
+
 		void					buildG92Code();
 		void					buildG94Code();
 		void					buildG20Code();
@@ -79,6 +95,13 @@ namespace DiscreteSimulator
 		static int						mLineCounter;
 		bool							mRCodeDetected;
 		bool							mSCodeDetected;
+		/***Pranit**/
+		bool							mUCodeDetected;
+		bool							mWCodeDetected;
+		bool							mNCodeDetected;
+
+	//	bool							mExternalNcCode;
+
 		bool							mFCodeDetected;
 		bool							mXValueDetected;
 		bool							mZValueDetected;
@@ -91,6 +114,13 @@ namespace DiscreteSimulator
 		bool							mDCodeDetected;
 		bool							mMachiningCodeDetected;
 		bool							mRetractCodeDetected;
+
+		/***Pranit****/
+		double							Uvalue;
+		double							WValue;
+		double							NValue;
+		int								linecheck;    //for G71 code
+
 		double							Rvalue;
 		double							PValue;
 		double							QValue;
@@ -106,7 +136,8 @@ namespace DiscreteSimulator
 		int								mDwellTime;
 		QTextStream						ncfilereader;
 		CODE_Type						mLastExecutedCodeType;
-		
+		double							xtemp; //added for compensate the x offset in incremental programming mode G91
+		double							ztemp; //added for compensate the z offset in incremental programming mode G91
 						
 	};
 }

@@ -163,13 +163,13 @@ bool	NcSimulationController::runSimulationByBlock()  //run simulation in block b
 				}
 			}
 		}
-		NcCode *gc = NcMachine::NcMachineInstance()->mNcCodeBlockList->at(indexOfLastGCodeLine)->getGCodeInBlock();
+		NcCode *gc = NcMachine::NcMachineInstance()->getGCodeInBlock(indexOfLastGCodeLine);
 		if(gc)
 			gc->executeCode(mSimulationState);
 
 		emit enableRewindButton();
 	}
-
+	emit enableRewindButton();
 	return true;
 }
 
@@ -246,7 +246,7 @@ bool	NcSimulationController::runSimulationByCycle()	//run simulation in cycle mo
 				}
 			}
 		}
-		NcCode *gc = NcMachine::NcMachineInstance()->mNcCodeBlockList->at(indexOfLastGCodeLine)->getGCodeInBlock();
+		NcCode *gc = NcMachine::NcMachineInstance()->getGCodeInBlock(indexOfLastGCodeLine);
 		if(gc)
 			gc->executeCode(mSimulationState);
 
@@ -254,6 +254,7 @@ bool	NcSimulationController::runSimulationByCycle()	//run simulation in cycle mo
 	}
 
 	return true;
+	emit enableRewindButton();
 }
 
 void	NcSimulationController::rewindSimulation()

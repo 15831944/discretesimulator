@@ -41,6 +41,10 @@ namespace DiscreteSimulator
 		void						updateNcSpindleStatus(bool status);
 		void						updateTPDisplay(int index);
 		void						updateCycleTime(int, int, int);
+		/*******************************Pranit**********************************/
+		void						updateNCCoolantStatus(bool status);
+		void						updateRefToolPosition(bool status);
+		/***********************************************************************/
 
 	signals:
 		void						updateToolPosInStatusWindow(double mCurrentToolZPos, double mCurrentToolXPos, double mCurrentToolYPos);
@@ -49,6 +53,9 @@ namespace DiscreteSimulator
 		void						updateSpindleStat(bool);
 		void						updateToolPathDisplayInTPWin(int);
 		void						updateCycleTimeStatus(int, int, int);
+		/*******************************Pranit**********************************/
+		void						updateNCCoolantStat(bool);
+		/***********************************************************************/
 
 	
 	private:

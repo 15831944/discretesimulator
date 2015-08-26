@@ -110,12 +110,12 @@ bool	G00::executeCode(SimulationState simstate, NcCode *code) //return true when
 				glCallList(mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL));
 
 				mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL);
-
+				/*
 				for(int i = 0; i < mLocalIndex; i++)
 				{
 					glCallList(mCumulativeDLList.at(i));
 				}
-
+				*/
 				emit updateToolPathDisplay(mLocalIndex);
 								
 				noOfDL++;
@@ -136,12 +136,12 @@ bool	G00::executeCode(SimulationState simstate, NcCode *code) //return true when
 				glCallList(mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL));
 
 				mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL);
-
+				/*
 				for(int i = 0; i < mLocalIndex; i++)
 				{
 					glCallList(mCumulativeDLList.at(i));
 				}
-				
+				*/
 				mPartProfileIndex++;
 				noOfDL = 0;
 				//cout << "G00 DL no in else for noOfDL after: " << noOfDL << endl;
@@ -166,10 +166,10 @@ bool	G00::executeCode(SimulationState simstate, NcCode *code) //return true when
 											->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
 											->mAssocitedDBDLIndexes->size() - 1);
 
-			for(int i = 0; i < mLocalIndex; i++)
+			/*for(int i = 0; i < mLocalIndex; i++)
 			{
 				glCallList(mCumulativeDLList.at(i));
-			}
+			}*/
 
 			emit updateCycleTime(mHours, mMinutes, mSeconds);
 			
@@ -191,10 +191,10 @@ bool	G00::executeCode(SimulationState simstate, NcCode *code) //return true when
 						->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
 						->mAssocitedDBDLIndexes->size() - 1);
 
-		for(int i = 0; i < mLocalIndex; i++)
+		/*for(int i = 0; i < mLocalIndex; i++)
 		{
 			glCallList(mCumulativeDLList.at(i));
-		}
+		}*/
 			
 		return true;
 	}
@@ -209,10 +209,10 @@ bool	G00::executeCode(SimulationState simstate, NcCode *code) //return true when
 
 		mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL);
 
-		for(int i = 0; i < mLocalIndex; i++)
+		/*for(int i = 0; i < mLocalIndex; i++)
 		{
 			glCallList(mCumulativeDLList.at(i));
-		}
+		}*/
 		return false;
 	}
 
@@ -225,10 +225,10 @@ bool	G00::executeLastDLForCode()
 				->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
 				->mAssocitedDBDLIndexes->size() -1));
 
-	for(int i = 0; i < mLocalIndex; i++)
+	/*for(int i = 0; i < mLocalIndex; i++)
 	{
 		glCallList(mCumulativeDLList.at(i));
-	}
+	}*/
 
 	mLastExecutedDL = mPartProfileList->at(mPartProfileList->size() - 1)
 				->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)

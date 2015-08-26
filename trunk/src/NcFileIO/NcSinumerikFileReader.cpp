@@ -126,6 +126,7 @@ void NcSinumerikFileReader::checkEachLineForSyntax()
 		switch(codeCharacter)
 		{
 		case 'G':
+		case 'g': 
 			{
 				int codenumber = code.right(code.size() - 1).toInt();
 				switch(codenumber)
@@ -176,7 +177,7 @@ void NcSinumerikFileReader::checkEachLineForSyntax()
 								tr("Please correct the NC file and restart the application");
  
 						QMessageBox::StandardButton ret;
-						ret = QMessageBox::warning(0,tr( "Discrete Simulator V1.0"),
+						ret = QMessageBox::warning(0,qApp->applicationName(),
 													message, QMessageBox::Ok);
 
 						if(ret == QMessageBox::Ok)
@@ -187,22 +188,26 @@ void NcSinumerikFileReader::checkEachLineForSyntax()
 				break;
 			}
 
-		case 'M':
+		case 'M': 
+		case 'm':
 			{
 				buildMCode(code);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				buildSCode(code);
 				break;
 			}
-		case 'F':	//need to handle F, S and T here only when they are not with the machining code
+		case 'F':  
+		case 'f':	//need to handle F, S and T here only when they are not with the machining code
 			{
 				buildFCode(code);
 				break;
 			}
-		case 'T':	//if machining code is detected, then F, S and T are handled in the respective code function
+		case 'T':
+		case 't':	//if machining code is detected, then F, S and T are handled in the respective code function
 			{
 				buildIndTCode(code);
 				break;
@@ -332,7 +337,8 @@ STATUS NcSinumerikFileReader::checkSyntaxOfDwellCode(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g' :
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -342,13 +348,15 @@ STATUS NcSinumerikFileReader::checkSyntaxOfDwellCode(QStringList codelist)
 				}
 				break;
 			}
-		case 'F': //dwell time in secs : //S code for time in spindle revolutions not implemented
+		case 'F':  
+		case 'f': //dwell time in secs : //S code for time in spindle revolutions not implemented
 			{
 				mXValueDetected = true;
 				mDwellTime = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
 				break;
 			}
@@ -393,7 +401,8 @@ STATUS NcSinumerikFileReader::checkSyntaxOfCCWCirInterpol(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -403,49 +412,57 @@ STATUS NcSinumerikFileReader::checkSyntaxOfCCWCirInterpol(QStringList codelist)
 				}
 				break;
 			}
-		case 'X':
+		case 'X':  
+		case 'x' : 
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F': 
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'T':
+		case 'T': 
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
-		case 'I':
+		case 'I': 
+		case 'i':
 			{
 				mICodeDetected = true;
 				IValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
-		case 'K':
+		case 'K':  
+		case 'k':
 			{
 				mKCodeDetected = true;
 				KValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
 		case 'N':
+		case 'n':
 			{
 				break;
 			}
@@ -521,7 +538,8 @@ STATUS NcSinumerikFileReader::checkSyntaxOfCWCirInterpol(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -531,49 +549,57 @@ STATUS NcSinumerikFileReader::checkSyntaxOfCWCirInterpol(QStringList codelist)
 				}
 				break;
 			}
-		case 'X':
+		case 'X':  
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'Z':
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F': 
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'T':
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
-		case 'I':
+		case 'I': 
+		case 'i':
 			{
 				mICodeDetected = true;
 				IValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
-		case 'K':
+		case 'K': 
+		case 'k':
 			{
 				mKCodeDetected = true;
 				KValue = code.right(code.size() - 1).toDouble(&ok); 
 				break;
 			}
-		case 'N':
+		case 'N': 
+		case 'n':
 			{
 				break;
 			}
@@ -646,7 +672,8 @@ STATUS NcSinumerikFileReader::checkSyntaxOfLinearInterpol(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -656,37 +683,43 @@ STATUS NcSinumerikFileReader::checkSyntaxOfLinearInterpol(QStringList codelist)
 				}
 				break;
 			}
-		case 'X':
+		case 'X':  
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'F':
+		case 'F': 
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'S':
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'T':
+		case 'T': 
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
 		case 'N':
+		case 'n':
 			{
 				break;
 			}
@@ -754,7 +787,8 @@ STATUS NcSinumerikFileReader::checkSyntaxOfRapidCode(QStringList codelist)
 		char codeCharacter = code.at(0).toAscii();
 		switch(codeCharacter)
 		{
-		case 'G':
+		case 'G': 
+		case 'g':
 			{
 				mGCodeDetected = true;
 				int codenumber = code.right(code.size() - 1).toInt(&ok);
@@ -764,37 +798,43 @@ STATUS NcSinumerikFileReader::checkSyntaxOfRapidCode(QStringList codelist)
 				}
 				break;
 			}
-		case 'X':
+		case 'X':  
+		case 'x' :
 			{
 				mXValueDetected = true;
 				XValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'Z':
+		case 'Z': 
+		case 'z' :
 			{
 				mZValueDetected = true;
 				ZValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'F':
+		case 'f':
 			{
 				mFCodeDetected = true;
 				FValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
-		case 'S':
+		case 'S': 
+		case 's':
 			{
 				mSCodeDetected = true;
 				SValue = code.right(code.size() - 1).toDouble(&ok);
 				break;
 			}
 		case 'T':
+		case 't':
 			{
 				mTCodeDetected = true;
 				TValue = code.right(code.size() - 1).toInt(&ok);
 				break;
 			}
-		case 'N':
+		case 'N':  
+		case 'n':
 			{
 				break;
 			}
@@ -912,7 +952,7 @@ void NcSinumerikFileReader::handleError(QString code)
 			tr("Please correct the NC file and restart the application");
 
 	QMessageBox::StandardButton ret;
-	ret = QMessageBox::warning(0,tr("Discrete Simulator V1.0"),
+	ret = QMessageBox::warning(0,qApp->applicationName(),
 								message, QMessageBox::Ok);
 
 	if(ret == QMessageBox::Ok)
@@ -931,7 +971,7 @@ void NcSinumerikFileReader::handleError(QStringList codelist)
 			tr("Please correct the NC file and restart the application");
 
 	QMessageBox::StandardButton ret;
-	ret = QMessageBox::warning(0, tr("Discrete Simulator V1.0"),
+	ret = QMessageBox::warning(0, qApp->applicationName(),
 								message, QMessageBox::Ok);
 
 	if(ret == QMessageBox::Ok)

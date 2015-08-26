@@ -11,10 +11,13 @@
 #include "NcStateMachine\G28.h"
 #include "NcStateMachine\NcEndOfCutFeedRateMove.h"
 #include "NcStateMachine\NcAuxRapidMove.h"
+#include "NcStateMachine\G53.h"
+#include "NcStateMachine\G54.h"
 #include "NcStateMachine\G90.h"
 #include "NcStateMachine\G74.h"
 #include "NcStateMachine\G75.h"
 #include "NcStateMachine\G76.h"
+#include "NcStateMachine\G91.h"
 #include "NcStateMachine\G92.h"
 #include "NcStateMachine\G94.h"
 #include "NcStateMachine\T01.h"
@@ -190,6 +193,80 @@ void	NcMachine::buildGCodeList()
 		
 		generateEndOfCutFeedrateMove(newcode);
 		generateRapidReturnToCycleStart(newcode);
+	}
+	/******Pranit**/
+	if(mOperationalMode == INCREMENTALMOVE)			//turning cycle G91	
+	{
+		newcode = new G91();
+		newcode->ctype = CG91;
+
+		newcode->setCycleStartX(mCycleStartXPos);
+		newcode->setCycleStartZ(mCycleStartZPos);
+
+		newcode->setstartX(mLastMachineXPos);				//move to the start of the next cut for turning
+		newcode->setstartZ(mLastMachineZPos);	 	//turning always in -ve z. set start z to the new z obtained from the code
+
+		newcode->setX(mEndOfMotionX); 
+		newcode->setZ(mEndOfMotionZ);  
+
+		newcode->setF(mCurrentFeedRate);
+		newcode->setS(mCurrentSpindleSpeed);
+
+		newcode->toolType = CT01;
+		newcode->setAsMachiningCode(true);
+		mCurrentCodeBlock->mContainsMachiningGCode = true;
+		generateInitialRapidMoveToCutDepth(newcode);  //generate G00 for first rapid move to cut depth
+
+		pushbackGCodeInLists(newcode);
+
+		mCurrentCodeBlock->mBlockCodeList.push_back(newcode);//push back G code in the current NcCodeBlock
+		newcode->mAssociatedCodeBlock = mCurrentCodeBlock;
+
+		generateEndOfCutFeedrateMove(newcode);
+		generateRapidReturnToCycleStart(newcode);
+	}
+
+	/******Pranit**/
+
+	if(mOperationalMode == MACHINECOORDINATE)			//Move to machine co ordinate  G53	
+	{
+		newcode = new G53();
+		newcode->ctype = CG53;	
+
+		newcode->setstartX(mLastMachineXPos);				
+		newcode->setstartZ(mLastMachineZPos);		
+
+		newcode->setX(mEndOfMotionX);
+		newcode->setZ(mEndOfMotionZ);
+
+		newcode->mAssociatedCodeBlock = mCurrentCodeBlock;
+
+		//create two G00 codes in the G53 code one for motion from current tool position
+		//to the machine zero point and add them to the G code list so that display list 
+		//creation is taken care of
+
+		generateG00CodesForG53Code(newcode);
+	}
+
+	/******Pranit**/
+	if(mOperationalMode == WORKCOORDINATESYSTEM)			//Move to machine co ordinate  G53	
+	{
+		newcode = new G54();
+		newcode->ctype = CG54;	
+
+		newcode->setstartX(mLastMachineXPos);				
+		newcode->setstartZ(mLastMachineZPos);		
+
+		newcode->setX(mEndOfMotionX);
+		newcode->setZ(mEndOfMotionZ);
+
+		newcode->mAssociatedCodeBlock = mCurrentCodeBlock;
+
+		//create two G00 codes in the G53 code one for motion from current tool position
+		//to the machine zero point and add them to the G code list so that display list 
+		//creation is taken care of
+
+		generateG00CodesForG53Code(newcode);
 	}
 
 	if(mOperationalMode == LINEARINTERPOL)
@@ -517,6 +594,25 @@ void	NcMachine::buildMCodes()
 		mcode = new M30();
 		mcode->ctype = PRGSTOP;
 	}
+/*****************************Pranit*********************/
+	
+	if(mCurrentMCode == TOOLCHANGE)
+	{
+		mcode = new M06();
+	}
+
+	if(mCurrentMCode == COOLENTON)
+	{
+		mcode = new M08();
+		mcode->ccoolant2 = true;
+	}
+	if(mCurrentMCode == COOLENTOFF)
+	{
+		mcode = new M09();
+		mcode->ccoolant2 =false;
+	}
+
+/*************************************************************/	
 
 	//Push the M code in the current code block to be iterated
 	//over and executed by NcSimulationController
@@ -688,6 +784,31 @@ void	NcMachine::generateInitialRapidMoveToCutDepth(NcCode *code)
 		mCurrentCodeBlock->mBlockCodeList.push_back(firstrapidmove);//push back G code in the current NcCodeBlock
 		firstrapidmove->mAssociatedCodeBlock = mCurrentCodeBlock;
 	}
+	/****Pranit******/
+	if(code->ctype == CG91)
+	{
+		G00 *firstrapidmove = new G00(1000);
+		firstrapidmove->ctype = CG00;
+
+		firstrapidmove->setstartX(code->getCycleStartX() * 2);  
+		firstrapidmove->setstartZ(code->getCycleStartZ());  
+
+		firstrapidmove->setX(code->getX() * 2);
+		firstrapidmove->setZ(code->getCycleStartZ());
+
+		setEndOfMotionXPosition(firstrapidmove->getX() * 2);
+		setEndOfMotionZPosition(firstrapidmove->getZ());
+
+		firstrapidmove->setF(1000);
+		firstrapidmove->setS(mCurrentSpindleSpeed);
+
+		firstrapidmove->setAsAuxillaryPath(true);
+
+		pushbackGCodeInLists(firstrapidmove);
+
+		mCurrentCodeBlock->mBlockCodeList.push_back(firstrapidmove);//push back G code in the current NcCodeBlock
+		firstrapidmove->mAssociatedCodeBlock = mCurrentCodeBlock;
+	}
 
 	if(code->ctype == CG94)
 	{
@@ -736,6 +857,31 @@ void	NcMachine::generateEndOfCutFeedrateMove(NcCode *code)
 
 		eocFeedRateMove->setAsAuxillaryPath(true);
 		
+		pushbackGCodeInLists(eocFeedRateMove);
+
+		mCurrentCodeBlock->mBlockCodeList.push_back(eocFeedRateMove);//push back G code in the current NcCodeBlock
+		eocFeedRateMove->mAssociatedCodeBlock = mCurrentCodeBlock;
+	}
+	/*****Pranit******/
+	if(code->ctype == CG91)
+	{
+		NcEndOfCutFeedRateMove *eocFeedRateMove = new NcEndOfCutFeedRateMove();
+		eocFeedRateMove->ctype = CGAUX;
+
+		eocFeedRateMove->setstartX(code->getX() * 2);  
+		eocFeedRateMove->setstartZ(code->getZ());  
+
+		eocFeedRateMove->setX(code->getCycleStartX() * 2);
+		eocFeedRateMove->setZ(code->getZ());
+
+		eocFeedRateMove->setF(mCurrentFeedRate);
+		eocFeedRateMove->setS(mCurrentSpindleSpeed);
+
+		setEndOfMotionXPosition(eocFeedRateMove->getX() * 2);
+		setEndOfMotionZPosition(eocFeedRateMove->getZ());
+
+		eocFeedRateMove->setAsAuxillaryPath(true);
+
 		pushbackGCodeInLists(eocFeedRateMove);
 
 		mCurrentCodeBlock->mBlockCodeList.push_back(eocFeedRateMove);//push back G code in the current NcCodeBlock
@@ -796,6 +942,31 @@ void	NcMachine::generateRapidReturnToCycleStart(NcCode *code)
 		returnrapidmove->mAssociatedCodeBlock = mCurrentCodeBlock;
 	}
 
+/******Pranit*******/
+	if(code->ctype == CG91)
+	{
+		NcAuxRapidMove *returnrapidmove = new NcAuxRapidMove(1000);
+		returnrapidmove->ctype = CGAUX;
+
+		returnrapidmove->setstartX(code->getCycleStartX() * 2);  
+		returnrapidmove->setstartZ(code->getZ());  
+
+		returnrapidmove->setX(code->getCycleStartX() * 2);
+		returnrapidmove->setZ(code->getCycleStartZ());
+
+		returnrapidmove->setF(1000);
+		returnrapidmove->setS(mCurrentSpindleSpeed);
+
+		returnrapidmove->setAsAuxillaryPath(true);
+
+		setEndOfMotionXPosition(returnrapidmove->getX() * 2);
+		setEndOfMotionZPosition(returnrapidmove->getZ());
+
+		pushbackGCodeInLists(returnrapidmove);
+
+		mCurrentCodeBlock->mBlockCodeList.push_back(returnrapidmove);//push back G code in the current NcCodeBlock
+		returnrapidmove->mAssociatedCodeBlock = mCurrentCodeBlock;
+	}
 	if(code->ctype == CG94)
 	{
 		NcAuxRapidMove *returnrapidmove = new NcAuxRapidMove(1000);
@@ -820,4 +991,38 @@ void	NcMachine::generateRapidReturnToCycleStart(NcCode *code)
 		mCurrentCodeBlock->mBlockCodeList.push_back(returnrapidmove);//push back G code in the current NcCodeBlock
 		returnrapidmove->mAssociatedCodeBlock = mCurrentCodeBlock;
 	}
+}
+
+NcCode* NcMachine:: getGCodeInBlock(int indexOfLastGCodeLine)
+{
+	if(mNcCodeBlockList != NULL)
+		return NULL;
+	return(mNcCodeBlockList->size()>=(indexOfLastGCodeLine-1))? mNcCodeBlockList->at(indexOfLastGCodeLine)->getGCodeInBlock(): NULL;
+}
+
+
+// This function is used to send the machine tool to the absolute co-ordinate 
+// This function sends the machine tool
+void NcMachine::generateG00CodesForG53Code(NcCode *newcode)
+{
+
+	//movement to the machine zero point
+	G00 *secondrapidmove = new G00(1000);
+	secondrapidmove->ctype = CG00;
+
+	secondrapidmove->setstartX(mEndOfMotionX);  
+	secondrapidmove->setstartZ(mEndOfMotionZ);  
+
+	secondrapidmove->setX(mEndOfMotionX);
+	secondrapidmove->setZ(mEndOfMotionZ);
+
+	/*secondrapidmove->setF(1000);
+	secondrapidmove->setS(mCurrentSpindleSpeed);
+	*/
+	secondrapidmove->setAsAuxillaryPath(true);
+
+	pushbackGCodeInLists(secondrapidmove);
+
+	mCurrentCodeBlock->mBlockCodeList.push_back(secondrapidmove);   //push back G code in the current NcCodeBlock
+	secondrapidmove->mAssociatedCodeBlock = mCurrentCodeBlock;
 }

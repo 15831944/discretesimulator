@@ -19,11 +19,11 @@ namespace DiscreteSimulator
 
 	enum	OperationalMode {RAPIDMOTION, LINEARINTERPOL, CWCIRCULARINTERPOL, CCWCIRCULARINTERPOL, DWELL,
 							 CANNEDTURNING, PECKDRILLING, PARTINGGROOVING, FACING, SINGLEPASSTHREADING,
-							 MULTIPASSTHREADING, MACHINEZERORETURN, INCHUNITMODE, MMUNITMODE};
+							 MULTIPASSTHREADING, MACHINEZERORETURN, INCHUNITMODE, MMUNITMODE,/*****Pranit****/INCREMENTALMOVE,MACHINECOORDINATE,WORKCOORDINATESYSTEM,ROUGHTURNINGCYCLE};
 
 	enum	ToolType {TURNINGTOOL, DRILLINGTOOL, PARTINGTOOL, THREADINGTOOL, GROOVINGTOOL, BORINGTOOL, FACINGTOOL};
 
-	enum	MCodeType {SPINDLECW, SPINDLECWT, SPINDLESTOP, PROGRAMSTOP};
+	enum	MCodeType {SPINDLECW, SPINDLECWT, SPINDLESTOP, PROGRAMSTOP,COOLENTON, COOLENTOFF,/*****Pranit****/TOOLCHANGE};
 
 	class NCSTATEMACHINEEXPORT NcMachine							//class representing the modal cnc state machine
 	{
@@ -52,6 +52,7 @@ namespace DiscreteSimulator
 		void	initializeCodeBlockInTheMachine(QString codeblock, int linecount);
 
 		friend class cleanupNcMachineInstance;
+		NcCode* getGCodeInBlock(int codeId);
 
 	public:
 		double					mLastMachineXPos;
@@ -95,6 +96,8 @@ namespace DiscreteSimulator
 		void	generateRapidReturnToCycleStart(NcCode *code);
 		void	generateG00CodesForG28Code(NcCode *code);
 
+		/////////////////////////////////Pranit//////////////////////////////////
+		void	generateG00CodesForG53Code(NcCode *code);	
 	private:
 		NcCodeBlock				*mCurrentCodeBlock;
 		static NcMachine		*mNcMachineInstance;

@@ -2,6 +2,7 @@
 #include "NcStateMachine\NcMachine.h"
 #include "NcUtility\NcStlImport.h"
 
+#include <gl\GLU.h>
 
 using namespace DiscreteSimulator;
 
@@ -21,6 +22,7 @@ NcToolController::NcToolController()
 	stlToolImporter = new NcStlImport();
 
 	mToolsLoaded = false;
+	//connect(this,SIGNAL(updateNCCoolantStatus(bool)),NcStatusWindow::StatusWindowInstance(),SLOT(updateNCCoolantStatus()));
 }
 
 //NcToolController::~NcToolController()
@@ -59,6 +61,15 @@ void	NcToolController::material_tool()
 
 void NcToolController::display_toolholder(double X, double Y, double Z)
 {
+	/*
+	GLUquadric *sphere = gluNewQuadric();
+	glPushMatrix();
+	glTranslated(X,Y,Z);
+	gluSphere(sphere,10,10,20);
+	glPopMatrix();
+
+	return; 
+	*/
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	material_tool();
@@ -70,9 +81,9 @@ void NcToolController::display_toolholder(double X, double Y, double Z)
 	{
 	case CT01:
 		{
-			glRotatef(90,0,1,0);
-			glRotatef(90,0,0,1);
-			glScalef(0.5,0.5,0.5);
+			glRotated(90,0,1,0);
+			glRotated(90,0,0,1);
+			glScaled(0.5,0.5,0.5);
 			glCallList(stlToolImporter->getDLIdForTurningTool());
 			break;
 		}
@@ -88,10 +99,10 @@ void NcToolController::display_toolholder(double X, double Y, double Z)
 		}
 	case CT03:
 		{
-			glRotatef(90,0,1,0);
-			glRotatef(90,0,0,1);
-			glRotatef(90,0,1,0);
-			glScalef(0.5,0.5,0.5);
+			glRotated(90,0,1,0);
+			glRotated(90,0,0,1);
+			glRotated(90,0,1,0);
+			glScaled(0.5,0.5,0.5);
 			glCallList(stlToolImporter->getDLIdForPartingTool());
 			break;
 		}
@@ -99,6 +110,7 @@ void NcToolController::display_toolholder(double X, double Y, double Z)
 		break;
 	}
 	glDisable(GL_CULL_FACE);
+   	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 	
 }
@@ -170,4 +182,17 @@ void NcToolController::changeTool(CODE_Type tooltype)
 
 	display_toolholder(mCurrentToolZPos, mCurrentToolXPos, mCurrentToolYPos);	
 	emit updateToolPosInStatusWindow(mCurrentToolZPos, mCurrentToolXPos, mCurrentToolYPos);
+}
+
+void DiscreteSimulator::NcToolController::updateNCCoolantStatus( bool status)
+{
+	emit updateNCCoolantStat(status);
+}
+/*********************************Pranit****************************************/
+//This function is added for updating the tool status to reference position
+// This function is called when M06 block code is called.
+
+void DiscreteSimulator::NcToolController::updateRefToolPosition( bool status )
+{
+	//updateToolPosition(0.0,0.0,0.0);
 }
