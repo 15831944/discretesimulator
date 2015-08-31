@@ -51,7 +51,7 @@ double NcVector::normalize()												 //convert this vector to unit vector
 }
 
 
-double NcVector::get_area(NcVector v0, NcVector v1, NcVector v2){
+double /*NcVector::*/get_area(NcVector v0, NcVector v1, NcVector v2){
 	NcVector e1, e2;
 	e1 = v1 - v0;
 	e2 = v2 - v0;
@@ -76,23 +76,8 @@ double NcVector::get_area(NcVector v0, NcVector v1, NcVector v2){
 //}
 
 
-NcVector NcVector::get_v(double a[])
+NcVector/* NcVector::*/get_v(double a[])
 {
 	return NcVector(a[0], a[1], 0.0);
 }
 
-
-double NcVector::x() const
-{
-	return vx;
-}
-
-double NcVector::y() const
-{
-	return vy;
-}
-
-double NcVector::z() const
-{
-	return vz;
-}

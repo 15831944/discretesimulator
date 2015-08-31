@@ -311,11 +311,11 @@ STATUS	NcDisplay::compressArray(double target[][2], int &n)
 	NcVector v1, v2, v3;
 	for(int i = 0; i < (n-2); i++)
 	{
-		v1 = NcVector::get_v(target[i]);
-		v2 = NcVector::get_v(target[i+1]);
-		v3 = NcVector::get_v(target[i+2]);
+		v1 = get_v(target[i]);
+		v2 = get_v(target[i+1]);
+		v3 = get_v(target[i+2]);
 		
-		double area = NcVector::get_area(v1, v2, v3);
+		double area = get_area(v1, v2, v3);
 
 		if(fabs(area) <= TOL)
 		{

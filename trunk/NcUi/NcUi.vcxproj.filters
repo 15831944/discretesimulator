@@ -261,4 +261,9 @@
       <Filter>Resource Files</Filter>
     </CustomBuild>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\images\toolbar_icons\build.png">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

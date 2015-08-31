@@ -50,18 +50,18 @@ STATUS NcStlImport::stl_read_triangulation (triangulation *patch)
 				break;
 			case normalsym:
 				fscanf(source,"%lf %lf %lf",
-					&patch->t[patch->num_triangle].normal.vx,
-					&patch->t[patch->num_triangle].normal.vy,
-					&patch->t[patch->num_triangle].normal.vz);
+					&patch->t[patch->num_triangle].normal.x(),
+					&patch->t[patch->num_triangle].normal.y(),
+					&patch->t[patch->num_triangle].normal.z());
 			case outersym: 
 				break;
 			case loopsym: 
 				break;
 			case vertexsym:
 				fscanf(source,"%lf %lf %lf",
-					&patch->t[patch->num_triangle].v[i].vx,
-					&patch->t[patch->num_triangle].v[i].vy,
-					&patch->t[patch->num_triangle].v[i].vz);
+					&patch->t[patch->num_triangle].v[i].x(),
+					&patch->t[patch->num_triangle].v[i].y(),
+					&patch->t[patch->num_triangle].v[i].z());
 				i++;
 			case endloopsym: 
 				break;
@@ -82,7 +82,7 @@ STATUS NcStlImport::stl_read_triangulation (triangulation *patch)
 	return OK;
 }
 
-STATUS NcStlImport::stl_display_triangulation (triangulation *patch)
+STATUS stl_display_triangulation (triangulation *patch)
 {
 	int i,j;
 	glBegin(GL_TRIANGLES);

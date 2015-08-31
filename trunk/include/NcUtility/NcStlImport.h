@@ -1,7 +1,7 @@
 #ifndef NC_STLIMPORT
 #define NC_STLIMPORT
 
-#include "NcUtility\NcUtilityGlobal.h"
+#include "NcUtility\NcExportImport.h"
 #include "NcUtility\NcGlobalDefinitions.h"
 
 /* Program for triangulation */
@@ -24,14 +24,19 @@ namespace DiscreteSimulator
 	NcStlImport();
 	/*virtual				~NcStlImport();*/
 	STATUS				stl_read_triangulation (triangulation *);
-	STATUS				stl_display_triangulation (triangulation *);
-	STATUS				stl_main(char *filename,triangulation* patch);
-	int					importLatheTools();
+	
+	
+	
 	GLuint				getDLIdForTurningTool() {return tool_list;}
 	GLuint				getDLIdForDrillingTool() {return drill_tool_list;}
 	GLuint				getDLIdForPartingTool() {return parting_tool_list;}
 	GLuint				getDLIdForThreadingTool() {return threading_tool_list;}
+	
+	int					importLatheTools();
+
 private:
+	STATUS				stl_main(char *filename,triangulation* patch);
+	
 	NcParser*			parser;
 	
 	FILE*				source;
@@ -46,6 +51,8 @@ private:
 	GLuint			chuck_list;
 	
 	};
+	
+	
 	
 }
 

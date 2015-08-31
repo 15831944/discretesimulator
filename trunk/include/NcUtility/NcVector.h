@@ -1,7 +1,7 @@
 #ifndef NC_VECTOR
 #define NC_VECTOR
 
-#include "NcUtility\NcUtilityGlobal.h"
+#include "NcUtility\NcExportImport.h"
 
 
 class NCUTILITYEXPORT NcVector
@@ -12,9 +12,13 @@ public:
 	NcVector(double x, double y, double z) {vx = x; vy = y; vz = z; }
 
 	/*~NcVector();*/
-	inline double x() const;
-	inline double y() const;
-	inline double z() const;
+	/*inline double x() const{return vx;}
+	inline double y() const{return vy;}
+	inline double z() const{return vz;}*/
+
+	inline const double& x() const{return vx;}
+	inline const double& y() const{return vy;}
+	inline const double& z() const{return vz;}
 
 	inline const NcVector operator - (const NcVector &rhs) const;		//vector subtraction
 	inline const NcVector operator + (const NcVector &rhs) const;		//vector addition
@@ -23,14 +27,18 @@ public:
 	inline const NcVector operator * (double rhs) const;				//scalar product
     inline double length() const;										//length of the vector
 	inline double normalize();											//convert this vector to unit vector
-    static NcVector get_v(double []);
-	static double get_area(NcVector v0, NcVector v1, NcVector v2);
 
 
+private:
 	double vx;
 	double vy;
 	double vz;
 
+	
+
 };
 
+
+NCUTILITYEXPORT NcVector get_v(double []);
+NCUTILITYEXPORT double get_area(NcVector v0, NcVector v1, NcVector v2);
 #endif

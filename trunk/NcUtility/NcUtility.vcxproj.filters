@@ -25,9 +25,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\NcUtility\NcLogger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\NcUtility\NcParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,19 +39,16 @@
     <ClInclude Include="..\include\NcUtility\NcGlobalDefinitions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\NcUtility\NCLogger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\NcUtility\NcParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\NcUtility\NcStlImport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\NcUtility\NcUtilityGlobal.h">
+    <ClInclude Include="..\include\NcUtility\NcVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\NcUtility\NcVector.h">
+    <ClInclude Include="..\include\NcUtility\NcExportImport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
