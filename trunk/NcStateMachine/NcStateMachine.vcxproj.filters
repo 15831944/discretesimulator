@@ -106,9 +106,6 @@
     <ClCompile Include="..\src\NcStateMachine\NcStartupStockDisplay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\NcStateMachine\NcToolController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\NcStateMachine\S.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -184,9 +181,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_NcEndOfCutFeedRateMove.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_NcToolController.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_S.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
@@ -236,9 +230,6 @@
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_NcEndOfCutFeedRateMove.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_NcToolController.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_S.cpp">
@@ -304,6 +295,21 @@
     <ClCompile Include="GeneratedFiles\Template\moc_G91.cpp">
       <Filter>Generated Files\Template</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_NcToolController.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_NcToolController.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Template\moc_NcToolController.cpp">
+      <Filter>Generated Files\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\NcStateMachine\NcToolController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\NcStateMachine\NcToolImporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\NcStateMachine\cleanupNcMachineInstance.h">
@@ -349,6 +355,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\NcStateMachine\T08.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\NcStateMachine\NcToolImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -401,9 +410,6 @@
     <CustomBuild Include="..\include\NcStateMachine\NcEndOfCutFeedRateMove.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\include\NcStateMachine\NcToolController.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\include\NcStateMachine\S.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -420,6 +426,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\include\NcStateMachine\G91.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\include\NcStateMachine\NcToolController.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

@@ -194,7 +194,7 @@ double DiscreteSimulator::cal_angle(double x, double y)
 		theta = 0;
 	else
 	{
-		theta = std::atan(y / x) * 180 / M_PI;
+		theta = std::atan(y / x) * 180 / NC_PI;
 		if(x > 0 && theta >= 0.0)
 			theta = theta;
 		if(x > 0 && theta <= 0.0)

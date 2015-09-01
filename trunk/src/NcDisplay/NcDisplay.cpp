@@ -245,9 +245,9 @@ STATUS	NcDisplay::createSurfaceOfRotation(int t)
 {
 	int i, j, k;
 	int no = 0; 
-	double dtheta =(double)(2.0 * M_PI / MAX);
+	double dtheta =(double)(2.0 * NC_PI / MAX);
 	
-	for(double rotation_theta = 0; rotation_theta <= (2.0 * M_PI); rotation_theta = rotation_theta + dtheta)
+	for(double rotation_theta = 0; rotation_theta <= (2.0 * NC_PI); rotation_theta = rotation_theta + dtheta)
 	{
 		double R[][3]=
 		{
@@ -902,6 +902,7 @@ STATUS	NcDisplay::normalvector(int t)
 }
 
 
+
 /***Pranit*******/
 
 //This function assigns the material to the stock
@@ -942,6 +943,9 @@ void	NcDisplay::UpdateProfileColor(Profile *target,QString colorname)
 
 }
 */
+
+
+
 
 
 

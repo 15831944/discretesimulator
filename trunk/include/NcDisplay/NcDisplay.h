@@ -6,7 +6,12 @@
 #include <QtOpenGl>
 
 namespace DiscreteSimulator
-{
+{//sda
+
+	typedef enum _CUT{	NO_VERTICAL_CUT,
+								ALLOW_VERTICAL_CUT
+							 }CUT;
+ //*****//
 	class NcCode;
 	class Profile;
 
@@ -63,12 +68,14 @@ namespace DiscreteSimulator
 		void			addDLIndexesToList(NcCode *code);
 		void			addProfilesToList(NcCode *code);
 
+	
+
   public:
 		/****Pranit***/
 		bool			setUserDefinedStockValues(double stockRadius,double stockLength );
 		bool			getUserDefinedStockFlag(){return mUserDefinedStock; }
 		void			setUserDefinedStockFlag(bool status ){ mUserDefinedStock = status; } // this function is added to check if user has defined stock dimentions
-	
+		
 	private:
 		void			updateStockBoundingBox();
 		void			displayProfile(Profile *target);
@@ -85,6 +92,10 @@ namespace DiscreteSimulator
 		SimulationState			mSimulationState;
 		int						mLastMachiningOpIndex;
 		GLuint					mStartupDLForStock;
+
+		
+		
+
 	protected:
 		NcDisplay();									
 		NcDisplay(const NcDisplay &){}									
@@ -93,8 +104,11 @@ namespace DiscreteSimulator
 		/****Pranit***/
 	public:
 			bool			mUserDefinedStock;
-
+			
 	};
+	
+	
+	
 }
 
 #endif

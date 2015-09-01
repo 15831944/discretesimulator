@@ -3,12 +3,13 @@
 
 #include "NcStateMachine\NcStateMachineGlobal.h"
 #include "NcUtility\NcGlobalDefinitions.h"
+
 #include <QObject>
 
 
 namespace DiscreteSimulator
 {
-	class NcStlImport;
+	class NcToolImporter;
 
 	class NCSTATEMACHINEEXPORT NcToolController : public QObject
 	{
@@ -68,7 +69,7 @@ namespace DiscreteSimulator
 
 	private:
 		static NcToolController		*mToolControllerInstance;
-		NcStlImport					*stlToolImporter;
+		NcToolImporter					*ToolImporter;
 		CODE_Type					mCurrentToolType;
 		bool						mToolsLoaded;
 	};

@@ -81,7 +81,7 @@ STATUS	G03::generateDisplayList()
 
 	dtheta = (end_angle - st_angle) / (double)(MAX_ANG_SUBDIV - 1);
 
-	double arclengthcut = ((end_angle - st_angle) * (M_PI / 180.0)) * r;
+	double arclengthcut = ((end_angle - st_angle) * (NC_PI / 180.0)) * r;
 	double feed = F ;
 	double sspeed = mSpindleSpeed;
 	mCodeExecutionTime =  ( arclengthcut / (F * mSpindleSpeed) ) * 60;
@@ -99,8 +99,8 @@ STATUS	G03::generateDisplayList()
 	for(int i = 0; i < MAX_ANG_SUBDIV; theta = theta + dtheta, i++)
 	{
 		float x, y;
-		x = cx + r * cos(theta * M_PI / 180.0);
-		y = cy + r * sin(theta * M_PI / 180.0);
+		x = cx + r * cos(theta * NC_PI / 180.0);
+		y = cy + r * sin(theta * NC_PI / 180.0);
 		arc_pts[i][0] = x;
 		arc_pts[i][1] = y;
 		profile->P[i][0] = x;

@@ -659,7 +659,7 @@ double NcPolygonBoolean::polarAngle(vector2d p)
 		return((p.v[1]>0.0)?90:270);
 	double theta = atan(p.v[1]/p.v[0]);	//in radians
 	
-	theta *=360.0/(2.0 * M_PI);		//convert to degrees	
+	theta *=360.0/(2.0 * NC_PI);		//convert to degrees	
 	if(p.v[0]>0.0)			//quadrants 1 and 4
 		return((p.v[1]>=0.0)? theta : 360 + theta);
 	else			// quadrants 2 and 3

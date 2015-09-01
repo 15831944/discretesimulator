@@ -65,9 +65,7 @@ namespace DiscreteSimulator
 								   OK,
 								 }STATUS;
 
-			typedef enum _CUT{	NO_VERTICAL_CUT,
-								ALLOW_VERTICAL_CUT
-							 }CUT;
+			
 
 			typedef enum  _INT_STATUS{	I_FAIL,
 								I_OK,
@@ -85,6 +83,7 @@ namespace DiscreteSimulator
 
 			const int	MAX_STL_TRI 	=	15000;
 
+
 			typedef struct _triangle
 			{
 					int id;
@@ -97,7 +96,7 @@ namespace DiscreteSimulator
 					int num_triangle;
 					triangle t[MAX_STL_TRI];
 			}triangulation;
-
+			
                                                            
 
 
@@ -108,7 +107,7 @@ namespace DiscreteSimulator
 			const int		MAX_LINEAR_SUBDIV  	=	11;
 			const int		ARRAY_MAX			=	10000;
 			const double	PARA_TOL			=	0.000001;
-			const double	M_PI				=	3.14159265358979323846;
+			const double	NC_PI				=	3.14159265358979323846;
 			const int		MAX					=	360;
 			const int		MAX_ANG_SUBDIV		=	15;
 			const int		MAX_ID				=	100;

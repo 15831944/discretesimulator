@@ -25,15 +25,17 @@ public:
     inline double operator * (const NcVector &rhs) const;				//vector dot product
 	inline const NcVector operator ^ (const NcVector& rhs) const;		//vector cross product
 	inline const NcVector operator * (double rhs) const;				//scalar product
-    inline double length() const;										//length of the vector
-	inline double normalize();											//convert this vector to unit vector
+	inline double length() const;										//length of the vector
+    
+	
 
 
 private:
 	double vx;
 	double vy;
 	double vz;
-
+	inline double normalize();		//convert this vector to unit vector
+	
 	
 
 };

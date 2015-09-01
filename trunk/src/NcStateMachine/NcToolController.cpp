@@ -1,6 +1,6 @@
 #include "NcStateMachine\NcToolController.h"
 #include "NcStateMachine\NcMachine.h"
-#include "NcUtility\NcStlImport.h"
+#include "NcStateMachine\NcToolImporter.h"
 
 #include <gl\GLU.h>
 
@@ -19,7 +19,7 @@ NcToolController::NcToolController()
 	mToolStartYPos = 0;
 	mToolStartZPos = NcMachine::NcMachineInstance()->mToolChangeZPos;
 	
-	stlToolImporter = new NcStlImport();
+	 ToolImporter = new NcToolImporter();
 
 	mToolsLoaded = false;
 	//connect(this,SIGNAL(updateNCCoolantStatus(bool)),NcStatusWindow::StatusWindowInstance(),SLOT(updateNCCoolantStatus()));
@@ -84,17 +84,17 @@ void NcToolController::display_toolholder(double X, double Y, double Z)
 			glRotated(90,0,1,0);
 			glRotated(90,0,0,1);
 			glScaled(0.5,0.5,0.5);
-			glCallList(stlToolImporter->getDLIdForTurningTool());
+			glCallList(ToolImporter->getDLIdForTurningTool());
 			break;
 		}
 	case CT02:
 		{
-			glCallList(stlToolImporter->getDLIdForDrillingTool());
+			glCallList(ToolImporter->getDLIdForDrillingTool());
 			break;
 		}
 	case CT04:
 		{
-			glCallList(stlToolImporter->getDLIdForThreadingTool());
+			glCallList(ToolImporter->getDLIdForThreadingTool());
 			break;
 		}
 	case CT03:
@@ -103,7 +103,7 @@ void NcToolController::display_toolholder(double X, double Y, double Z)
 			glRotated(90,0,0,1);
 			glRotated(90,0,1,0);
 			glScaled(0.5,0.5,0.5);
-			glCallList(stlToolImporter->getDLIdForPartingTool());
+			glCallList(ToolImporter->getDLIdForPartingTool());
 			break;
 		}
 	default:
@@ -164,7 +164,7 @@ void NcToolController::changeTool(CODE_Type tooltype)
 {
 	if(mToolsLoaded == false)
 	{
-		stlToolImporter->importLatheTools();
+		ToolImporter->importLatheTools();
 		mToolsLoaded = true;
 	}
 
