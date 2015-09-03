@@ -4,9 +4,14 @@
 
 #include "NcGeomKernel\NcGeomKernelGlobal.h"
 #include "NcUtility\NcGlobalDefinitions.h"
+//#include "NcUtility\NcVector.h"
 
+
+
+#include <vector>
 #include <QList>
 #include <QtOpenGL>
+
 namespace DiscreteSimulator
 {
 	
@@ -14,9 +19,6 @@ namespace DiscreteSimulator
 	{
 	public:
 		Profile();
-		~Profile();
-		void allocate();
-		void free_allocate();
 	     
 		int				no_pts;
 		CODE_Type		type;
@@ -25,13 +27,22 @@ namespace DiscreteSimulator
 		bool			coolant2;
 		SpindleStatus	spindle;
 		double			feed;
-		double			**P;
+		
+		STATUS			normalvector();	
+		/*double			**P;
 		double			***S;
-		double			***unitnormal;
-
+		double			***unitnormal;*/
+		std::vector <NcVector> P;
+		std::vector < std::vector<NcVector > > S;
+		std::vector < std::vector<NcVector> > unitnormal;
 		QList<GLuint>	*mAssocitedDBDLIndexes;
 		QList<GLuint>	*mAssociated2DDLIndexes;
 		int				mNoOfDBDL;
+
+	private:
+		
+		
+		
 	};
 }
 

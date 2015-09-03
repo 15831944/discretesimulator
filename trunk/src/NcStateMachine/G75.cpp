@@ -171,7 +171,7 @@ void G75::generateCuttingPass()
 	double pass = (mStartX - mCutEndXValue) /(double)(num_pass);
 
 	profile->no_pts = num_pass * 2;
-	profile->allocate();
+	//profile->allocate();
 	
 	double init_pass = pass;	
 

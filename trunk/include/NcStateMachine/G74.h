@@ -2,6 +2,8 @@
 #define CODE_G74
 
 #include "NcStateMachine\NcCode.h"
+#include"NcUtility\NcVector.h"
+#include<vector>
 
 namespace DiscreteSimulator
 {
@@ -17,7 +19,7 @@ namespace DiscreteSimulator
 		inline double	getK();
 		STATUS			generateDisplayList();
 		bool			executeCode(SimulationState simstate, NcCode *code = 0);
-		void			initializePath();
+		/*void			initializePath();*/
 		void			generateToolPathsForThecode();
 		void			generateCuttingPass();
 		void			generateApproachPath();
@@ -38,7 +40,8 @@ namespace DiscreteSimulator
 		double			mCutEndZValue;
 		double			dia;
 		int				ptindex;
-		double			**P;
+		std::vector<NcVector> P;
+		//double			**P;
 		int				noOfKDepthCuts;
 		double			remainderDepthToCut;
 		double			totaldepthfortool;

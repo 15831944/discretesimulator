@@ -82,3 +82,9 @@ NcVector/* NcVector::*/get_v(double a[])
 	return NcVector(a[0], a[1], 0.0);
 }
 
+double& NcVector::operator [](const int index)
+{
+	if(index == 0) return vx;
+	else if(index == 1) return vy;
+	else if(index == 2) return vz;
+}

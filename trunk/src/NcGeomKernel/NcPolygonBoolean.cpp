@@ -30,12 +30,15 @@ namespace DiscreteSimulator
 
 	};
 
+	/*STATUS	isSame(const vector2d& v1, const vector2d& v2) const;
+	double	signedAngle(const vector2d& a, const line& l) const;*/
+
 }
 
 using namespace DiscreteSimulator;
 
 
-vector2d midPoint(line l)
+vector2d midPoint(line& l)
 {	
 	vector2d m;
 	m.v[0] = (l.start_pt->v[0] + l.end_pt->v[0]) / 2.0;
@@ -342,7 +345,7 @@ INT_STATUS NcPolygonBoolean::intersect_line(line *p, line *q, double t[2])
 
 
 
-STATUS NcPolygonBoolean::isSame(vector2d v1, vector2d v2)
+STATUS isSame(const vector2d& v1, const vector2d& v2)
 {
 	if((fabs(v1.v[0] - v2.v[0]) < TOL && fabs(v1.v[1] - v2.v[1]) <TOL))	
 		return OK;
@@ -651,7 +654,7 @@ STATUS NcPolygonBoolean::polgon_boolean(polygon &target, polygon tool)
 }
 
 
-double NcPolygonBoolean::polarAngle(vector2d p)
+double polarAngle(vector2d p)
 {
 	if((p.v[0]==0.0) &&(p.v[1]==0.0))
 		return -1.0;
@@ -668,7 +671,7 @@ double NcPolygonBoolean::polarAngle(vector2d p)
 
 
 
-double NcPolygonBoolean::signedAngle(vector2d a, line l)
+double signedAngle(const vector2d& a, const line& l)
 {
 	vector2d u,w;
 	u.v[0] = l.start_pt->v[0] - a.v[0];
@@ -697,7 +700,7 @@ double NcPolygonBoolean::signedAngle(vector2d a, line l)
 
 
 
-int NcPolygonBoolean::pointInPolygon(polygon target,vector2d p)
+int NcPolygonBoolean::pointInPolygon(polygon& target, vector2d& p)
 {
 	double total=0.0;
 	for(target.edge = target.start; target.edge != NULL; target.edge = target.edge->next)

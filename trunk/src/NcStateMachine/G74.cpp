@@ -91,7 +91,7 @@ void G74::generateToolPathsForThecode()
 	int sec = min % 60;
 	mSeconds = sec;
 
-	initializePath();
+	//initializePath();
 	generateCuttingPass();					//generate first depth of cut
 	generateReturnPath(this);				//first return path
 	
@@ -120,7 +120,7 @@ void G74::generateToolPathsForThecode()
 		newcode->toolType = CT02;
 		newcode->mAssociatedCodeBlock = mAssociatedCodeBlock;
 		newcode->initializeParameters();
-		newcode->initializePath();
+		//newcode->initializePath();
 		
 		
 		newcode->generateCuttingPass();
@@ -155,7 +155,7 @@ void G74::generateToolPathsForThecode()
 		newcode->toolType = CT02;
 		newcode->mAssociatedCodeBlock = mAssociatedCodeBlock;
 		newcode->initializeParameters();
-		newcode->initializePath();
+		//newcode->initializePath();
 		
 		generateCuttingPass();
 		generateReturnPath(newcode);
@@ -164,15 +164,15 @@ void G74::generateToolPathsForThecode()
 }
 
 
-void G74::initializePath()
-{
-	P = new double* [2];
-
-    for(int i = 0; i < 2; i++)
-	{
-    	P[i] = new double [3];
-    }
-}
+//void G74::initializePath()
+//{
+//	P = new double* [2];
+//
+//    for(int i = 0; i < 2; i++)
+//	{
+//    	P[i] = new double [3];
+//    }
+//}
 
 
 STATUS	G74::generateDisplayList()
@@ -183,7 +183,7 @@ STATUS	G74::generateDisplayList()
 	mPartProfileList->push_back(profile);
 
 	profile->no_pts = 2;
-	profile->P = P;
+	profile->P = P; 
 
 	GLuint newlistindex = glGenLists(1);
 	profile->mAssociated2DDLIndexes->push_back(newlistindex);

@@ -6,16 +6,16 @@
 #include "NcUtility\NcVector.h"
 #include "NcUtility\NcStlImport.h"
 #include "NcStateMachine\NcCode.h"
-#include "NcStateMachine\G00.h"
-#include "NcStateMachine\G01.h"
-#include "NcStateMachine\G02.h"
-#include "NcStateMachine\G03.h"
-#include "NcStateMachine\G90.h"
-#include "NcStateMachine\G74.h"
-#include "NcStateMachine\G75.h"
-#include "NcStateMachine\NcEndOfCutFeedRateMove.h"
-#include "NcStateMachine\NcAuxRapidMove.h"
-#include "NcStateMachine\NcCodeBlock.h"
+//#include "NcStateMachine\G00.h"
+//#include "NcStateMachine\G01.h"
+//#include "NcStateMachine\G02.h"
+//#include "NcStateMachine\G03.h"
+//#include "NcStateMachine\G90.h"
+//#include "NcStateMachine\G74.h"
+////#include "NcStateMachine\G75.h"
+//#include "NcStateMachine\NcEndOfCutFeedRateMove.h"
+//#include "NcStateMachine\NcAuxRapidMove.h"
+//#include "NcStateMachine\NcCodeBlock.h"
 #include <NcDisplay\NcDisplay.h>
 #include <iostream>
 #include <QMessageBox>
@@ -58,7 +58,7 @@ NcDisplay::NcDisplay() : stock(0)
 		stock = new Profile;
 	}
 	else 
-		stock->free_allocate();
+		//stock->free_allocate();
 
 	mStockBoundingBox.zmin	= -5.0;
 	mStockBoundingBox.xmin	= 0.0001;
@@ -210,7 +210,7 @@ void	NcDisplay::updateStockBoundingBox()
 STATUS	NcDisplay::displayStockProfile()
 {
 	stock->no_pts = 5;
-	stock->allocate();
+	//stock->allocate();
 	stock->P[0][0] = mStockBoundingBox.zmin;		
 	stock->P[0][1] = mStockBoundingBox.xmin;	
 	stock->P[0][2] = 0;
@@ -236,12 +236,12 @@ STATUS	NcDisplay::displayStockProfile()
 
 STATUS	NcDisplay::createPart()
 {
-	createSurfaceOfRotation(0);
-	normalvector(0);
+	createSurfaceOfRotation();
+	stock->normalvector();
 	return OK;
 }
 
-STATUS	NcDisplay::createSurfaceOfRotation(int t)
+STATUS	NcDisplay::createSurfaceOfRotation()
 {
 	int i, j, k;
 	int no = 0; 
@@ -358,15 +358,15 @@ STATUS	NcDisplay::createDeformedBody(Profile* target, double **tool, CUT cut)
 	}
 
 	NcPolygonBoolean polyboolean;
-	polyboolean.boolean_main(target->P, target->no_pts, tool, 5, modi_target, iTargetPoints);
+	//polyboolean.boolean_main(target->P, target->no_pts, tool, 5, modi_target, iTargetPoints); /*~TODO*/
 
 	compressArray(modi_target, iTargetPoints);		
 
 	if(target->no_pts != iTargetPoints)
 	{
-		target->free_allocate();
+		//target->free_allocate();
 		target->no_pts = iTargetPoints;
-		target->allocate();
+		//target->allocate();
 	}
 	for(int i=0; i < target->no_pts; i++)
 	{
@@ -446,7 +446,7 @@ void	NcDisplay::generateDisplayLists()
 		{
 			for(int j = 0; j < mPartProfileList.at(i)->no_pts - 1; j += 2)
 			{
-				load_Drilling_Tool(tool, mPartProfileList.at(i)->P[j], mPartProfileList.at(i)->P[j+1], P);
+				//load_Drilling_Tool(tool, mPartProfileList.at(i)->P[j], mPartProfileList.at(i)->P[j+1]); /*~TODO*/
 				
 				GLuint dlId = glGenLists(1);
 
@@ -468,7 +468,7 @@ void	NcDisplay::generateDisplayLists()
 
 			for(int j = 0; j < mPartProfileList.at(i)->no_pts - 1; j++)
 			{
-				/*load_CG00_Tool(tool, P, i, j);*/
+				load_CG00_Tool(tool);
 				
 				GLuint dlId = glGenLists(1);
 				
@@ -523,7 +523,7 @@ void	NcDisplay::generateDisplayLists()
 
 			for(int j = 0; j < mPartProfileList.at(i)->no_pts - 2; j+=2)
 			{
-				load_Parting_Tool(tool, P, i, j);
+				load_Parting_Tool(tool,  i, j);
 				
 				GLuint dlId = glGenLists(1);
 				
@@ -556,7 +556,7 @@ void	NcDisplay::generateDisplayLists()
 
 			for(int j = 0; j < mPartProfileList.at(i)->no_pts - 1; j++)
 			{
-				load_Facing_Tool(tool, P, i, j);
+				load_Facing_Tool(tool, i, j);
 				
 				GLuint dlId = glGenLists(1);
 				
@@ -614,7 +614,7 @@ void	NcDisplay::generateDisplayLists()
 	}
 }
 
-STATUS	NcDisplay::load_Facing_Tool(double **tool, double *P, int i, int j)
+STATUS	NcDisplay::load_Facing_Tool(double **tool, int i, int j)
 {
 
 	//cout << "profile co-ords" << mPartProfileList.at(i)->P[j+1][0] << " " << mPartProfileList.at(i)->P[j+1][1]
@@ -642,7 +642,7 @@ STATUS	NcDisplay::load_Facing_Tool(double **tool, double *P, int i, int j)
 }
 
 
-STATUS	NcDisplay::load_CG00_Tool(double **tool, double *P, int i, int j)
+STATUS	NcDisplay::load_CG00_Tool(double **tool)
 {
 	tool[0][0] = 0.0;
 	tool[0][1] = 0.0;
@@ -770,7 +770,7 @@ STATUS	NcDisplay::load_Cutting_Tool(double **tool, double *P, int i, int j)
 }
 
 
-STATUS	NcDisplay::load_Parting_Tool(double **tool, double *P, int i, int j)
+STATUS	NcDisplay::load_Parting_Tool(double **tool, int i, int j)
 {	
 	Profile *prof = mPartProfileList.at(i);
 
@@ -800,26 +800,26 @@ STATUS	NcDisplay::load_Parting_Tool(double **tool, double *P, int i, int j)
 }
 
 
-STATUS	NcDisplay::load_Drilling_Tool(double **tool, double *P1, double *P2, double *P)
-{
-	tool[0][0] = P2[0];
-	tool[0][1] = P2[1];
-	tool[1][0] = P1[0];
-	tool[1][1] = P1[1];
-	tool[2][0] = P1[0] + 50;
-	tool[2][1] = tool[1][1];
-	tool[3][0] = P2[0] + 50;
-	tool[3][1] = tool[0][1];
-	tool[4][0] = tool[0][0];
-	tool[4][1] = tool[0][1];
-
-	/*std::cout << tool[0][0] << " " << tool[0][1] << endl;
-	std::cout << tool[1][0] << " " << tool[1][1] << endl;
-	std::cout << tool[2][0] << " " << tool[2][1] << endl;
-	std::cout << tool[3][0] << " " << tool[3][1] << endl;
-	std::cout << tool[4][0] << " " << tool[4][1] << endl;*/
-	return OK;
-}
+//STATUS	NcDisplay::load_Drilling_Tool(double **tool, const NcVector& P1, const NcVector& P2)
+//{
+//	tool[0][0] = P2[0];
+//	tool[0][1] = P2[1];
+//	tool[1][0] = P1[0];
+//	tool[1][1] = P1[1];
+//	tool[2][0] = P1[0] + 50;
+//	tool[2][1] = tool[1][1];
+//	tool[3][0] = P2[0] + 50;
+//	tool[3][1] = tool[0][1];
+//	tool[4][0] = tool[0][0];
+//	tool[4][1] = tool[0][1];
+//
+//	/*std::cout << tool[0][0] << " " << tool[0][1] << endl;
+//	std::cout << tool[1][0] << " " << tool[1][1] << endl;
+//	std::cout << tool[2][0] << " " << tool[2][1] << endl;
+//	std::cout << tool[3][0] << " " << tool[3][1] << endl;
+//	std::cout << tool[4][0] << " " << tool[4][1] << endl;*/
+//	return OK;
+//}/*TODO*/
 
 void	NcDisplay::setIndex(int index)
 {
@@ -860,46 +860,7 @@ void	NcDisplay::material_stock()
 }
 
 
-STATUS	NcDisplay::normalvector(int t)
-{
-	double v1[3], v2[3];
-	double length;
-	int i, k;
-	for(int j = 0; j < MAX; j++)
-	{
-		for(k = 0; k < stock->no_pts - 1; k++)
-		{
-			for(i = 0; i < 3; i++)
-			{
-				v1[i] = stock->S[j][k+1][i] - stock->S[j][k][i];
 
-				if(j+1 == MAX)
-				{
-					v2[i] = stock->S[0][k][i] - stock->S[j][k][i];
-				}
-				else
-				{
-					v2[i] = stock->S[j+1][k][i] - stock->S[j][k][i];
-				}
-			}
-
-			stock->unitnormal[j][k][0] = v1[1] * v2[2] - v1[2] * v2[1];
-			stock->unitnormal[j][k][1] = v1[2] * v2[0] - v1[0] * v2[2];
-			stock->unitnormal[j][k][2] = v1[0] * v2[1] - v1[1] * v2[0];
-
-			length = sqrt(stock->unitnormal[j][k][0] * stock->unitnormal[j][k][0]
-							+ stock->unitnormal[j][k][1] * stock->unitnormal[j][k][1]
-							+ stock->unitnormal[j][k][2] * stock->unitnormal[j][k][2]);
-			if(length==0.0)
-				length=1.0;
-
-			stock->unitnormal[j][k][0] = stock->unitnormal[j][k][0] / length;
-			stock->unitnormal[j][k][1] = stock->unitnormal[j][k][1] / length;
-			stock->unitnormal[j][k][2] = stock->unitnormal[j][k][2] / length;
-		}
-	}
-	return OK;
-}
 
 
 

@@ -49,18 +49,18 @@ namespace DiscreteSimulator
 
 	private:
 		STATUS			createPart();
-		STATUS			createSurfaceOfRotation(int t);
+		STATUS			createSurfaceOfRotation();
 		STATUS			createDeformedBody(Profile* target, double **tool, CUT cut = NO_VERTICAL_CUT);
 		STATUS			createDeformedBody(Profile* target);
 		STATUS			compressArray(double target[][2], int &n);
 		
 		STATUS			load_Cutting_Tool(double **tool, double *P, int i, int j);
-		STATUS			load_Drilling_Tool(double **tool, double *P1, double *P2, double *P);
-		STATUS			load_Parting_Tool(double **tool, double *P, int i, int j);
-		STATUS			load_CG00_Tool(double **tool, double *P, int i, int j);
-		STATUS			load_Facing_Tool(double **tool, double *P, int i, int j);
+		STATUS			load_Drilling_Tool(double **tool, const NcVector& P1, const NcVector&  P2);
+		STATUS			load_Parting_Tool(double **tool, int i, int j);
+		STATUS			load_CG00_Tool(double **tool);
+		STATUS			load_Facing_Tool(double **tool, int i, int j);
 
-		STATUS			normalvector(int t);	
+		
 
 		int				spinDisplay(bool gstepmode, int goNextOperation, int& deformed_ds_count, int& DISPLAY_count);
 		void			material_stock();

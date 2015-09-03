@@ -9,6 +9,7 @@
 #include "NcDisplay\NcDisplay.h"
 #include "NcGeomKernel\NcProfile.h"
 
+
 using namespace std;
 using namespace DiscreteSimulator;
 

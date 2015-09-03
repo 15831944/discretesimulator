@@ -13,9 +13,8 @@ namespace DiscreteSimulator
 	class line;
 	class vector2d
 	{
-
-	public:
-		double v[2];
+		public:
+			double v[2];
 
 	};
 
@@ -36,13 +35,14 @@ namespace DiscreteSimulator
 		STATUS	polgon_boolean(polygon &, polygon );
 		STATUS	find_tool_edge_tobeadded(polygon tool, polygon target, vector2d v1, vector2d v2, line *tobe_added[100], int &);
 		STATUS	display_polygon(polygon, polygon, FILE *);
-		int		pointInPolygon(polygon, vector2d );
-		double	polarAngle(vector2d p);
+		int		pointInPolygon( polygon&, vector2d& );
+		
 		int		add_vertex(polygon &target, vector2d v);
 		int		add_vertex(polygon &target, line edge, double t);
-		STATUS	isSame(vector2d v1, vector2d v2);
-		double	signedAngle(vector2d a, line l);
+		
 	};
+
+
 }
 
 #endif

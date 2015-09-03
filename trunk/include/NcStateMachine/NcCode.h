@@ -68,7 +68,7 @@ namespace DiscreteSimulator
 		virtual bool				isAuxillaryPath();
 
 		virtual void				generateToolPathsForThecode(){} //added to enable call in G74
-		virtual void				initializePath(){}
+		/*virtual void				initializePath(){}*/
 		
 		virtual void				generateCuttingPass(){}
 		virtual void				generateApproachPath(){}

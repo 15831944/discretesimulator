@@ -22,7 +22,7 @@ namespace DiscreteSimulator
 		inline double	getK();
 		STATUS			generateDisplayList();
 		bool			executeCode(SimulationState simstate, NcCode *code = 0);
-		void			initializePath();
+		/*void			initializePath();*/
 		void			generateToolPathsForThecode();
 		void			generateCuttingPass();
 		void			generateApproachPath();
@@ -37,7 +37,8 @@ namespace DiscreteSimulator
 		double			mCutStartXValue;
 		double			mCutEndXValue;
 		double			equalDepthCuts;
-		double			**P;
+		std::vector<NcVector> P;
+	/*	double			**P;*/
 		int				noOfIDepthCuts;
 		double			remainderDepthToCut;
 		double			totaldepthfortool;

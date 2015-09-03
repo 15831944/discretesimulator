@@ -20,8 +20,8 @@ G76::G76()
 		    NcToolController::getToolControllerInstance(), SLOT(updateCycleTime(int, int, int)));
 }
 
-void	G76::initializePath()
-{}//no code written
+/*void	G76::initializePath()
+{}*///no code written
 
 void G76::setK(double k)
 {
@@ -169,7 +169,7 @@ void	G76::generateCuttingPass()
 	int max_threads = (int)fabs((Z - mStartZ) / F);
 	
 	profile->no_pts = 3 + (max_threads * 2 + 1);
-	profile->allocate();
+	//profile->allocate();
 
 	profile->P[0][0] = mStartZ;
 	profile->P[0][1] = mStartX;

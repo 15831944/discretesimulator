@@ -46,7 +46,7 @@ STATUS	G00::generateDisplayList()
 
 	int n = MAX_LINEAR_SUBDIV;
 	profile->no_pts = n;
-	profile->allocate();
+	//profile->allocate();
 
 	profile->P[0][0] = mStartZ;
 	profile->P[0][1] = mStartX;
