@@ -1,7 +1,9 @@
 #include <cassert>
 #include <math.h>
+#include <vector>
 #include "NcUtility\NcGlobalDefinitions.h"
 #include "NcGeomKernel\NcPolygonBoolean.h"
+
 
 
 namespace DiscreteSimulator
@@ -67,8 +69,8 @@ line* new_edge(vector2d *v1, vector2d *v2)
 //{}
 
 
-
-STATUS NcPolygonBoolean::construct_polygon(polygon &poly, double **dInputPoly, int iPoint)
+template <class T>
+STATUS NcPolygonBoolean::construct_polygon(polygon &poly, std::vector<T>dInputPoly, int iPoint)
 {
 	int i;
 	poly.num_vertex = iPoint;
@@ -117,8 +119,8 @@ STATUS NcPolygonBoolean::construct_polygon(polygon &poly, double **dInputPoly, i
 }
 
 
-STATUS NcPolygonBoolean::boolean_main(double **dTargetPoly, int iTargetPoints,
-									  double **dToolPoly, int iToolPoints,
+STATUS NcPolygonBoolean::boolean_main(std::vector<NcVector> dTargetPoly, int iTargetPoints,
+									  std::vector<vector2d> dToolPoly, int iToolPoints,
                                       double dModiTargetPoly[][2], int &iMoadiTargetPoints)
 {
 	polygon target, tool;
@@ -779,4 +781,18 @@ STATUS NcPolygonBoolean::find_tool_edge_tobeadded(polygon tool, polygon target, 
 		}
 	}
 	return FAIL;
+}
+double& vector2d::operator [](const int index)
+{
+	if(index == 0) return v[0];
+	else if(index == 1) return v[1];
+	
+}
+
+const double& vector2d::operator[](const int index) const
+{
+	return (*this)[index];
+	/*if(index == 0) return vx;
+	else if(index == 1) return vy;
+	else if(index == 2) return vz;*/
 }

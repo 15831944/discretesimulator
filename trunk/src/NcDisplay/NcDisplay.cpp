@@ -44,7 +44,6 @@ NcDisplay	*NcDisplay::mNcDisplayInstance = 0;
 int NcDisplay::dllistcount = -1;
 
 
-
 NcDisplay::NcDisplay() : stock(0)
 {
 	mSimulationState = PAUSED;
@@ -57,7 +56,7 @@ NcDisplay::NcDisplay() : stock(0)
 	{ 
 		stock = new Profile;
 	}
-	else 
+	/*else */
 		//stock->free_allocate();
 
 	mStockBoundingBox.zmin	= -5.0;
@@ -333,7 +332,7 @@ STATUS	NcDisplay::compressArray(double target[][2], int &n)
 }
 
 
-STATUS	NcDisplay::createDeformedBody(Profile* target, double **tool, CUT cut)
+STATUS	NcDisplay::createDeformedBody(Profile* target, std::vector<vector2d> tool, CUT cut)
 {	
 	double modi_target[1000][2];
 	int iTargetPoints;
@@ -358,7 +357,7 @@ STATUS	NcDisplay::createDeformedBody(Profile* target, double **tool, CUT cut)
 	}
 
 	NcPolygonBoolean polyboolean;
-	//polyboolean.boolean_main(target->P, target->no_pts, tool, 5, modi_target, iTargetPoints); /*~TODO*/
+	polyboolean.boolean_main(target->P, target->no_pts, tool, 5, modi_target, iTargetPoints); /*~TODO*/
 
 	compressArray(modi_target, iTargetPoints);		
 
@@ -425,17 +424,15 @@ void	NcDisplay::generateDisplayLists()
 		addProfilesToList(*codeItr);	
 	}
 
-	double P[2] = {0};
-	P[0] = mStockBoundingBox.zmax;
-	P[1] = mStockBoundingBox.xmax;
 	
-	double **tool;
+	std::vector<vector2d> tool(5);
+	/*double **tool;
 	tool = new double* [5];
 	for(int i = 0; i < 5; i++)
 	{
 		tool[i] = new double[2];
 	}
-	
+	*/
 	for(int i = 1; i < mPartProfileList.size(); i++)  //i = 0 for display of initial stock profile
 	{
 		Profile *ppp = mPartProfileList.at(i);
@@ -489,10 +486,14 @@ void	NcDisplay::generateDisplayLists()
 		{	
 			int kk = mPartProfileList.at(i)->no_pts - 1;
 			Profile *pp = mPartProfileList.at(i);
+			
+			double stockbbox[2] = {0};
+			stockbbox[0] = mStockBoundingBox.zmax;
+			stockbbox[1] = mStockBoundingBox.xmax;
 
 			for(int j = 0; j < mPartProfileList.at(i)->no_pts - 1; j++)
 			{
-				load_Cutting_Tool(tool, P, i, j);
+				load_Cutting_Tool(tool, stockbbox, i, j);
 				
 				GLuint dlId = glGenLists(1);
 				
@@ -583,10 +584,13 @@ void	NcDisplay::generateDisplayLists()
 		{	
 			int kk = mPartProfileList.at(i)->no_pts - 1;
 			Profile *pp = mPartProfileList.at(i);
+			double stockbbox[2] = {0};
+			stockbbox[0] = mStockBoundingBox.zmax;
+			stockbbox[1] = mStockBoundingBox.xmax;
 
 			for(int j = 0; j < mPartProfileList.at(i)->no_pts - 1; j++)
 			{
-				load_Cutting_Tool(tool, P, i, j);
+				load_Cutting_Tool(tool, stockbbox, i, j);
 				
 				GLuint dlId = glGenLists(1);
 				
@@ -614,7 +618,7 @@ void	NcDisplay::generateDisplayLists()
 	}
 }
 
-STATUS	NcDisplay::load_Facing_Tool(double **tool, int i, int j)
+STATUS	NcDisplay::load_Facing_Tool(std::vector<vector2d> tool, int i, int j)
 {
 
 	//cout << "profile co-ords" << mPartProfileList.at(i)->P[j+1][0] << " " << mPartProfileList.at(i)->P[j+1][1]
@@ -642,7 +646,7 @@ STATUS	NcDisplay::load_Facing_Tool(double **tool, int i, int j)
 }
 
 
-STATUS	NcDisplay::load_CG00_Tool(double **tool)
+STATUS	NcDisplay::load_CG00_Tool(std::vector<vector2d> tool)
 {
 	tool[0][0] = 0.0;
 	tool[0][1] = 0.0;
@@ -754,7 +758,7 @@ int		NcDisplay::spinDisplay(bool gstepmode, int goNextOperation, int& deformed_d
 
 
 
-STATUS	NcDisplay::load_Cutting_Tool(double **tool, double *P, int i, int j)
+STATUS	NcDisplay::load_Cutting_Tool(std::vector<vector2d> tool, double *P, int i, int j)
 {	
 	tool[0][0] = mPartProfileList.at(i)->P[j+1][0];
 	tool[0][1] = mPartProfileList.at(i)->P[j+1][1];
@@ -770,7 +774,7 @@ STATUS	NcDisplay::load_Cutting_Tool(double **tool, double *P, int i, int j)
 }
 
 
-STATUS	NcDisplay::load_Parting_Tool(double **tool, int i, int j)
+STATUS	NcDisplay::load_Parting_Tool(std::vector<vector2d> tool, int i, int j)
 {	
 	Profile *prof = mPartProfileList.at(i);
 
@@ -800,26 +804,26 @@ STATUS	NcDisplay::load_Parting_Tool(double **tool, int i, int j)
 }
 
 
-//STATUS	NcDisplay::load_Drilling_Tool(double **tool, const NcVector& P1, const NcVector& P2)
-//{
-//	tool[0][0] = P2[0];
-//	tool[0][1] = P2[1];
-//	tool[1][0] = P1[0];
-//	tool[1][1] = P1[1];
-//	tool[2][0] = P1[0] + 50;
-//	tool[2][1] = tool[1][1];
-//	tool[3][0] = P2[0] + 50;
-//	tool[3][1] = tool[0][1];
-//	tool[4][0] = tool[0][0];
-//	tool[4][1] = tool[0][1];
-//
-//	/*std::cout << tool[0][0] << " " << tool[0][1] << endl;
-//	std::cout << tool[1][0] << " " << tool[1][1] << endl;
-//	std::cout << tool[2][0] << " " << tool[2][1] << endl;
-//	std::cout << tool[3][0] << " " << tool[3][1] << endl;
-//	std::cout << tool[4][0] << " " << tool[4][1] << endl;*/
-//	return OK;
-//}/*TODO*/
+STATUS	NcDisplay::load_Drilling_Tool(std::vector<vector2d> tool, const NcVector& P1, const NcVector& P2)
+{
+	tool[0][0] = P2[0];
+	tool[0][1] = P2[1];
+	tool[1][0] = P1[0];
+	tool[1][1] = P1[1];
+	tool[2][0] = P1[0] + 50;
+	tool[2][1] = tool[1][1];
+	tool[3][0] = P2[0] + 50;
+	tool[3][1] = tool[0][1];
+	tool[4][0] = tool[0][0];
+	tool[4][1] = tool[0][1];
+
+	/*std::cout << tool[0][0] << " " << tool[0][1] << endl;
+	std::cout << tool[1][0] << " " << tool[1][1] << endl;
+	std::cout << tool[2][0] << " " << tool[2][1] << endl;
+	std::cout << tool[3][0] << " " << tool[3][1] << endl;
+	std::cout << tool[4][0] << " " << tool[4][1] << endl;*/
+	return OK;
+}/*TODO*/
 
 void	NcDisplay::setIndex(int index)
 {

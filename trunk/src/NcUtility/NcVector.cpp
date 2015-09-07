@@ -88,3 +88,11 @@ double& NcVector::operator [](const int index)
 	else if(index == 1) return vy;
 	else if(index == 2) return vz;
 }
+
+const double& NcVector::operator[](const int index) const
+{
+	return (*this)[index];
+	/*if(index == 0) return vx;
+	else if(index == 1) return vy;
+	else if(index == 2) return vz;*/
+}

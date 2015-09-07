@@ -3,6 +3,7 @@
 
 #include "NcDisplay\NcDisplayGlobal.h"
 #include "NcUtility\NcGlobalDefinitions.h"
+#include "NcGeomKernel\NcPolygonBoolean.h"
 #include <QtOpenGl>
 
 namespace DiscreteSimulator
@@ -32,9 +33,7 @@ namespace DiscreteSimulator
 		static			NcDisplay* getNcDisplayInstance();
 		void			CreateDisplayListsForGCodes();		
 		void			setStockBBInitialValues();
-
 		STATUS			displayStockProfile();	
-
 		bool			setStockBBFinalValues();
 		void			generateDisplayLists();	
 		void			callToolPathDL();
@@ -50,25 +49,21 @@ namespace DiscreteSimulator
 	private:
 		STATUS			createPart();
 		STATUS			createSurfaceOfRotation();
-		STATUS			createDeformedBody(Profile* target, double **tool, CUT cut = NO_VERTICAL_CUT);
+		STATUS			createDeformedBody(Profile* target, std::vector<vector2d> tool, CUT cut = NO_VERTICAL_CUT);
 		STATUS			createDeformedBody(Profile* target);
 		STATUS			compressArray(double target[][2], int &n);
 		
-		STATUS			load_Cutting_Tool(double **tool, double *P, int i, int j);
-		STATUS			load_Drilling_Tool(double **tool, const NcVector& P1, const NcVector&  P2);
-		STATUS			load_Parting_Tool(double **tool, int i, int j);
-		STATUS			load_CG00_Tool(double **tool);
-		STATUS			load_Facing_Tool(double **tool, int i, int j);
-
-		
+		STATUS			load_Cutting_Tool(std::vector<vector2d> tool, double *P, int i, int j);
+		STATUS			load_Drilling_Tool(std::vector<vector2d> tool, const NcVector& P1, const NcVector&  P2);
+		STATUS			load_Parting_Tool(std::vector<vector2d> tool, int i, int j);
+		STATUS			load_CG00_Tool(std::vector<vector2d> tool);
+		STATUS			load_Facing_Tool(std::vector<vector2d> tool, int i, int j);
 
 		int				spinDisplay(bool gstepmode, int goNextOperation, int& deformed_ds_count, int& DISPLAY_count);
 		void			material_stock();
 		void			surfaceDisplay();
 		void			addDLIndexesToList(NcCode *code);
 		void			addProfilesToList(NcCode *code);
-
-	
 
   public:
 		/****Pranit***/
@@ -92,9 +87,6 @@ namespace DiscreteSimulator
 		SimulationState			mSimulationState;
 		int						mLastMachiningOpIndex;
 		GLuint					mStartupDLForStock;
-
-		
-		
 
 	protected:
 		NcDisplay();									

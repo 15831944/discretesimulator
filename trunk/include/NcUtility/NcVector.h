@@ -26,6 +26,7 @@ public:
 	inline const NcVector operator ^ (const NcVector& rhs) const;		//vector cross product
 	inline const NcVector operator * (double rhs) const;				//scalar product
 	inline double& operator[](const int index);
+	inline const double& operator[](const int index) const;
 	inline double length() const;										//length of the vector
     
 	

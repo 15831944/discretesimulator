@@ -50,7 +50,7 @@ namespace DiscreteSimulator
 		Q_OBJECT
 	public:
 		M06();
-		~M06();
+		/*~M06();*/
 
 	bool	executeCode(SimulationState simstate, NcCode *code = 0);
 	
@@ -64,7 +64,7 @@ namespace DiscreteSimulator
 		Q_OBJECT
 	public:
 		M07();
-		~M07();
+		/*~M07();*/
 	};
 
 	class NCSTATEMACHINEEXPORT M08 : public QObject,public NcCode	//coolant 2 on
@@ -72,7 +72,7 @@ namespace DiscreteSimulator
 		Q_OBJECT
 	public:
 		M08();
-		~M08();
+		/*~M08();*/
 		
 		bool	executeCode(SimulationState simstate, NcCode *code = 0);
 	
@@ -85,7 +85,7 @@ namespace DiscreteSimulator
 		Q_OBJECT
 	public:
 		M09();
-		~M09();
+	/*	~M09();*/
 		bool	executeCode(SimulationState simstate, NcCode *code = 0);
 
 	signals:

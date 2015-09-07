@@ -31,8 +31,8 @@ namespace DiscreteSimulator
 		virtual ~NcMachine();
 		static	NcMachine* NcMachineInstance();
 
-		void	setMachineDimensionUnit(DimensionUnit unit);
-		void	setMachineDimensionReferece(DimensionReference dimensionreference);
+		//void	setMachineDimensionUnit(DimensionUnit unit);
+		//void	setMachineDimensionReferece(DimensionReference dimensionreference);
 		
 		void	setEndOfMotionXPosition(double xpos);
 		void	setEndOfMotionZPosition(double zpos);

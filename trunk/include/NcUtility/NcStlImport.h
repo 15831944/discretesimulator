@@ -27,8 +27,6 @@ namespace DiscreteSimulator
 
 		private:
 			STATUS		stl_read_triangulation (triangulation *);
-			
-	
 			NcParser*			parser;
 
 	};
