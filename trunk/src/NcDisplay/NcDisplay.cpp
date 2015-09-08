@@ -89,10 +89,7 @@ NcDisplay* NcDisplay::getNcDisplayInstance()
 }
 
 
-void	NcDisplay::CreateDisplayListsForGCodes()
-{
-	updateStockBoundingBox();
-}
+
 
 
 bool	NcDisplay::setStockBBFinalValues()
@@ -209,7 +206,11 @@ void	NcDisplay::updateStockBoundingBox()
 STATUS	NcDisplay::displayStockProfile()
 {
 	stock->no_pts = 5;
-	//stock->allocate();
+	
+	
+	stock->allocate();
+	
+	/*stock->P.resize(stock->no_pts);*/
 	stock->P[0][0] = mStockBoundingBox.zmin;		
 	stock->P[0][1] = mStockBoundingBox.xmin;	
 	stock->P[0][2] = 0;
@@ -357,7 +358,7 @@ STATUS	NcDisplay::createDeformedBody(Profile* target, std::vector<vector2d> tool
 	}
 
 	NcPolygonBoolean polyboolean;
-	polyboolean.boolean_main(target->P, target->no_pts, tool, 5, modi_target, iTargetPoints); /*~TODO*/
+	polyboolean.boolean_main(target->P/*, target->no_pts*/, tool, /*5,*/ modi_target, iTargetPoints); /*~TODO*/
 
 	compressArray(modi_target, iTargetPoints);		
 
@@ -365,7 +366,8 @@ STATUS	NcDisplay::createDeformedBody(Profile* target, std::vector<vector2d> tool
 	{
 		//target->free_allocate();
 		target->no_pts = iTargetPoints;
-		//target->allocate();
+		/*target->P.resize(target->no_pts);*/
+		target->allocate();
 	}
 	for(int i=0; i < target->no_pts; i++)
 	{
@@ -435,21 +437,21 @@ void	NcDisplay::generateDisplayLists()
 	*/
 	for(int i = 1; i < mPartProfileList.size(); i++)  //i = 0 for display of initial stock profile
 	{
-		Profile *ppp = mPartProfileList.at(i);
+		Profile* currentProfile = mPartProfileList.at(i);
 
-		if(mPartProfileList.at(i)->type == CGAUX)		//do not generate DL for auxillary moves 
+		if(currentProfile->type == CGAUX)		//do not generate DL for auxillary moves 
 			continue;
-		if(mPartProfileList.at(i)->typeTool == CT02)
+		if(currentProfile->typeTool == CT02)
 		{
-			for(int j = 0; j < mPartProfileList.at(i)->no_pts - 1; j += 2)
+			for(int j = 0; j < currentProfile->no_pts - 1; j += 2)
 			{
 				//load_Drilling_Tool(tool, mPartProfileList.at(i)->P[j], mPartProfileList.at(i)->P[j+1]); /*~TODO*/
 				
 				GLuint dlId = glGenLists(1);
 
-				mPartProfileList.at(i)->mAssocitedDBDLIndexes->push_back(dlId);
+				currentProfile->mAssocitedDBDLIndexes->push_back(dlId);
 
-				mPartProfileList.at(i)->mNoOfDBDL++;
+				currentProfile->mNoOfDBDL++;
 
 				mDeformedBodyDLIndexes.push_back(dlId);
 
@@ -458,22 +460,22 @@ void	NcDisplay::generateDisplayLists()
 				glEndList();
 			}	
 		}
-		else if(mPartProfileList.at(i)->typeTool == CT00)
+		else if(currentProfile->typeTool == CT00)
 		{	
-			int kk = mPartProfileList.at(i)->no_pts - 1;
-			Profile *pp = mPartProfileList.at(i);
+			int kk = currentProfile->no_pts - 1;
+			
 
-			for(int j = 0; j < mPartProfileList.at(i)->no_pts - 1; j++)
+			for(int j = 0; j < currentProfile->no_pts - 1; j++)
 			{
 				load_CG00_Tool(tool);
 				
 				GLuint dlId = glGenLists(1);
 				
-				mPartProfileList.at(i)->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
+				currentProfile->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
 
-				mPartProfileList.at(i)->mNoOfDBDL++;							//keeping related DB DL count with the profile
+				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
-				int sz = mPartProfileList.at(i)->mAssocitedDBDLIndexes->size();
+				int sz = currentProfile->mAssocitedDBDLIndexes->size();
 
 				mDeformedBodyDLIndexes.push_back(dlId);
 				
@@ -482,26 +484,26 @@ void	NcDisplay::generateDisplayLists()
 				glEndList();
 			}	
 		}
-		else if(mPartProfileList.at(i)->typeTool == CT01)
+		else if(currentProfile->typeTool == CT01)
 		{	
-			int kk = mPartProfileList.at(i)->no_pts - 1;
-			Profile *pp = mPartProfileList.at(i);
+			int kk = currentProfile->no_pts - 1;
+			
 			
 			double stockbbox[2] = {0};
 			stockbbox[0] = mStockBoundingBox.zmax;
 			stockbbox[1] = mStockBoundingBox.xmax;
 
-			for(int j = 0; j < mPartProfileList.at(i)->no_pts - 1; j++)
+			for(int j = 0; j < currentProfile->no_pts - 1; j++)
 			{
 				load_Cutting_Tool(tool, stockbbox, i, j);
 				
 				GLuint dlId = glGenLists(1);
 				
-				mPartProfileList.at(i)->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
+				currentProfile->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
 
-				mPartProfileList.at(i)->mNoOfDBDL++;							//keeping related DB DL count with the profile
+				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
-				int sz = mPartProfileList.at(i)->mAssocitedDBDLIndexes->size();
+				int sz = currentProfile->mAssocitedDBDLIndexes->size();
 
 				mDeformedBodyDLIndexes.push_back(dlId);
 				
@@ -517,22 +519,22 @@ void	NcDisplay::generateDisplayLists()
 				#endif
 			}	
 		}
-		else if(mPartProfileList.at(i)->typeTool == CT03)     //for parting/grooving tool
+		else if(currentProfile->typeTool == CT03)     //for parting/grooving tool
 		{
-			int u = mPartProfileList.at(i)->no_pts;
-			Profile *ppp = mPartProfileList.at(i);
+			int u = currentProfile->no_pts;
+			
 
-			for(int j = 0; j < mPartProfileList.at(i)->no_pts - 2; j+=2)
+			for(int j = 0; j < currentProfile->no_pts - 2; j+=2)
 			{
 				load_Parting_Tool(tool,  i, j);
 				
 				GLuint dlId = glGenLists(1);
 				
-				mPartProfileList.at(i)->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
+				currentProfile->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
 
-				mPartProfileList.at(i)->mNoOfDBDL++;							//keeping related DB DL count with the profile
+				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
-				int sz = mPartProfileList.at(i)->mAssocitedDBDLIndexes->size();
+				int sz = currentProfile->mAssocitedDBDLIndexes->size();
 
 				mDeformedBodyDLIndexes.push_back(dlId);
 				
@@ -550,22 +552,22 @@ void	NcDisplay::generateDisplayLists()
 
 			}	
 		}
-		else if(mPartProfileList.at(i)->typeTool == CT05)
+		else if(currentProfile->typeTool == CT05)
 		{	
-			int kk = mPartProfileList.at(i)->no_pts - 1;
-			Profile *pp = mPartProfileList.at(i);
+			int kk = currentProfile->no_pts - 1;
+			
 
-			for(int j = 0; j < mPartProfileList.at(i)->no_pts - 1; j++)
+			for(int j = 0; j < currentProfile->no_pts - 1; j++)
 			{
 				load_Facing_Tool(tool, i, j);
 				
 				GLuint dlId = glGenLists(1);
 				
-				mPartProfileList.at(i)->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
+				currentProfile->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
 
-				mPartProfileList.at(i)->mNoOfDBDL++;							//keeping related DB DL count with the profile
+				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
-				int sz = mPartProfileList.at(i)->mAssocitedDBDLIndexes->size();
+				int sz = currentProfile->mAssocitedDBDLIndexes->size();
 
 				mDeformedBodyDLIndexes.push_back(dlId);
 				
@@ -580,25 +582,25 @@ void	NcDisplay::generateDisplayLists()
 					 << stock->P[4][0] << " " << stock->P[4][1] << " " << stock->P[4][2] << endl;*/
 			}	
 		}
-		else if(mPartProfileList.at(i)->typeTool == CT07)
+		else if(currentProfile->typeTool == CT07)
 		{	
-			int kk = mPartProfileList.at(i)->no_pts - 1;
-			Profile *pp = mPartProfileList.at(i);
+			int kk = currentProfile->no_pts - 1;
+			
 			double stockbbox[2] = {0};
 			stockbbox[0] = mStockBoundingBox.zmax;
 			stockbbox[1] = mStockBoundingBox.xmax;
 
-			for(int j = 0; j < mPartProfileList.at(i)->no_pts - 1; j++)
+			for(int j = 0; j < currentProfile->no_pts - 1; j++)
 			{
 				load_Cutting_Tool(tool, stockbbox, i, j);
 				
 				GLuint dlId = glGenLists(1);
 				
-				mPartProfileList.at(i)->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
+				currentProfile->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
 
-				mPartProfileList.at(i)->mNoOfDBDL++;							//keeping related DB DL count with the profile
+				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
-				int sz = mPartProfileList.at(i)->mAssocitedDBDLIndexes->size();
+				int sz = currentProfile->mAssocitedDBDLIndexes->size();
 
 				mDeformedBodyDLIndexes.push_back(dlId);
 				
@@ -823,7 +825,7 @@ STATUS	NcDisplay::load_Drilling_Tool(std::vector<vector2d> tool, const NcVector&
 	std::cout << tool[3][0] << " " << tool[3][1] << endl;
 	std::cout << tool[4][0] << " " << tool[4][1] << endl;*/
 	return OK;
-}/*TODO*/
+}
 
 void	NcDisplay::setIndex(int index)
 {

@@ -65,7 +65,7 @@ STATUS	G92::generateDisplayList()
 	int sec = min % 60;
 	mSeconds = sec;
 	
-	profile->no_pts = 2 + (max_threads * 2 + 1);
+	profile->no_pts=( 2 + (max_threads * 2 + 1));
 	//profile->allocate();
 
 	profile->P[0][0] = mStartZ;

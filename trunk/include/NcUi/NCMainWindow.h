@@ -32,7 +32,7 @@ namespace DiscreteSimulator
 		~NCMainWindow();
 
 	public slots:
-		void					newFile();
+		void					prepareWindowForNewFile();
 		void					open();
 		bool					save();
 		bool 					saveAs();

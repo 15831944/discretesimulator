@@ -65,7 +65,6 @@ NcFanuc10T11TFileReader::NcFanuc10T11TFileReader() : mFile(0)
 	mLastExecutedCodeType  = UNKNOWN;
 }
 
-
 NcFanuc10T11TFileReader::~NcFanuc10T11TFileReader()
 {
 	if(mFile != 0)
@@ -81,12 +80,10 @@ QString		NcFanuc10T11TFileReader::getFullNcCodeText()
 	return mFile->readAll();
 }
 
-
 inline QFile* NcFanuc10T11TFileReader::getCurrentNcFile()
 {
 	return mFile;
 }
-
 
 bool	NcFanuc10T11TFileReader::openNcFileForReadWrite()
  {
@@ -146,7 +143,6 @@ STATUS	NcFanuc10T11TFileReader::checkCodeSyntax()
 	}
 	return FAIL;
 }
-
 
 void NcFanuc10T11TFileReader::checkEachLineForSyntax()
 {
@@ -280,8 +276,8 @@ void NcFanuc10T11TFileReader::checkEachLineForSyntax()
 				default:
 					{
 						QString message;
-						message += tr("code ") + code + tr(" is invalid.") + tr( "\n") +
-								tr("Please correct the NC file and restart the application");
+						message += QObject::tr("code ") + code + QObject::tr(" is invalid.") + QObject::tr( "\n") +
+								QObject::tr("Please correct the NC file and restart the application");
  
 						QMessageBox::StandardButton ret;
 						ret = QMessageBox::warning(0,qApp->applicationName(),
@@ -363,11 +359,10 @@ void NcFanuc10T11TFileReader::checkEachLineForSyntax()
 		if(mMachiningCodeDetected == true) //breaking from the for loop when machining code is detected
 			break;
 	}
-	NcDisplay::getNcDisplayInstance()->CreateDisplayListsForGCodes();
+	NcDisplay::getNcDisplayInstance()->updateStockBoundingBox();
 	mLineCounter++;
 	mMachiningCodeDetected = false;
 }
-
 
 void NcFanuc10T11TFileReader::buildIndXCode(QString code)
 {
@@ -410,7 +405,6 @@ void NcFanuc10T11TFileReader::buildIndXCode(QString code)
 	}
 }
 
-
 void NcFanuc10T11TFileReader::buildIndZCode(QString code)
 {
 	bool ok = true;
@@ -441,7 +435,6 @@ void NcFanuc10T11TFileReader::buildIndZCode(QString code)
 	}
 }
 
-
 void NcFanuc10T11TFileReader::resetBoolValues()
 {
 	mTCodeDetected = false;
@@ -455,7 +448,6 @@ void NcFanuc10T11TFileReader::resetBoolValues()
 	mZValueDetected = false;
 	mICodeDetected = false;
 }
-
 
 void NcFanuc10T11TFileReader::buildMCode(QString code)		//building M Codes
 {
@@ -514,7 +506,6 @@ void NcFanuc10T11TFileReader::buildMCode(QString code)		//building M Codes
 	NcMachine::NcMachineInstance()->buildMCodes();
 }
 
-
 void NcFanuc10T11TFileReader::buildSCode(QString code)		//building S code when it is not with a machining command
 {
 	bool ok = true;
@@ -526,7 +517,6 @@ void NcFanuc10T11TFileReader::buildSCode(QString code)		//building S code when i
 	NcMachine::NcMachineInstance()->mCurrentSpindleSpeed = speed;
 	NcMachine::NcMachineInstance()->buildSCodes();
 }
-
 
 void NcFanuc10T11TFileReader::buildFCode(QString code)		//building F code when it is not with a machining command
 {
@@ -543,7 +533,6 @@ void NcFanuc10T11TFileReader::buildFCode(QString code)		//building F code when i
 	NcMachine::NcMachineInstance()->buildFCodes();
 }
 
-
 void NcFanuc10T11TFileReader::buildIndTCode(QString code)	//building T code when it is not with a machining command
 {
 	bool ok = true;
@@ -559,7 +548,6 @@ void NcFanuc10T11TFileReader::buildIndTCode(QString code)	//building T code when
 	buildTCode();
 	mTCodeDetected = false;
 }
-
 
 void NcFanuc10T11TFileReader::buildG20Code()
 {
@@ -578,8 +566,6 @@ void NcFanuc10T11TFileReader::buildG28Code()
 	NcMachine::NcMachineInstance()->setMachineOperationalMode(MACHINEZERORETURN);
 	NcMachine::NcMachineInstance()->buildGCodeList();
 }
-
-
 
 STATUS NcFanuc10T11TFileReader::checkSyntaxOfMultiPassThreading(QStringList codelist)
 {
@@ -707,8 +693,6 @@ void NcFanuc10T11TFileReader::buildG76Code()
 	NcMachine::NcMachineInstance()->buildGCodeList();
 }
 
-
-
 STATUS NcFanuc10T11TFileReader::checkSyntaxOfSinglePassThreading(QStringList codelist)
 {
 	bool ok = true;
@@ -790,7 +774,6 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfSinglePassThreading(QStringList cod
 		return OK;
 }
 
-
 void NcFanuc10T11TFileReader::buildG92Code()
 {
 	NcMachine::NcMachineInstance()->setMachineOperationalMode(SINGLEPASSTHREADING);
@@ -812,7 +795,6 @@ void NcFanuc10T11TFileReader::buildG92Code()
 
 	NcMachine::NcMachineInstance()->buildGCodeList();
 }
-
 
 STATUS NcFanuc10T11TFileReader::checkSyntaxOfFacingCycle(QStringList codelist)
 {
@@ -1046,7 +1028,6 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfCannedTurning(QStringList codelist)
 		return OK;
 }
 
-
 void NcFanuc10T11TFileReader::buildG90Code()
 {
 	NcMachine::NcMachineInstance()->setMachineOperationalMode(CANNEDTURNING);
@@ -1077,7 +1058,6 @@ void NcFanuc10T11TFileReader::buildG90Code()
 
 	NcMachine::NcMachineInstance()->buildGCodeList();
 }
-
 
 STATUS NcFanuc10T11TFileReader::checkSyntaxOfDwellCode(QStringList codelist)
 {
@@ -1142,8 +1122,6 @@ void NcFanuc10T11TFileReader::buildG04Code()
 
 	NcMachine::NcMachineInstance()->buildGCodeList();
 }
-
-
 
 STATUS NcFanuc10T11TFileReader::checkSyntaxOfCCWCirInterpol(QStringList codelist)
 {
@@ -1248,7 +1226,6 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfCCWCirInterpol(QStringList codelist
 		return OK;
 }
 
-
 void NcFanuc10T11TFileReader::buildG03Code()
 {
 	NcMachine::NcMachineInstance()->setMachineOperationalMode(CCWCIRCULARINTERPOL);
@@ -1282,8 +1259,6 @@ void NcFanuc10T11TFileReader::buildG03Code()
 
 	NcMachine::NcMachineInstance()->buildGCodeList();
 }
-
-
 
 STATUS NcFanuc10T11TFileReader::checkSyntaxOfCWCirInterpol(QStringList codelist)
 {
@@ -1546,8 +1521,6 @@ void NcFanuc10T11TFileReader::buildG01Code()
 	NcMachine::NcMachineInstance()->buildGCodeList();
 }
 
-
-
 STATUS NcFanuc10T11TFileReader::checkSyntaxOfRapidCode(QStringList codelist)
 {
 	bool ok = true;
@@ -1685,7 +1658,6 @@ void NcFanuc10T11TFileReader::buildG00Code()
 	NcMachine::NcMachineInstance()->buildGCodeList();
 }
 
-
 void NcFanuc10T11TFileReader::buildTCode()
 {
 	switch(TValue)
@@ -1732,7 +1704,6 @@ void NcFanuc10T11TFileReader::buildTCode()
 
 	NcMachine::NcMachineInstance()->buildTCodes();
 }
-
 
 STATUS NcFanuc10T11TFileReader::checkSyntaxOfPeckDrillCycle(QStringList codelist)
 {
@@ -1843,9 +1814,6 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfPeckDrillCycle(QStringList codelist
 	return OK;
 }
 
-
-
-
 void NcFanuc10T11TFileReader::buildG74Code()
 {
 	NcMachine::NcMachineInstance()->setMachineOperationalMode(PECKDRILLING);
@@ -1867,8 +1835,6 @@ void NcFanuc10T11TFileReader::buildG74Code()
 
 	NcMachine::NcMachineInstance()->buildGCodeList();
 }
-
-
 
 STATUS NcFanuc10T11TFileReader::checkSyntaxOfPartingGrooving(QStringList codelist)
 {
@@ -1978,7 +1944,6 @@ STATUS NcFanuc10T11TFileReader::checkSyntaxOfPartingGrooving(QStringList codelis
 	return OK;
 }
 
-
 void NcFanuc10T11TFileReader::buildG75Code()
 {
 	NcMachine::NcMachineInstance()->setMachineOperationalMode(PARTINGGROOVING);
@@ -2001,13 +1966,11 @@ void NcFanuc10T11TFileReader::buildG75Code()
 	NcMachine::NcMachineInstance()->buildGCodeList();
 }
 
-
-
 void NcFanuc10T11TFileReader::handleError(QString code)
 {
 	QString message;
-	message += tr("code ") + code + tr(" is invalid.") + tr("\n") +
-			tr("Please correct the NC file and restart the application");
+	message += QObject::tr("code ") + code + QObject::tr(" is invalid.") + QObject::tr("\n") +
+			QObject::tr("Please correct the NC file and restart the application");
 
 	QMessageBox::StandardButton ret;
 	ret = QMessageBox::warning(0,qApp->applicationName(),
@@ -2023,13 +1986,13 @@ void NcFanuc10T11TFileReader::handleError(QString code)
 void NcFanuc10T11TFileReader::handleError(QStringList codelist)
 {
 	QString message;
-	message += tr("Block ");
+	message += QObject::tr("Block ");
 	foreach(QString code, codelist)
 	{
-		message += code + tr(" ");
+		message += code + QObject::tr(" ");
 	}
-	message += tr(" is invalid.") + tr("\n") +
-			tr("Please correct the NC file and restart the application");
+	message += QObject::tr(" is invalid.") + QObject::tr("\n") +
+			QObject::tr("Please correct the NC file and restart the application");
 
 	QMessageBox::StandardButton ret;
 	ret = QMessageBox::warning(0, qApp->applicationName(),
@@ -2040,6 +2003,7 @@ void NcFanuc10T11TFileReader::handleError(QStringList codelist)
 		exit(0);
 	}
 }
+
 void NcFanuc10T11TFileReader::setCurrentNcFile(QFile* file)
 {
 	mFile = file;

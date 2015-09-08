@@ -168,7 +168,7 @@ void	G76::generateCuttingPass()
 	double p = F / 2.0;							//half pitch
 	int max_threads = (int)fabs((Z - mStartZ) / F);
 	
-	profile->no_pts = 3 + (max_threads * 2 + 1);
+	profile->no_pts=( 3 + (max_threads * 2 + 1));
 	//profile->allocate();
 
 	profile->P[0][0] = mStartZ;

@@ -57,7 +57,7 @@ STATUS	G94::generateDisplayList()
 	int sec = min % 60;
 	mSeconds = sec;
 
-	profile->no_pts = 1 + MAX_LINEAR_SUBDIV;
+	profile->no_pts=(1 + MAX_LINEAR_SUBDIV);
 	//profile->allocate();
 
 	profile->P[0][0] = mStartZ;

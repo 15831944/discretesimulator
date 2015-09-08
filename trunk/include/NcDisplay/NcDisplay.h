@@ -31,7 +31,7 @@ namespace DiscreteSimulator
 	public:
 		~NcDisplay();
 		static			NcDisplay* getNcDisplayInstance();
-		void			CreateDisplayListsForGCodes();		
+		void			updateStockBoundingBox();	
 		void			setStockBBInitialValues();
 		STATUS			displayStockProfile();	
 		bool			setStockBBFinalValues();
@@ -72,7 +72,7 @@ namespace DiscreteSimulator
 		void			setUserDefinedStockFlag(bool status ){ mUserDefinedStock = status; } // this function is added to check if user has defined stock dimentions
 		
 	private:
-		void			updateStockBoundingBox();
+		
 		void			displayProfile(Profile *target);
 		static NcDisplay		*mNcDisplayInstance;
 		static int				dllistcount;

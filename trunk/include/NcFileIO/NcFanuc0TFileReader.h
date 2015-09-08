@@ -12,9 +12,8 @@ class QFile;
 
 namespace DiscreteSimulator
 {
-	class NCEXPORT NcFanuc0TFileReader  : public QObject
+	class NCEXPORT NcFanuc0TFileReader  
 	{
-		Q_OBJECT
 
 	public:
 		static NcFanuc0TFileReader*	getReaderInstance();

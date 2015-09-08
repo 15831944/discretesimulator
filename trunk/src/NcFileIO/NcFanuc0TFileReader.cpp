@@ -263,7 +263,7 @@ void NcFanuc0TFileReader::checkEachLineForSyntax()
 		if(mMachiningCodeDetected == true) //breaking from the for loop when machining code is detected
 			break;
 	}
-	NcDisplay::getNcDisplayInstance()->CreateDisplayListsForGCodes();
+	NcDisplay::getNcDisplayInstance()->updateStockBoundingBox();
 	mLineCounter++;
 	mMachiningCodeDetected = false;
 }
@@ -272,8 +272,8 @@ void NcFanuc0TFileReader::checkEachLineForSyntax()
 void NcFanuc0TFileReader::handleError(QString code)
 {
 	QString message;
-	message += tr("code ") + code + tr(" is invalid.") + tr( "\n") +
-			tr("Please correct the NC file and restart the application");
+	message += QObject::tr("code ") + code + QObject::tr(" is invalid.") + QObject::tr( "\n") +
+			QObject::tr("Please correct the NC file and restart the application");
 
 	QMessageBox::StandardButton ret;
 	ret = QMessageBox::warning(0, qApp->applicationName(),
@@ -286,13 +286,13 @@ void NcFanuc0TFileReader::handleError(QString code)
 void NcFanuc0TFileReader::handleError(QStringList codelist)
 {
 	QString message;
-	message += tr("Block ");
+	message += QObject::tr("Block ");
 	foreach(QString code, codelist)
 	{
-		message += code + tr(" ");
+		message += code + QObject::tr(" ");
 	}
-	message += tr(" is invalid.") + tr("\n") +
-			tr("Please correct the NC file and restart the application");
+	message += QObject::tr(" is invalid.") + QObject::tr("\n") +
+			QObject::tr("Please correct the NC file and restart the application");
 
 	QMessageBox::StandardButton ret;
 	ret = QMessageBox::warning(0,qApp->applicationName(),

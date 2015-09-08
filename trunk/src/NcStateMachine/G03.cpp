@@ -63,6 +63,7 @@ STATUS	G03::generateDisplayList()
 	y2 = X;
 
 	profile->no_pts = MAX_ANG_SUBDIV; /* To be modified in future*/
+	/*profile->P.resize(MAX_ANG_SUBDIV);*/
 	//profile->allocate();
 
 	cx = mStartZ + K;

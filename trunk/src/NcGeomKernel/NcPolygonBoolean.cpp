@@ -70,10 +70,11 @@ line* new_edge(vector2d *v1, vector2d *v2)
 
 
 template <class T>
-STATUS NcPolygonBoolean::construct_polygon(polygon &poly, std::vector<T>dInputPoly, int iPoint)
+STATUS NcPolygonBoolean::construct_polygon(polygon &poly, std::vector<T>dInputPoly)
 {
 	int i;
-	poly.num_vertex = iPoint;
+	int x=dInputPoly.size();
+	poly.num_vertex = dInputPoly.size();
 	poly.vertex = new vector2d[poly.num_vertex + ARRAY_MAX];
 	assert( poly.vertex );
 
@@ -119,19 +120,20 @@ STATUS NcPolygonBoolean::construct_polygon(polygon &poly, std::vector<T>dInputPo
 }
 
 
-STATUS NcPolygonBoolean::boolean_main(std::vector<NcVector> dTargetPoly, int iTargetPoints,
-									  std::vector<vector2d> dToolPoly, int iToolPoints,
+STATUS NcPolygonBoolean::boolean_main(std::vector<NcVector> dTargetPoly/*, int iTargetPoints*/,
+									  std::vector<vector2d> dToolPoly/*, int iToolPoints*/,
                                       double dModiTargetPoly[][2], int &iMoadiTargetPoints)
 {
 	polygon target, tool;
 	iMoadiTargetPoints = 0;
+	
 
 #ifdef debug
 	debug_boolean=fopen("boolean.debug", "w+");
 #endif
 
-	construct_polygon(target, dTargetPoly, iTargetPoints);
-	construct_polygon(tool, dToolPoly, iToolPoints);
+	construct_polygon(target, dTargetPoly /*iTargetPoints*/);
+	construct_polygon(tool, dToolPoly /*iToolPoints*/);
 
 #ifdef debug
 	display_polygon(target,tool,output_handle);
@@ -143,7 +145,7 @@ STATUS NcPolygonBoolean::boolean_main(std::vector<NcVector> dTargetPoly, int iTa
 	display_polygon(target,tool,output_handle);
 #endif
 
-	polgon_boolean(target, tool);
+	polygon_boolean(target, tool);
 
 #ifdef debug
 	display_polygon(target,tool,output_handle);
@@ -563,7 +565,7 @@ STATUS NcPolygonBoolean::intersect_polygon(polygon &target, polygon &tool)
 }
 
 
-STATUS NcPolygonBoolean::polgon_boolean(polygon &target, polygon tool)
+STATUS NcPolygonBoolean::polygon_boolean(polygon &target, polygon tool)
 {
 	int count_d=0,count_a=0,i=0;
 	int found_end=0;
@@ -576,7 +578,7 @@ STATUS NcPolygonBoolean::polgon_boolean(polygon &target, polygon tool)
 		if(pointInPolygon(tool,*target.edge->start_pt)==OUTSIDE){
 			target.start=target.edge;
 			break;
-		}
+		}                                         
 	}
 
 	for(target.edge=target.start;target.edge!=NULL;target.edge=target.edge->next)
@@ -784,14 +786,15 @@ STATUS NcPolygonBoolean::find_tool_edge_tobeadded(polygon tool, polygon target, 
 }
 double& vector2d::operator [](const int index)
 {
-	if(index == 0) return v[0];
-	else if(index == 1) return v[1];
+	return const_cast<double &>(static_cast<const vector2d&>(*this)[index]);
 	
 }
 
 const double& vector2d::operator[](const int index) const
 {
-	return (*this)[index];
+	if(index == 0) return v[0];
+	else if(index == 1) return v[1];
+	
 	/*if(index == 0) return vx;
 	else if(index == 1) return vy;
 	else if(index == 2) return vz;*/

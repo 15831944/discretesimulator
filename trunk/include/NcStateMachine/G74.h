@@ -19,7 +19,7 @@ namespace DiscreteSimulator
 		inline double	getK();
 		STATUS			generateDisplayList();
 		bool			executeCode(SimulationState simstate, NcCode *code = 0);
-		/*void			initializePath();*/
+		void			initializePath();
 		void			generateToolPathsForThecode();
 		void			generateCuttingPass();
 		void			generateApproachPath();

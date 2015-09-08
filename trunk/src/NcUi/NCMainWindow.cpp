@@ -112,7 +112,7 @@ void	NCMainWindow::createConnections()
 	connect(mMainWindowUI->action_Open, SIGNAL(triggered()), this, SLOT(open()));
 	connect(mMainWindowUI->action_Save, SIGNAL(triggered()), this, SLOT(save()));
 	connect(mMainWindowUI->action_Save_as, SIGNAL(triggered()), this, SLOT(saveAs()));
-	connect(mMainWindowUI->action_New, SIGNAL(triggered()), this, SLOT(newFile()));
+	connect(mMainWindowUI->action_New, SIGNAL(triggered()), this, SLOT(prepareWindowForNewFile()));
 	connect(mMainWindowUI->actionClose, SIGNAL(triggered()), this, SLOT(closeFile()));
 	connect(mMainWindowUI->action_Quit, SIGNAL(triggered()), this, SLOT(close()));
 	connect(mMainWindowUI->actionStart_MDI_Mode, SIGNAL(triggered()), this, SLOT(executeMDIMode()));
@@ -406,7 +406,7 @@ QString	NCMainWindow::strippedName(const QString &fullFileName)
 } 
 
 
-void	NCMainWindow::newFile()
+void	NCMainWindow::prepareWindowForNewFile()
 {
 	mIsNewFile = true; // Pranit To fix the bug of crashing the app when exit is clicked and once again new is clicked
 	setupGLWidgetWindows();
@@ -426,7 +426,7 @@ void	NCMainWindow::newFile()
 
 void	NCMainWindow::open()
 {
-	newFile();
+	prepareWindowForNewFile();
     openFile();
 
 }
@@ -498,7 +498,7 @@ bool	NCMainWindow::saveFile(const QString &fileName)
 
 void	NCMainWindow::openFile(QString fname)
 {
-    /*call newFile() and then make open button grayed*/
+    /*call prepareWindowForNewFile() and then make open button grayed*/
     /*and also new button grayed*/
 	mIsNewFile = false;
 
@@ -579,7 +579,7 @@ void	NCMainWindow::openFile(QString fname)
 				{
 					QApplication::setOverrideCursor(Qt::WaitCursor);
 					NcSinumerikFileReader::getReaderInstance()->setCurrentNcFile(filename);
-					newFile();
+					prepareWindowForNewFile();
 					NcSinumerikFileReader::getReaderInstance()->checkCodeSyntax();
 					
 					setCurrentFile(filename);

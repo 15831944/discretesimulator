@@ -131,7 +131,7 @@ void	NcFileReadWriteManager::interpreteCodeBlock(QString codeblock)
 		NcMachine::NcMachineInstance()->buildGCodeList();			//build QList of GCodes
 
 		//create display list for the g code detected here
-		NcDisplay::getNcDisplayInstance()->CreateDisplayListsForGCodes();
+		NcDisplay::getNcDisplayInstance()->updateStockBoundingBox();
 		
 	}
 

@@ -84,14 +84,14 @@ NcVector/* NcVector::*/get_v(double a[])
 
 double& NcVector::operator [](const int index)
 {
-	if(index == 0) return vx;
-	else if(index == 1) return vy;
-	else if(index == 2) return vz;
+	return const_cast<double&>(static_cast<const NcVector&>(*this)[index]);
 }
 
 const double& NcVector::operator[](const int index) const
-{
-	return (*this)[index];
+{	if(index == 0) return vx;
+	else if(index == 1) return vy;
+	else if(index == 2) return vz;
+	
 	/*if(index == 0) return vx;
 	else if(index == 1) return vy;
 	else if(index == 2) return vz;*/

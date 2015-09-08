@@ -173,8 +173,8 @@ void NcSinumerikFileReader::checkEachLineForSyntax()
 				default:
 					{
 						QString message;
-						message += tr("code ") + code + tr(" is invalid.") + tr( "\n") +
-								tr("Please correct the NC file and restart the application");
+						message += QObject::tr("code ") + code + QObject::tr(" is invalid.") + QObject::tr( "\n") +
+								QObject::tr("Please correct the NC file and restart the application");
  
 						QMessageBox::StandardButton ret;
 						ret = QMessageBox::warning(0,qApp->applicationName(),
@@ -223,7 +223,7 @@ void NcSinumerikFileReader::checkEachLineForSyntax()
 		if(mMachiningCodeDetected == true) //breaking from the for loop when machining code is detected
 			break;
 	}
-	NcDisplay::getNcDisplayInstance()->CreateDisplayListsForGCodes();
+	NcDisplay::getNcDisplayInstance()->updateStockBoundingBox();
 	mLineCounter++;
 	mMachiningCodeDetected = false;
 }
@@ -948,8 +948,8 @@ void NcSinumerikFileReader::buildTCode()
 void NcSinumerikFileReader::handleError(QString code)
 {
 	QString message;
-	message += tr("code ") + code + tr(" is invalid.") + tr( "\n") +
-			tr("Please correct the NC file and restart the application");
+	message += QObject::tr("code ") + code + QObject::tr(" is invalid.") + QObject::tr( "\n") +
+			QObject::tr("Please correct the NC file and restart the application");
 
 	QMessageBox::StandardButton ret;
 	ret = QMessageBox::warning(0,qApp->applicationName(),
@@ -962,13 +962,13 @@ void NcSinumerikFileReader::handleError(QString code)
 void NcSinumerikFileReader::handleError(QStringList codelist)
 {
 	QString message;
-	message += tr("Block ");
+	message += QObject::tr("Block ");
 	foreach(QString code, codelist)
 	{
 		message += code + " ";
 	}
-	message += tr(" is invalid.") + tr("\n") +
-			tr("Please correct the NC file and restart the application");
+	message += QObject::tr(" is invalid.") + QObject::tr("\n") +
+			QObject::tr("Please correct the NC file and restart the application");
 
 	QMessageBox::StandardButton ret;
 	ret = QMessageBox::warning(0, qApp->applicationName(),
