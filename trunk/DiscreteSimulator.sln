@@ -22,6 +22,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NcFileIO", "NcFileIO\NcFile
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NcGeomKernel", "NcGeomKernel\NcGeomKernel.vcxproj", "{44E6A8E9-050F-4046-AFAD-E348FA960732}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A2E79058-BFE2-4F18-82F1-10C911282101} = {A2E79058-BFE2-4F18-82F1-10C911282101}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NcSimulationController", "NcSimulationController\NcSimulationController.vcxproj", "{393AE835-CEEA-4267-8280-A36EBD8BEFD0}"
 	ProjectSection(ProjectDependencies) = postProject

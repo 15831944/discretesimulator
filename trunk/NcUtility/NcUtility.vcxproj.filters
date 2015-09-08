@@ -34,6 +34,9 @@
     <ClCompile Include="..\src\NcUtility\NcVector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\NcUtility\vector2d.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\NcUtility\NcGlobalDefinitions.h">
@@ -49,6 +52,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\NcUtility\NcExportImport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\NcUtility\vector2d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

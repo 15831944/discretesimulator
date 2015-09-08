@@ -5,6 +5,7 @@
 #include "NcGeomKernel\NcGeomKernelGlobal.h"
 #include "NcUtility\NcGlobalDefinitions.h"
 #include "NcUtility\NcVector.h"
+#include "NcUtility\vector2d.h"
 
 
 
@@ -12,14 +13,14 @@ namespace DiscreteSimulator
 {
 	class polygon;
 	class line;
-	 class NCGEOMKERNELEXPORT vector2d
-	{
-		public:
-			double v[2];
-			inline double& operator[](const int index);
-	        inline const double& operator[](const int index) const;
+	// class NCGEOMKERNELEXPORT vector2d
+	//{
+	//	public:
+	//		double v[2];
+	//		inline double& operator[](const int index);
+	//        inline const double& operator[](const int index) const;
 
-	};
+	//};
 
 
 	class NCGEOMKERNELEXPORT NcPolygonBoolean
@@ -32,7 +33,7 @@ namespace DiscreteSimulator
 	private:
 		template <class T>
 		STATUS	construct_polygon(polygon &poly, std::vector<T> dInputPoly, int iPoint);
-		STATUS	fill_edges(line *, vector2d *, int ,int );
+		//STATUS	fill_edges(line *, vector2d *, int ,int );
 		INT_STATUS intersect_line(line *p, line *q, double t[2]);
 		STATUS	intersect_polygon(polygon &, polygon &);
 		STATUS	polgon_boolean(polygon &, polygon );

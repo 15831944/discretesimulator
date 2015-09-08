@@ -80,6 +80,7 @@
     <ClCompile Include="..\src\NcUtility\NcParser.cpp" />
     <ClCompile Include="..\src\NcUtility\NcStlImport.cpp" />
     <ClCompile Include="..\src\NcUtility\NcVector.cpp" />
+    <ClCompile Include="..\src\NcUtility\vector2d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\NcUtility\NcExportImport.h" />
@@ -87,6 +88,7 @@
     <ClInclude Include="..\include\NcUtility\NcParser.h" />
     <ClInclude Include="..\include\NcUtility\NcStlImport.h" />
     <ClInclude Include="..\include\NcUtility\NcVector.h" />
+    <ClInclude Include="..\include\NcUtility\vector2d.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

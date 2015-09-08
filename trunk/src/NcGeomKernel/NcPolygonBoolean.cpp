@@ -3,6 +3,7 @@
 #include <vector>
 #include "NcUtility\NcGlobalDefinitions.h"
 #include "NcGeomKernel\NcPolygonBoolean.h"
+#include "NcUtility\vector2d.h"
 
 
 
@@ -782,17 +783,17 @@ STATUS NcPolygonBoolean::find_tool_edge_tobeadded(polygon tool, polygon target, 
 	}
 	return FAIL;
 }
-double& vector2d::operator [](const int index)
-{
-	if(index == 0) return v[0];
-	else if(index == 1) return v[1];
-	
-}
-
-const double& vector2d::operator[](const int index) const
-{
-	return (*this)[index];
-	/*if(index == 0) return vx;
-	else if(index == 1) return vy;
-	else if(index == 2) return vz;*/
-}
+//double& vector2d::operator [](const int index)
+//{
+//	if(index == 0) return v[0];
+//	else if(index == 1) return v[1];
+//	
+//}
+//
+//const double& vector2d::operator[](const int index) const
+//{
+//	return (*this)[index];
+//	/*if(index == 0) return vx;
+//	else if(index == 1) return vy;
+//	else if(index == 2) return vz;*/
+//}
