@@ -13,7 +13,7 @@
 using namespace std;
 using namespace DiscreteSimulator;
 
-NcFileReadWriteManager	*NcFileReadWriteManager::mNcFileReadWriteInstance = 0;
+//NcFileReadWriteManager	*NcFileReadWriteManager::mNcFileReadWriteInstance = 0;
 
 static bool		GCodeDetected = false;
 static bool		TCodeDetected = false;
@@ -38,14 +38,14 @@ NcFileReadWriteManager::NcFileReadWriteManager() : mFile(0)
 	}
  }
 
- NcFileReadWriteManager* NcFileReadWriteManager::getFileReadWriteInstance()
- {
-	 if(NcFileReadWriteManager::mNcFileReadWriteInstance == 0)
-	{
-		NcFileReadWriteManager::mNcFileReadWriteInstance = new NcFileReadWriteManager();
-	}
-	return NcFileReadWriteManager::mNcFileReadWriteInstance;
- }
+ //NcFileReadWriteManager* NcFileReadWriteManager::getFileReadWriteInstance()
+ //{
+	// if(NcFileReadWriteManager::mNcFileReadWriteInstance == 0)
+	//{
+	//	NcFileReadWriteManager::mNcFileReadWriteInstance = new NcFileReadWriteManager();
+	//}
+	//return NcFileReadWriteManager::mNcFileReadWriteInstance;
+ //}
 
 
 inline QFile* NcFileReadWriteManager::getCurrentNcFile()

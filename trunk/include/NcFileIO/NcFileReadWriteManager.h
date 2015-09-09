@@ -15,7 +15,9 @@ namespace DiscreteSimulator
 	{
 				
 	public:
-		static		NcFileReadWriteManager* getFileReadWriteInstance();
+		//static		NcFileReadWriteManager* getFileReadWriteInstance();
+		NcFileReadWriteManager();									
+		NcFileReadWriteManager(const NcFileReadWriteManager &){}
 		~NcFileReadWriteManager();
 
 		void		setCurrentNcFile(QString filename) {mCurrentFileName = filename;}
@@ -42,12 +44,11 @@ namespace DiscreteSimulator
 		friend	class cleanupReadWriteInstance;
 
 	protected:
-		NcFileReadWriteManager();									
-		NcFileReadWriteManager(const NcFileReadWriteManager &){}									
+										
 		NcFileReadWriteManager&	operator=(const NcFileReadWriteManager&);
 	
 	private:
-		static NcFileReadWriteManager	*mNcFileReadWriteInstance;
+		//static NcFileReadWriteManager	*mNcFileReadWriteInstance;
 		QString							mCurrentFileName;
 		QFile							*mFile;
 

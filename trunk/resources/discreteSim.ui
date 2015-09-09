@@ -34,7 +34,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>GOKCE CNC Torna Simülasyonu</string>
+   <string>DiscreteSimulator</string>
   </property>
   <property name="windowIcon">
    <iconset resource="discretesim.qrc">
@@ -259,7 +259,7 @@
      <x>0</x>
      <y>0</y>
      <width>884</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <property name="font">
@@ -318,8 +318,6 @@
      <property name="title">
       <string>Stock Export</string>
      </property>
-     <addaction name="actionDXF"/>
-     <addaction name="actionIGES"/>
      <addaction name="actionSTL"/>
     </widget>
     <widget class="QMenu" name="menuFile_Export">
@@ -446,7 +444,7 @@
   <action name="actionSend_to_CNC">
    <property name="icon">
     <iconset>
-     <normaloff>../../../../../../.designer/backup/images/forward.png</normaloff>../../../../../../.designer/backup/images/forward.png</iconset>
+     <normaloff>../../../../.designer/backup/images/forward.png</normaloff>../../../../.designer/backup/images/forward.png</iconset>
    </property>
    <property name="text">
     <string>Send to CNC</string>
@@ -536,7 +534,7 @@
   <action name="actionPlot">
    <property name="icon">
     <iconset>
-     <normaloff>../../../../../../.designer/backup/images/file print.png</normaloff>../../../../../../.designer/backup/images/file print.png</iconset>
+     <normaloff>../../../../.designer/backup/images/file print.png</normaloff>../../../../.designer/backup/images/file print.png</iconset>
    </property>
    <property name="text">
     <string>Plot</string>
@@ -565,7 +563,7 @@
   <action name="actionLoad_Tools">
    <property name="icon">
     <iconset>
-     <normaloff>../../../../../../.designer/run/images/toolbar_icons/load_tools.xpm</normaloff>../../../../../../.designer/run/images/toolbar_icons/load_tools.xpm</iconset>
+     <normaloff>../../../../.designer/run/images/toolbar_icons/load_tools.xpm</normaloff>../../../../.designer/run/images/toolbar_icons/load_tools.xpm</iconset>
    </property>
    <property name="text">
     <string>Load Tools</string>
@@ -881,7 +879,7 @@
   </action>
   <action name="actionBuild">
    <property name="icon">
-    <iconset resource="discretesim.qrc">
+    <iconset>
      <normaloff>:/toolbar/images/toolbar_icons/build.png</normaloff>:/toolbar/images/toolbar_icons/build.png</iconset>
    </property>
    <property name="text">

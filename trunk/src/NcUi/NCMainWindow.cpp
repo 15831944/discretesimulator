@@ -15,7 +15,6 @@
 #include "NcFileIO\NcFanuc0TFileReader.h"
 #include "NcFileIO\NcFanuc10T11TFileReader.h"
 #include "NcFileIO\NcSinumerikFileReader.h"
-#include "NcFileIO\cleanupReadWriteInstance.h"
 #include "NcSimulationController\NcSimulationController.h"
 #include "NcSimulationController\cleanupSimulationController.h"
 #include "NcUIComponents\NcStatusWindow.h"
@@ -38,7 +37,7 @@
 
 #include "NcUi\NCMainWindow.h"
 
-
+void	writeSTLFile(const char *file);
 using namespace DiscreteSimulator;
 
 static bool bybctrlbool;
@@ -552,14 +551,17 @@ void	NCMainWindow::openFile(QString fname)
 				else if(ext.compare(tr("f0t")) == 0)
 				{
 					QApplication::setOverrideCursor(Qt::WaitCursor);
-					NcFanuc0TFileReader::getReaderInstance()->setCurrentNcFile(filename);
+					//NcFanuc0TFileReader::getReaderInstance()->setCurrentNcFile(filename);
+					NcFanuc0TFileReader reader;
+					reader.setNcFile(filename);
 					
-					NcFanuc0TFileReader::getReaderInstance()->checkCodeSyntax();
-					
+					//NcFanuc0TFileReader::getReaderInstance()->checkCodeSyntax();
+					reader.checkCodeSyntax();
+
 					setCurrentFile(filename);
 
 					NcCodeEditor::NcCodeEditorInstance()->
-						setPlainText(NcFanuc0TFileReader::getReaderInstance()->getFullNcCodeText());
+						setPlainText(/*NcFanuc0TFileReader::getReaderInstance()->*/reader.getFullNcCodeText());
 
 					mMainWindowUI->actionRun->setEnabled(true);
 					mMainWindowUI->actionNext->setEnabled(true);
@@ -620,8 +622,8 @@ bool	NCMainWindow::export_STL()
 	
 	std::string fn = fileName.toStdString();
 	const char *file = fn.c_str();
-
-	NcFileReadWriteManager::getFileReadWriteInstance()->writeSTLFile(file);
+	writeSTLFile(file);
+	
 	
 	return true;
 }
@@ -827,88 +829,34 @@ void	NCMainWindow::next()
 
 void	NCMainWindow::closeFile()
 {
-	//to change read write manager depending the current controller chosen
-	if(NcFileReadWriteManager::getFileReadWriteInstance()->getCurrentNcFile() != 0)
-    {
-        /* excecuted when QFile(file) has been created i.e open case
-           has been executed
-        */
 
-        if(isSaved())
-        {
-				QMessageBox::StandardButton ret;
-				ret = QMessageBox::warning(this, qApp->applicationName(),
-										tr("Do you want to close?"),
-										QMessageBox::Ok | QMessageBox::Cancel);
+	cleanupNcMachineInstance cleanNcMachine;
+	cleanupStaticWindowInstances cleanup;
+	cleanupSimulationController cleanupSimController;
 
-				if(ret == QMessageBox::Ok)
-				{
-			
-					{
-						cleanupReadWriteInstance cleanupReadWrite;
-						cleanupNcMachineInstance cleanNcMachine;
-						cleanupStaticWindowInstances cleanup;
-						cleanupSimulationController cleanupSimController;
-					}
-		            
-		                  
-					mMainWindowUI->toolWindow->setVisible(false);
-					mMainWindowUI->propertyWindow->setVisible(false);
-					/*mMainWindowUI->graphicsWindow->setVisible(false);*/
-					mMainWindowUI->CodeWindow->setVisible(false);
-					mMainWindowUI->ToolPathWindow->setVisible(false);
+	mMainWindowUI->toolWindow->setVisible(false);
+	mMainWindowUI->propertyWindow->setVisible(false);
+	/*mMainWindowUI->graphicsWindow->setVisible(false);*/
+	mMainWindowUI->CodeWindow->setVisible(false);
+	mMainWindowUI->ToolPathWindow->setVisible(false);
 
-					mMainWindowUI->action_Open->setEnabled(true);
-					mMainWindowUI->action_New->setEnabled(true);
+	mMainWindowUI->action_Open->setEnabled(true);
+	mMainWindowUI->action_New->setEnabled(true);
 
-					mMainWindowUI->actionBackground->setEnabled(false);
-					mMainWindowUI->actionUndo->setEnabled(false);
-					mMainWindowUI->actionRedo->setEnabled(false);
-					mMainWindowUI->actionCu_t->setEnabled(false);
-					mMainWindowUI->actionFind->setEnabled(false);
-					mMainWindowUI->action_Copy_2->setEnabled(false);
-					mMainWindowUI->action_Paste_2->setEnabled(false);
-					mMainWindowUI->action_Print->setEnabled(false);
+	mMainWindowUI->actionBackground->setEnabled(false);
+	mMainWindowUI->actionUndo->setEnabled(false);
+	mMainWindowUI->actionRedo->setEnabled(false);
+	mMainWindowUI->actionCu_t->setEnabled(false);
+	mMainWindowUI->actionFind->setEnabled(false);
+	mMainWindowUI->action_Copy_2->setEnabled(false);
+	mMainWindowUI->action_Paste_2->setEnabled(false);
+	mMainWindowUI->action_Print->setEnabled(false);
 
-					mMainWindowUI->actionRun->setEnabled(false);
-					mMainWindowUI->actionPause->setEnabled(false);
-					mMainWindowUI->actionNext->setEnabled(false);
+	mMainWindowUI->actionRun->setEnabled(false);
+	mMainWindowUI->actionPause->setEnabled(false);
+	mMainWindowUI->actionNext->setEnabled(false);
 
-					mMainWindowUI->actionBuild->setEnabled(false);// for disabling the Commit button 
-				}
-        }
-    } 
-    else
-    {
-        /* excecuted when QFile(file) has not been created
-        i.e new case has been executed
-        */
-        if(isSaved())
-		{
-			centralWidget()->close();
-            mMainWindowUI->CodeWindow->close();
-            mMainWindowUI->ToolPathWindow->close();
-            mMainWindowUI->toolWindow->close();
-            mMainWindowUI->propertyWindow->close();
-			//mMainWindowUI->videoWindow->close();
-            mMainWindowUI->action_Open->setEnabled(true);
-            mMainWindowUI->action_New->setEnabled(true);
-            mMainWindowUI->actionRun->setEnabled(false);
-            mMainWindowUI->actionPause->setEnabled(false);
-            mMainWindowUI->actionNext->setEnabled(false);
-
-            mMainWindowUI->actionBackground->setEnabled(false);
-            mMainWindowUI->actionUndo->setEnabled(false);
-            mMainWindowUI->actionRedo->setEnabled(false);
-            mMainWindowUI->actionCu_t->setEnabled(false);
-            mMainWindowUI->actionFind->setEnabled(false);
-            mMainWindowUI->action_Copy_2->setEnabled(false);
-            mMainWindowUI->action_Paste_2->setEnabled(false);
-            mMainWindowUI->action_Print->setEnabled(false);
-
-			mMainWindowUI->actionBuild->setEnabled(false); // for disabling the Commit button 
-        }
-    }
+	mMainWindowUI->actionBuild->setEnabled(false);// for disabling the Commit button 
 
 }
 
@@ -1082,3 +1030,58 @@ void NCMainWindow::updateBgcolor( QColor bgcolor )
 	m_simulationWindow->callUpdateBg(bgcolor);
 }
 
+void	writeSTLFile(const char *file)
+{
+	Profile *stock = NcDisplay::getNcDisplayInstance()->getStockProfile();
+	
+	int j, k;
+	FILE *output_stl_handle;
+	
+	output_stl_handle = fopen(file, "w+");	
+
+	fprintf(output_stl_handle, "solid CCTech_DiscreteSimulator_Stock\n");
+
+	for(j = 0; j < MAX; j++)
+		for(k = 0; k < stock->no_pts - 1; k++)
+		{
+			fprintf(output_stl_handle, "\tfacet normal %18.8e %18.8e %18.8e\n",
+					stock->unitnormal[j][k][0], stock->unitnormal[j][k][1], stock->unitnormal[j][k][2]);
+			
+			fprintf(output_stl_handle,"\t\touter loop\n");
+			
+			fprintf(output_stl_handle,"\t\t\tvertex %18.8e %18.8e %18.8e\n",
+					stock->S[j][k][0], stock->S[j][k][1], stock->S[j][k][2]);
+			
+			fprintf(output_stl_handle,"\t\t\tvertex %18.8e %18.8e %18.8e\n",
+                	stock->S[j+1][k][0], stock->S[j+1][k][1], stock->S[j+1][k][2]);
+			
+			fprintf(output_stl_handle,"\t\t\tvertex %18.8e %18.8e %18.8e\n",
+                	stock->S[j+1][k+1][0], stock->S[j+1][k+1][1], stock->S[j+1][k+1][2]);
+			
+			fprintf(output_stl_handle, "\t\tendloop\n");
+			
+			fprintf(output_stl_handle, "\tendfacet\n");
+			
+			fprintf(output_stl_handle,"\tfacet normal %18.8e %18.8e %18.8e\n",
+				    stock->unitnormal[j][k][0], stock->unitnormal[j][k][1], stock->unitnormal[j][k][2]);
+			
+			fprintf(output_stl_handle, "\t\touter loop\n");
+			
+			fprintf(output_stl_handle,"\t\t\tvertex %18.8e %18.8e %18.8e\n",
+					stock->S[j][k][0], stock->S[j][k][1], stock->S[j][k][2]);
+			
+			fprintf(output_stl_handle, "\t\t\tvertex %18.8e %18.8e %18.8e\n",
+                			stock->S[j+1][k+1][0], stock->S[j+1][k+1][1], stock->S[j+1][k+1][2]);
+			
+			fprintf(output_stl_handle, "\t\t\tvertex %18.8e %18.8e %18.8e\n",
+					stock->S[j][k+1][0], stock->S[j][k+1][1], stock->S[j][k+1][2]);
+			
+			fprintf(output_stl_handle, "\t\tendloop\n");
+			
+			fprintf(output_stl_handle, "\tendfacet\n");
+	}
+	fprintf(output_stl_handle, "endsolid\n");
+
+	fclose(output_stl_handle);
+	
+}

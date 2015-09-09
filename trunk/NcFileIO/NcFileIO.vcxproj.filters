@@ -35,16 +35,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\NcFileIO\cleanupReadWriteInstance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\NcFileIO\NcFanuc0TFileReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\NcFileIO\NcFanuc10T11TFileReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\NcFileIO\NcFileReadWriteManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\NcFileIO\NcSinumerikFileReader.cpp">
@@ -52,9 +46,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\NcFileIO\cleanupReadWriteInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\NcFileIO\NcFileIOGlobal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -64,9 +55,6 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\include\NcFileIO\NcFanuc10T11TFileReader.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\include\NcFileIO\NcFileReadWriteManager.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\include\NcFileIO\NcSinumerikFileReader.h">

@@ -16,11 +16,13 @@ namespace DiscreteSimulator
 	{
 
 	public:
-		static NcFanuc0TFileReader*	getReaderInstance();
+		//static NcFanuc0TFileReader*	getReaderInstance();
+		NcFanuc0TFileReader();
+		NcFanuc0TFileReader(const NcFanuc0TFileReader &){}
 		~NcFanuc0TFileReader();
 
-		void		setCurrentNcFile(QString filename) {mCurrentFileName = filename;}
-		QFile*		getCurrentNcFile();
+		void		setNcFile(QString filename) {mCurrentFileName = filename;}
+		QFile*		getNcFile();
 		bool		openNcFileForReadWrite();
 		STATUS		checkCodeSyntax();
 		void		checkEachLineForSyntax();
@@ -37,11 +39,11 @@ namespace DiscreteSimulator
 		STATUS		checkSyntaxOfMultiPassThreading(QStringList codelist);
 		QString		getFullNcCodeText();
 
-		friend	class cleanupReadWriteInstance;
+		//friend	class cleanupReadWriteInstance;
 
 	protected:
-		NcFanuc0TFileReader();									
-		NcFanuc0TFileReader(const NcFanuc0TFileReader &){}									
+											
+											
 		NcFanuc0TFileReader&	operator=(const NcFanuc0TFileReader&);
 
 	private:
@@ -71,7 +73,7 @@ namespace DiscreteSimulator
 		void					buildTCode();
 
 	private:
-		static NcFanuc0TFileReader		*mFanuc0TFileReaderInstance;
+		//static NcFanuc0TFileReader		*mFanuc0TFileReaderInstance;
 		QString							mCurrentFileName;
 		QFile							*mFile;
 		QList<QString>					mCodeBlockList;

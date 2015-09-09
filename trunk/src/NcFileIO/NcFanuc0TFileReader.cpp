@@ -8,17 +8,17 @@
 #include "NcDisplay\NcDisplay.h"
 using namespace DiscreteSimulator;
 
-NcFanuc0TFileReader* NcFanuc0TFileReader::mFanuc0TFileReaderInstance = 0;
+//NcFanuc0TFileReader* NcFanuc0TFileReader::mFanuc0TFileReaderInstance = 0;
 int	NcFanuc0TFileReader::mLineCounter = 0;
 
-NcFanuc0TFileReader*	NcFanuc0TFileReader::getReaderInstance()
-{
-	if(mFanuc0TFileReaderInstance == 0)
-	{
-		mFanuc0TFileReaderInstance = new NcFanuc0TFileReader();
-	}
-	return mFanuc0TFileReaderInstance;
-}
+//NcFanuc0TFileReader*	NcFanuc0TFileReader::getReaderInstance()
+//{
+//	if(mFanuc0TFileReaderInstance == 0)
+//	{
+//		mFanuc0TFileReaderInstance = new NcFanuc0TFileReader();
+//	}
+//	return mFanuc0TFileReaderInstance;
+//}
 
 NcFanuc0TFileReader::NcFanuc0TFileReader() : mFile(0)
 {
@@ -53,7 +53,7 @@ QString		NcFanuc0TFileReader::getFullNcCodeText()
 }
 
 
-inline QFile* NcFanuc0TFileReader::getCurrentNcFile()
+inline QFile* NcFanuc0TFileReader::getNcFile()
 {
 	return mFile;
 }
