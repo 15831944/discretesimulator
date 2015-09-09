@@ -4,6 +4,7 @@
 //#include "NcGeomKernel\NcRevolve.h"
 #include "NcGeomKernel\NcPolygonBoolean.h"
 #include "NcUtility\NcVector.h"
+#include "NcUtility\vector2d.h"
 #include "NcUtility\NcStlImport.h"
 #include "NcStateMachine\NcCode.h"
 //#include "NcStateMachine\G00.h"
