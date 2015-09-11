@@ -32,6 +32,7 @@ namespace DiscreteSimulator
 		/*double			**P;
 		double			***S;
 		double			***unitnormal;*/
+
 		std::vector <NcVector> P;
 		std::vector < std::vector<NcVector > > S;
 		std::vector < std::vector<NcVector> > unitnormal;

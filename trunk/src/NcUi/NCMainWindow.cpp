@@ -34,7 +34,7 @@
 #include "NcStateMachine\NcToolController.h"
 #include "NcDisplay\NcDisplay.h"
 #include "NcGeomKernel\NcProfile.h"
-
+#include "NcUtility\NcVector.h"
 #include "NcUi\NCMainWindow.h"
 
 void	writeSTLFile(const char *file);
@@ -536,8 +536,8 @@ void	NCMainWindow::openFile(QString fname)
 						NcDisplay::getNcDisplayInstance()->setStockBBFinalValues();
 					}
 					NcDisplay::getNcDisplayInstance()->generateDisplayLists();
-					NcStartupStockDisplay::getStockDisplayInstance()
-							->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());
+					/*NcStartupStockDisplay::getStockDisplayInstance()
+							->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());*/
 
 					setCurrentFile(filename);
 
@@ -563,8 +563,8 @@ void	NCMainWindow::openFile(QString fname)
 					if (reader.checkCodeSyntax()== OK)
 					{
 						NcDisplay::getNcDisplayInstance()->setStockBBFinalValues();
-						NcDisplay::getNcDisplayInstance()->generateDisplayLists();
-						NcStartupStockDisplay::getStockDisplayInstance()->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());
+						/*NcDisplay::getNcDisplayInstance()->generateDisplayLists();
+						NcStartupStockDisplay::getStockDisplayInstance()->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());*/
 					}
 					setCurrentFile(filename);
 
@@ -722,7 +722,7 @@ void	NCMainWindow:: setupVideoCaptureWindow()
 void	NCMainWindow::documentWasModified()
 {
 	bool mod = NcCodeEditor::NcCodeEditorInstance()->document()->isModified();
-    setWindowModified(NcCodeEditor::NcCodeEditorInstance()->document()->isModified());
+    setWindowModified(mod);
 }
 
 
@@ -847,7 +847,8 @@ void	NCMainWindow::closeFile()
 
 	mMainWindowUI->toolWindow->setVisible(false);
 	mMainWindowUI->propertyWindow->setVisible(false);
-	/*mMainWindowUI->graphicsWindow->setVisible(false);*/
+	m_simulationWindow->setVisible(false);
+	//mMainWindowUI->graphicsWindow->setVisible(false);
 	mMainWindowUI->CodeWindow->setVisible(false);
 	mMainWindowUI->ToolPathWindow->setVisible(false);
 
@@ -862,7 +863,7 @@ void	NCMainWindow::closeFile()
 	mMainWindowUI->action_Copy_2->setEnabled(false);
 	mMainWindowUI->action_Paste_2->setEnabled(false);
 	mMainWindowUI->action_Print->setEnabled(false);
-
+	//mMainWindowUI->actionRewind->setEnabled(false);
 	mMainWindowUI->actionRun->setEnabled(false);
 	mMainWindowUI->actionPause->setEnabled(false);
 	mMainWindowUI->actionNext->setEnabled(false);
@@ -1017,8 +1018,8 @@ void NCMainWindow::userDefinedStockValues(double stockDiameter, double stockLeng
 {
 	NcDisplay::getNcDisplayInstance()->setUserDefinedStockValues(stockDiameter/2, stockLength);
 	NcDisplay::getNcDisplayInstance()->generateDisplayLists();
-	NcStartupStockDisplay::getStockDisplayInstance()
-		->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());
+	/*NcStartupStockDisplay::getStockDisplayInstance()
+		->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());*/
 
 	mMainWindowUI->actionRun->setEnabled(true);
 	mMainWindowUI->actionNext->setEnabled(true);

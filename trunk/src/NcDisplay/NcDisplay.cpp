@@ -7,6 +7,7 @@
 #include "NcUtility\vector2d.h"
 #include "NcUtility\NcStlImport.h"
 #include "NcStateMachine\NcCode.h"
+#include "NcStateMachine\NcStartupStockDisplay.h"
 //#include "NcStateMachine\G00.h"
 //#include "NcStateMachine\G01.h"
 //#include "NcStateMachine\G02.h"
@@ -416,6 +417,9 @@ void	NcDisplay::generateDisplayLists()
 {
 	generateStartupDLForStock();
 
+	NcStartupStockDisplay::getStockDisplayInstance()
+		  ->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());
+
 	QList<NcCode *>::iterator codeItr = NcMachine::NcMachineInstance()->mGCodeList->begin();
 
 	for(; codeItr != NcMachine::NcMachineInstance()->mGCodeList->end(); codeItr++)	//iterate through code list created when reading file
@@ -474,7 +478,7 @@ void	NcDisplay::generateDisplayLists()
 
 				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
-				int sz = currentProfile->mAssocitedDBDLIndexes->size();
+				/*int sz = currentProfile->mAssocitedDBDLIndexes->size();*/
 
 				mDeformedBodyDLIndexes.push_back(dlId);
 				
@@ -502,7 +506,7 @@ void	NcDisplay::generateDisplayLists()
 
 				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
-				int sz = currentProfile->mAssocitedDBDLIndexes->size();
+				/*int sz = currentProfile->mAssocitedDBDLIndexes->size();*/
 
 				mDeformedBodyDLIndexes.push_back(dlId);
 				
@@ -533,7 +537,7 @@ void	NcDisplay::generateDisplayLists()
 
 				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
-				int sz = currentProfile->mAssocitedDBDLIndexes->size();
+				/*int sz = currentProfile->mAssocitedDBDLIndexes->size();*/
 
 				mDeformedBodyDLIndexes.push_back(dlId);
 				
@@ -566,7 +570,7 @@ void	NcDisplay::generateDisplayLists()
 
 				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
-				int sz = currentProfile->mAssocitedDBDLIndexes->size();
+				/*int sz = currentProfile->mAssocitedDBDLIndexes->size();*/
 
 				mDeformedBodyDLIndexes.push_back(dlId);
 				
@@ -599,7 +603,7 @@ void	NcDisplay::generateDisplayLists()
 
 				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
-				int sz = currentProfile->mAssocitedDBDLIndexes->size();
+				/*int sz = currentProfile->mAssocitedDBDLIndexes->size();*/
 
 				mDeformedBodyDLIndexes.push_back(dlId);
 				

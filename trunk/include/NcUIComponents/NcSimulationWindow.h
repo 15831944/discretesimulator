@@ -113,10 +113,6 @@ namespace DiscreteSimulator
 	
 		void				initLighting();
 		
-
-	private:
-	
-		
 		double				gscale;	
 		double				mAspectRatio;
 		QPoint				lastPos;

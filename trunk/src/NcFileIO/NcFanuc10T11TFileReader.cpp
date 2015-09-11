@@ -1631,7 +1631,6 @@ void NcFanuc10T11TFileReader::compileExternalNcfile( QString codelist )
 
 	
 	  NcDisplay::getNcDisplayInstance()->generateDisplayLists();
-	  NcStartupStockDisplay::getStockDisplayInstance()
-		  ->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());
+	  
 	  
 }
