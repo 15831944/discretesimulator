@@ -8,10 +8,7 @@ using namespace DiscreteSimulator;
 
 Profile::Profile()
 {
-		/*P;
-		S = NULL;
-		unitnormal = NULL;*/
-		
+
 		no_pts = 0;
 		type = UNKNOWN;
 		coolant1 = false;
@@ -30,6 +27,7 @@ STATUS	Profile::normalvector()
 	double v1[3], v2[3];
 	double length;
 	int i, k;
+	this->unitnormal.resize(MAX+1,std::vector<NcVector>(this->no_pts));
 	for(int j = 0; j < MAX; j++)
 	{
 		for(k = 0; k < this->no_pts - 1; k++)
@@ -67,74 +65,72 @@ STATUS	Profile::normalvector()
 }
 
 
-void Profile::allocate()
-{ if(P.capacity()<no_pts)
-	P.resize(no_pts);
-if(S.capacity()<MAX+1)
-	S.resize(MAX+1,P);
-if(unitnormal.capacity()<MAX+1)
-	unitnormal.resize(MAX+1,P);
-	/*if(P)
-	{
-		#ifdef debug
-       	std::cout << "Already allocated\n";
-		#endif
-	}
-
-    try{
-            P = new double* [no_pts];
-
-            for(int i=0;i<no_pts;i++)
-			{
-            	P[i]= new double [3];
-            }
-        }
-	catch(std::bad_alloc xa)
-	{
-		#ifdef debug
-       	std::cout<<"Memory allocation failed for P\n";
-		#endif
-    }
-    
-	try{
-           unitnormal = new double** [MAX + 1];
-
-			for(int i = 0; i < MAX + 1; i++)
-			{
-                unitnormal[i] = new double* [no_pts];
-            	for(int j = 0; j < no_pts; j++)
-				{
-            		unitnormal[i][j] = new double [3];
-            	}
-		}
-
-	}
-	catch(std::bad_alloc xa)
-	{
-		#ifdef debug
-       	std::cout<<"Memory allocation failed for normal\n";
-		#endif
-    }
-
-	try
-	{	
-		S = new double ** [MAX+1];
-        for(int i = 0; i < MAX+1; i++)
-		{
-            S[i] = new double* [no_pts];
-            for(int j=0;j<no_pts;j++)
-			{
-                    S[i][j]=new double [3];
-			}
-         }
-     }
-	catch(std::bad_alloc xa)
-	{
-		#ifdef debug
-       	std::cout<<"Memory allocation failed for S\n";
-		#endif
-    }*/
-}
+//void Profile::allocate()
+//{ 
+//	P.resize(no_pts);
+//	S.resize(MAX+1,P);
+//	unitnormal.resize(MAX+1,P);
+//	/*if(P)
+//	{
+//		#ifdef debug
+//       	std::cout << "Already allocated\n";
+//		#endif
+//	}
+//
+//    try{
+//            P = new double* [no_pts];
+//
+//            for(int i=0;i<no_pts;i++)
+//			{
+//            	P[i]= new double [3];
+//            }
+//        }
+//	catch(std::bad_alloc xa)
+//	{
+//		#ifdef debug
+//       	std::cout<<"Memory allocation failed for P\n";
+//		#endif
+//    }
+//    
+//	try{
+//           unitnormal = new double** [MAX + 1];
+//
+//			for(int i = 0; i < MAX + 1; i++)
+//			{
+//                unitnormal[i] = new double* [no_pts];
+//            	for(int j = 0; j < no_pts; j++)
+//				{
+//            		unitnormal[i][j] = new double [3];
+//            	}
+//		}
+//
+//	}
+//	catch(std::bad_alloc xa)
+//	{
+//		#ifdef debug
+//       	std::cout<<"Memory allocation failed for normal\n";
+//		#endif
+//    }
+//
+//	try
+//	{	
+//		S = new double ** [MAX+1];
+//        for(int i = 0; i < MAX+1; i++)
+//		{
+//            S[i] = new double* [no_pts];
+//            for(int j=0;j<no_pts;j++)
+//			{
+//                    S[i][j]=new double [3];
+//			}
+//         }
+//     }
+//	catch(std::bad_alloc xa)
+//	{
+//		#ifdef debug
+//       	std::cout<<"Memory allocation failed for S\n";
+//		#endif
+//    }*/
+//}
 
 
 //void Profile::free_allocate()

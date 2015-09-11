@@ -57,7 +57,7 @@ m_toolPathWindow(0)
 	mMainWindowUI->CodeWindow->setVisible(false);
 	mMainWindowUI->ToolPathWindow->setVisible(false);
 	//mMainWindowUI->videoWindow->setVisible(false);
-
+	
 	createConnections();
 	init();
 
@@ -454,7 +454,7 @@ bool	NCMainWindow::save()
      {
          return saveAs();
      } 
-	 else
+	 else      
 	 {
          return saveFile(curFileName);
      }
@@ -496,7 +496,7 @@ bool	NCMainWindow::saveFile(const QString &fileName)
 
 
 void	NCMainWindow::openFile(QString fname)
-{
+{	
     /*call prepareWindowForNewFile() and then make open button grayed*/
     /*and also new button grayed*/
 	mIsNewFile = false;
@@ -504,7 +504,7 @@ void	NCMainWindow::openFile(QString fname)
 	if (isSaved())
 	{
 		QString filename;
-
+		 
             if(fname.isEmpty())
 			{
                 filename = QFileDialog::getOpenFileName(this, tr("Open File"),
@@ -527,14 +527,22 @@ void	NCMainWindow::openFile(QString fname)
                 if(ext.compare(tr("f10t")) == 0)
                 {
 					QApplication::setOverrideCursor(Qt::WaitCursor);
-					NcFanuc10T11TFileReader::getReaderInstance()->setCurrentNcFile(filename);
-
 					
-					NcFanuc10T11TFileReader::getReaderInstance()->checkCodeSyntax();
+					NcFanuc10T11TFileReader reader(filename);
+					reader.checkCodeSyntax();
+
+					if(NcDisplay::getNcDisplayInstance()->getUserDefinedStockFlag()==false)
+					{
+						NcDisplay::getNcDisplayInstance()->setStockBBFinalValues();
+					}
+					NcDisplay::getNcDisplayInstance()->generateDisplayLists();
+					NcStartupStockDisplay::getStockDisplayInstance()
+							->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());
+
 					setCurrentFile(filename);
 
 					NcCodeEditor::NcCodeEditorInstance()->
-						setPlainText(NcFanuc10T11TFileReader::getReaderInstance()->getFullNcCodeText());								
+						setPlainText(reader.getFullNcCodeText());								
 					
 					mMainWindowUI->actionRun->setEnabled(true);
 					mMainWindowUI->actionNext->setEnabled(true);
@@ -551,17 +559,17 @@ void	NCMainWindow::openFile(QString fname)
 				else if(ext.compare(tr("f0t")) == 0)
 				{
 					QApplication::setOverrideCursor(Qt::WaitCursor);
-					//NcFanuc0TFileReader::getReaderInstance()->setCurrentNcFile(filename);
-					NcFanuc0TFileReader reader;
-					reader.setNcFile(filename);
-					
-					//NcFanuc0TFileReader::getReaderInstance()->checkCodeSyntax();
-					reader.checkCodeSyntax();
-
+					NcFanuc0TFileReader reader(filename);
+					if (reader.checkCodeSyntax()== OK)
+					{
+						NcDisplay::getNcDisplayInstance()->setStockBBFinalValues();
+						NcDisplay::getNcDisplayInstance()->generateDisplayLists();
+						NcStartupStockDisplay::getStockDisplayInstance()->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());
+					}
 					setCurrentFile(filename);
 
 					NcCodeEditor::NcCodeEditorInstance()->
-						setPlainText(/*NcFanuc0TFileReader::getReaderInstance()->*/reader.getFullNcCodeText());
+						setPlainText(reader.getFullNcCodeText());
 
 					mMainWindowUI->actionRun->setEnabled(true);
 					mMainWindowUI->actionNext->setEnabled(true);
@@ -583,7 +591,10 @@ void	NCMainWindow::openFile(QString fname)
 					NcSinumerikFileReader::getReaderInstance()->setCurrentNcFile(filename);
 					prepareWindowForNewFile();
 					NcSinumerikFileReader::getReaderInstance()->checkCodeSyntax();
-					
+					NcDisplay::getNcDisplayInstance()->setStockBBFinalValues();
+					NcDisplay::getNcDisplayInstance()->generateDisplayLists();
+					NcStartupStockDisplay::getStockDisplayInstance()
+				->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());
 					setCurrentFile(filename);
 
 					NcCodeEditor::NcCodeEditorInstance()->
@@ -974,7 +985,7 @@ void NCMainWindow::buildEditorText()
 {
 
 
-	if( NcCodeEditor::NcCodeEditorInstance()->toPlainText().size()==0 )
+	/*if( NcCodeEditor::NcCodeEditorInstance()->toPlainText().size()==0 )
 	{	QString message;
 		message += 	tr("Please Enter CNC code in Editor and then click on compile button");
 
@@ -985,9 +996,9 @@ void NCMainWindow::buildEditorText()
 		if(ret == QMessageBox::Ok)
 		return;
 	}
-
+	NcFanuc10T11TFileReader reader
 	QString data = NcCodeEditor::NcCodeEditorInstance()->toPlainText();
-	NcFanuc10T11TFileReader::getReaderInstance()->compileExternalNcfile(data);
+	Reader->compileExternalNcfile(data);
 	mMainWindowUI->actionRun->setEnabled(true);
 	mMainWindowUI->actionNext->setEnabled(true);
 	connect(mMainWindowUI->actionRun, SIGNAL(triggered()), this, SLOT(run()));
@@ -996,7 +1007,7 @@ void NCMainWindow::buildEditorText()
 		this, SLOT(changeSimulationSpeed(int)));
 
 	connect(mMainWindowUI->actionNext, SIGNAL(triggered()), this, SLOT(next()));
-	m_simulationWindow->setIsoView();
+	m_simulationWindow->setIsoView();*/
 
 }
 

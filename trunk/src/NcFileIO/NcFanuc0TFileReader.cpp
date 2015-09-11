@@ -1,5 +1,4 @@
 #include <QFile>
-
 #include <QStringList>
 #include "NcStateMachine\NcMachine.h"
 #include "NcStateMachine\NcStartupStockDisplay.h"
@@ -8,19 +7,10 @@
 #include "NcDisplay\NcDisplay.h"
 using namespace DiscreteSimulator;
 
-//NcFanuc0TFileReader* NcFanuc0TFileReader::mFanuc0TFileReaderInstance = 0;
-int	NcFanuc0TFileReader::mLineCounter = 0;
 
-//NcFanuc0TFileReader*	NcFanuc0TFileReader::getReaderInstance()
-//{
-//	if(mFanuc0TFileReaderInstance == 0)
-//	{
-//		mFanuc0TFileReaderInstance = new NcFanuc0TFileReader();
-//	}
-//	return mFanuc0TFileReaderInstance;
-//}
 
-NcFanuc0TFileReader::NcFanuc0TFileReader() : mFile(0)
+NcFanuc0TFileReader::NcFanuc0TFileReader(QString filename) 
+	:NcFileReader(filename)
 {
 	mRCodeDetected = false;
 	mSCodeDetected = false;
@@ -34,86 +24,12 @@ NcFanuc0TFileReader::NcFanuc0TFileReader() : mFile(0)
 	mPCodeDetected = false;
 	mMachiningCodeDetected = false;
 	mRetractCodeDetected = false;
+
 }
 
 
-NcFanuc0TFileReader::~NcFanuc0TFileReader()
-{
-	if(mFile != 0)
-	{
-		delete mFile;
-		mFile = 0;
-	}
-}
-
-QString		NcFanuc0TFileReader::getFullNcCodeText()
-{
-	ncfilereader.seek(0);
-	return mFile->readAll();
-}
-
-
-inline QFile* NcFanuc0TFileReader::getNcFile()
-{
-	return mFile;
-}
-
-
-bool	NcFanuc0TFileReader::openNcFileForReadWrite()
- {
-	if(mFile == 0)
-	{
-		if(!mCurrentFileName.isEmpty())
-		{
-			mFile = new QFile(mCurrentFileName);
-
-			if(mFile->open(QIODevice::ReadOnly | QIODevice::Text))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
-	return true;
- }
-		
+	
 static int linecount = 0;
-
-STATUS	NcFanuc0TFileReader::checkCodeSyntax()
-{
-	if(openNcFileForReadWrite() == true)
-	{
-		ncfilereader.setDevice(mFile);
-
-		while(!ncfilereader.atEnd())
-		{
-			//read nc code line by line and put individual lines in the list for further checking
-			QString codeblock = ncfilereader.readLine();      
-			mCodeBlockList.push_back(codeblock);
-		}	
-		
-		/*NcDisplay::getNcDisplayInstance()->setStockBBInitialValues();
-		NcDisplay::getNcDisplayInstance()->generateStartupDLForStock();*/
-		
-		for(; mLineCounter < mCodeBlockList.size();)
-		{
-			if(mLineCounter == 0)
-				NcDisplay::getNcDisplayInstance()->setStockBBInitialValues();
-
-			NcMachine::NcMachineInstance()->initializeCodeBlockInTheMachine(mCodeBlockList.at(mLineCounter), mLineCounter);
-			checkEachLineForSyntax();			
-		}
-
-		NcDisplay::getNcDisplayInstance()->setStockBBFinalValues();
-		NcDisplay::getNcDisplayInstance()->generateDisplayLists();
-		NcStartupStockDisplay::getStockDisplayInstance()
-				->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());
-	}
-	return OK;
-}
 
 
 void NcFanuc0TFileReader::checkEachLineForSyntax()
@@ -268,42 +184,6 @@ void NcFanuc0TFileReader::checkEachLineForSyntax()
 	mMachiningCodeDetected = false;
 }
 
-
-void NcFanuc0TFileReader::handleError(QString code)
-{
-	QString message;
-	message += QObject::tr("code ") + code + QObject::tr(" is invalid.") + QObject::tr( "\n") +
-			QObject::tr("Please correct the NC file and restart the application");
-
-	QMessageBox::StandardButton ret;
-	ret = QMessageBox::warning(0, qApp->applicationName(),
-								(message), QMessageBox::Ok);
-
-	if(ret == QMessageBox::Ok)
-		exit(0);
-}
-
-void NcFanuc0TFileReader::handleError(QStringList codelist)
-{
-	QString message;
-	message += QObject::tr("Block ");
-	foreach(QString code, codelist)
-	{
-		message += code + QObject::tr(" ");
-	}
-	message += QObject::tr(" is invalid.") + QObject::tr("\n") +
-			QObject::tr("Please correct the NC file and restart the application");
-
-	QMessageBox::StandardButton ret;
-	ret = QMessageBox::warning(0,qApp->applicationName(),
-								message, QMessageBox::Ok);
-
-	if(ret == QMessageBox::Ok)
-		exit(0);
-}
-
-
-
 void NcFanuc0TFileReader::buildMCode(QString code)		//building M Codes
 {
 	bool ok = true;
@@ -340,67 +220,11 @@ void NcFanuc0TFileReader::buildMCode(QString code)		//building M Codes
 	NcMachine::NcMachineInstance()->buildMCodes();
 }
 
-void NcFanuc0TFileReader::buildSCode(QString code)		//building S code when it is not with a machining command
-{
-	bool ok = true;
-	double speed = code.right(code.size() - 1).toDouble(&ok);
-	if(ok == false)
-	{
-		handleError(code);
-	}
-	NcMachine::NcMachineInstance()->mCurrentSpindleSpeed = speed;
-	NcMachine::NcMachineInstance()->buildSCodes();
-}
-
-void NcFanuc0TFileReader::buildFCode(QString code)		//building F code when it is not with a machining command
-{
-	bool ok = true;
-
-	double feedrate = code.right(code.size() - 1).toDouble(&ok);
-
-	if(ok == false)
-	{
-		handleError(code);
-	}
-
-	NcMachine::NcMachineInstance()->mCurrentFeedRate = feedrate;
-	NcMachine::NcMachineInstance()->buildFCodes();
-}
-void NcFanuc0TFileReader::buildIndTCode(QString code)	//building T code when it is not with a machining command
-{
-	bool ok = true;
-	
-	mTCodeDetected = true;
-	TValue = code.right(code.size() - 1).toInt(&ok);
-
-	if(ok == false)
-	{
-		handleError(code);
-	}
-
-	buildTCode();
-	mTCodeDetected = false;
-}
-
-
-void NcFanuc0TFileReader::buildG20Code()
-{
-	NcMachine::NcMachineInstance()->setMachineOperationalMode(INCHUNITMODE);
-	NcMachine::NcMachineInstance()->buildGCodeList();
-}
-
-void NcFanuc0TFileReader::buildG21Code()
-{
-	NcMachine::NcMachineInstance()->setMachineOperationalMode(MMUNITMODE);
-	NcMachine::NcMachineInstance()->buildGCodeList();
-}
-
 void NcFanuc0TFileReader::buildG28Code()
 {
 	NcMachine::NcMachineInstance()->setMachineOperationalMode(MACHINEZERORETURN);
 	NcMachine::NcMachineInstance()->buildGCodeList();
 }
-
 
 STATUS NcFanuc0TFileReader::checkSyntaxOfMultiPassThreading(QStringList codelist)
 {
@@ -594,8 +418,6 @@ void NcFanuc0TFileReader::buildG76Code()
 	/*mRetractCodeDetected = false;*/
 }
 
-
-
 STATUS NcFanuc0TFileReader::checkSyntaxOfSinglePassThreading(QStringList codelist)
 {
 	bool ok = true;
@@ -664,7 +486,6 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfSinglePassThreading(QStringList codelis
 		return OK;
 }
 
-
 void NcFanuc0TFileReader::buildG92Code()
 {
 	NcMachine::NcMachineInstance()->setMachineOperationalMode(SINGLEPASSTHREADING);
@@ -683,7 +504,6 @@ void NcFanuc0TFileReader::buildG92Code()
 
 	NcMachine::NcMachineInstance()->buildGCodeList();
 }
-
 
 STATUS NcFanuc0TFileReader::checkSyntaxOfFacingCycle(QStringList codelist)
 {
@@ -896,7 +716,6 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfCannedTurning(QStringList codelist)
 		return OK;
 }
 
-
 void NcFanuc0TFileReader::buildG90Code()
 {
 	NcMachine::NcMachineInstance()->setMachineOperationalMode(CANNEDTURNING);
@@ -927,640 +746,6 @@ void NcFanuc0TFileReader::buildG90Code()
 
 	NcMachine::NcMachineInstance()->buildGCodeList();
 }
-
-
-STATUS NcFanuc0TFileReader::checkSyntaxOfDwellCode(QStringList codelist)
-{
-	bool ok = true;
-
-	foreach(QString code, codelist)
-	{
-		char codeCharacter = code.at(0).toAscii();
-		switch(codeCharacter)
-		{
-		case 'G': 
-		case 'g':
-			{
-				mGCodeDetected = true;
-				int codenumber = code.right(code.size() - 1).toInt(&ok);
-				if(codenumber != 4)
-				{
-					handleError(code);
-				}
-				break;
-			}
-		case 'X':  
-		case 'x' :
-			{
-				mXValueDetected = true;
-				mDwellTime = code.right(code.size() - 1).toInt(&ok);
-				break;
-			}
-		case 'N':
-		case 'n':
-			{
-				break;
-			}
-		default:
-			{
-				//invalid code in dwell block 
-				//display error and abort file reading
-				handleError(codelist);
-			}
-		}
-
-		if(ok == false)
-		{
-			handleError(code);
-		}
-	}
-
-	buildG04Code();
-	mGCodeDetected = false;
-	mXValueDetected = false;
-	return OK;
-}
-
-void NcFanuc0TFileReader::buildG04Code()
-{
-	NcMachine::NcMachineInstance()->setMachineOperationalMode(DWELL);
-
-	if(mXValueDetected == true)
-		NcMachine::NcMachineInstance()->mDwellTime = mDwellTime;
-
-	NcMachine::NcMachineInstance()->buildGCodeList();
-}
-
-
-
-STATUS NcFanuc0TFileReader::checkSyntaxOfCCWCirInterpol(QStringList codelist)
-{
-	bool ok = true;
-
-	foreach(QString code, codelist)
-	{
-		char codeCharacter = code.at(0).toAscii();
-		switch(codeCharacter)
-		{
-		case 'G':  
-		case 'g':
-			{
-				mGCodeDetected = true;
-				int codenumber = code.right(code.size() - 1).toInt();
-				if(codenumber != 3)
-				{
-					handleError(code);
-				}
-				break;
-			}
-		case 'X': 
-		case 'x' :
-			{
-				mXValueDetected = true;
-				XValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'Z': 
-		case 'z' :
-			{
-				mZValueDetected = true;
-				ZValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'F':
-		case 'f':
-			{
-				mFCodeDetected = true;
-				FValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'S':  
-		case 's':
-			{
-				mSCodeDetected = true;
-				SValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'T': 
-		case 't':
-			{
-				mTCodeDetected = true;
-				TValue = code.right(code.size() - 1).toInt(&ok);
-				break;
-			}
-		case 'I':
-		case 'i':
-			{
-				mICodeDetected = true;
-				IValue = code.right(code.size() - 1).toDouble(&ok); 
-				break;
-			}
-		case 'K':
-		case 'k':
-			{
-				mKCodeDetected = true;
-				KValue = code.right(code.size() - 1).toDouble(&ok); 
-				break;
-			}
-		case 'N': 
-		case 'n':
-			{
-				break;
-			}
-		default:
-			{
-				//invalid code on the line
-				//display error and abort file reading
-				handleError(codelist);
-			}
-		}
-
-		if(ok == false)
-		{
-			handleError(code);
-		}
-	}
-
-		buildG03Code();
-		mGCodeDetected = false;
-		mSCodeDetected = false;
-		mFCodeDetected = false;
-		mXValueDetected = false;
-		mZValueDetected = false;
-		mTCodeDetected = false;
-		mICodeDetected = false;
-		mKCodeDetected = false;
-
-		return OK;
-}
-
-
-void NcFanuc0TFileReader::buildG03Code()
-{
-	NcMachine::NcMachineInstance()->setMachineOperationalMode(CCWCIRCULARINTERPOL);
-
-	if(mTCodeDetected == true)
-		buildTCode();
-
-	if(mFCodeDetected == true)
-	{
-		NcMachine::NcMachineInstance()->mCurrentFeedRate = FValue;
-		NcMachine::NcMachineInstance()->buildFCodes();
-	}
-
-	if(mSCodeDetected == true)
-	{
-		NcMachine::NcMachineInstance()->mCurrentSpindleSpeed = SValue;
-		NcMachine::NcMachineInstance()->buildSCodes();
-	}
-
-	if(mXValueDetected == true)
-		NcMachine::NcMachineInstance()->setEndOfMotionXPosition(XValue);
-
-	if(mZValueDetected == true)
-		NcMachine::NcMachineInstance()->setEndOfMotionZPosition(ZValue);
-
-	if(mICodeDetected == true)
-		NcMachine::NcMachineInstance()->I = IValue;
-
-	if(mKCodeDetected == true)
-		NcMachine::NcMachineInstance()->K = KValue;
-
-	NcMachine::NcMachineInstance()->buildGCodeList();
-}
-
-
-
-STATUS NcFanuc0TFileReader::checkSyntaxOfCWCirInterpol(QStringList codelist)
-{
-	bool ok = true;
-
-	foreach(QString code, codelist)
-	{
-		char codeCharacter = code.at(0).toAscii();
-		switch(codeCharacter)
-		{
-		case 'G':  
-		case 'g':
-			{
-				mGCodeDetected = true;
-				int codenumber = code.right(code.size() - 1).toInt();
-				if(codenumber != 2)
-				{
-					handleError(code);
-				}
-				break;
-			}
-		case 'X': 
-		case 'x' :
-			{
-				mXValueDetected = true;
-				XValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'Z': 
-		case 'z' :
-			{
-				mZValueDetected = true;
-				ZValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'F': 
-		case 'f':
-			{
-				mFCodeDetected = true;
-				FValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'S': 
-		case 's':
-			{
-				mSCodeDetected = true;
-				SValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'T':  
-		case 't':
-			{
-				mTCodeDetected = true;
-				TValue = code.right(code.size() - 1).toInt(&ok);
-				break;
-			}
-		case 'I':
-		case 'i':
-			{
-				mICodeDetected = true;
-				IValue = code.right(code.size() - 1).toDouble(&ok); 
-				break;
-			}
-		case 'K':
-		case 'k':
-			{
-				mKCodeDetected = true;
-				KValue = code.right(code.size() - 1).toDouble(&ok); 
-				break;
-			}
-		case 'N': 
-		case 'n':
-			{
-				break;
-			}
-		default:
-			{
-				//invalid code on the line
-				//display error and abort file reading
-				handleError(codelist);
-			}
-		}
-
-		if(ok == false)
-		{
-			handleError(code);
-		}
-	}
-
-		buildG02Code();
-		mGCodeDetected = false;
-		mSCodeDetected = false;
-		mFCodeDetected = false;
-		mXValueDetected = false;
-		mZValueDetected = false;
-		mTCodeDetected = false;
-		mICodeDetected = false;
-		mKCodeDetected = false;
-		return OK;
-}
-
-void NcFanuc0TFileReader::buildG02Code()
-{
-	NcMachine::NcMachineInstance()->setMachineOperationalMode(CWCIRCULARINTERPOL);
-
-	if(mTCodeDetected == true)
-		buildTCode();
-
-	if(mFCodeDetected == true)
-	{
-		NcMachine::NcMachineInstance()->mCurrentFeedRate = FValue;
-		NcMachine::NcMachineInstance()->buildFCodes();
-	}
-
-	if(mSCodeDetected == true)
-	{
-		NcMachine::NcMachineInstance()->mCurrentSpindleSpeed = SValue;
-		NcMachine::NcMachineInstance()->buildSCodes();
-	}
-
-	if(mXValueDetected == true)
-		NcMachine::NcMachineInstance()->setEndOfMotionXPosition(XValue);
-
-	if(mZValueDetected == true)
-		NcMachine::NcMachineInstance()->setEndOfMotionZPosition(ZValue);
-
-	if(mICodeDetected == true)
-		NcMachine::NcMachineInstance()->I = IValue;
-
-	if(mKCodeDetected == true)
-		NcMachine::NcMachineInstance()->K = KValue;
-
-	NcMachine::NcMachineInstance()->buildGCodeList();
-}
-
-STATUS NcFanuc0TFileReader::checkSyntaxOfLinearInterpol(QStringList codelist)
-{
-	bool ok = true;
-
-	foreach(QString code, codelist)
-	{
-		char codeCharacter = code.at(0).toAscii();
-		switch(codeCharacter)
-		{
-		case 'G': 
-		case 'g':
-			{
-				mGCodeDetected = true;
-				int codenumber = code.right(code.size() - 1).toInt();
-				if(codenumber != 1)
-				{
-					handleError(code);
-				}
-				break;
-			}
-		case 'X': 
-		case 'x' :
-			{
-				mXValueDetected = true;
-				XValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'Z': 
-		case 'z' :
-			{
-				mZValueDetected = true;
-				ZValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'F':  
-		case 'f':
-			{
-				mFCodeDetected = true;
-				FValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'S':  
-		case 's':
-			{
-				mSCodeDetected = true;
-				SValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'T': 
-		case 't':
-			{
-				mTCodeDetected = true;
-				TValue = code.right(code.size() - 1).toInt(&ok);
-				break;
-			}
-		case 'N': 
-		case 'n':
-			{
-				break;
-			}
-		default:
-			{
-				//invalid code on the line
-				//display error and abort file reading
-				handleError(codelist);
-			}
-		}
-
-		if(ok == false)
-		{
-			handleError(code);
-		}
-	}
-
-	if(mXValueDetected == false)
-	{
-		XValue = NcMachine::NcMachineInstance()->mEndOfMotionX;
-		mXValueDetected = true;
-	}
-	if(mZValueDetected == false)
-	{
-		ZValue = NcMachine::NcMachineInstance()->mEndOfMotionZ;
-		mZValueDetected = true;
-	}
-
-	buildG01Code();
-	mGCodeDetected = false;
-	mSCodeDetected = false;
-	mFCodeDetected = false;
-	mXValueDetected = false;
-	mZValueDetected = false;
-	mTCodeDetected = false;
-
-	return OK;
-}
-
-void NcFanuc0TFileReader::buildG01Code()
-{
-	NcMachine::NcMachineInstance()->setMachineOperationalMode(LINEARINTERPOL);
-
-	if(mTCodeDetected == true)
-		buildTCode();
-
-	if(mFCodeDetected == true)
-	{
-		NcMachine::NcMachineInstance()->mCurrentFeedRate = FValue;
-		NcMachine::NcMachineInstance()->buildFCodes();
-	}
-
-	if(mSCodeDetected == true)
-	{
-		NcMachine::NcMachineInstance()->mCurrentSpindleSpeed = SValue;
-		NcMachine::NcMachineInstance()->buildSCodes();
-	}
-
-	if(mXValueDetected == true)
-		NcMachine::NcMachineInstance()->setEndOfMotionXPosition(XValue);
-
-	if(mZValueDetected == true)
-		NcMachine::NcMachineInstance()->setEndOfMotionZPosition(ZValue);
-
-	NcMachine::NcMachineInstance()->buildGCodeList();
-}
-
-
-
-STATUS NcFanuc0TFileReader::checkSyntaxOfRapidCode(QStringList codelist)
-{
-	bool ok = true;
-	foreach(QString code, codelist)
-	{
-		char codeCharacter = code.at(0).toAscii();
-		switch(codeCharacter)
-		{
-		case 'G': 
-		case 'g':
-			{
-				mGCodeDetected = true;
-				int codenumber = code.right(code.size() - 1).toInt(&ok);
-				if(codenumber != 0)
-				{
-					handleError(code);
-				}
-				break;
-			}
-		case 'X': 
-		case 'x' :
-			{
-				mXValueDetected = true;
-				XValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'Z': 
-		case 'z' :
-			{
-				mZValueDetected = true;
-				ZValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'F': 
-		case 'f':
-			{
-				mFCodeDetected = true;
-				FValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'S': 
-		case 's':
-			{
-				mSCodeDetected = true;
-				SValue = code.right(code.size() - 1).toDouble(&ok);
-				break;
-			}
-		case 'T': 
-		case 't':
-			{
-				mTCodeDetected = true;
-				TValue = code.right(code.size() - 1).toInt(&ok);
-				break;
-			}
-		case 'N':
-		case 'n':
-			{
-				break;
-			}
-		default:
-			{
-				//invalid code on the line
-				//display error and abort file reading
-				handleError(codelist);
-			}
-		}
-
-		if(ok == false)
-		{
-			handleError(code);
-		}
-	}
-
-	if(mXValueDetected == false)
-	{
-		XValue = NcMachine::NcMachineInstance()->mEndOfMotionX;
-		mXValueDetected = true;
-	}
-	if(mZValueDetected == false)
-	{
-		ZValue = NcMachine::NcMachineInstance()->mEndOfMotionZ;
-		mZValueDetected = true;
-	}
-	buildG00Code();
-	mGCodeDetected = false;
-	mSCodeDetected = false;
-	mFCodeDetected = false;
-	mXValueDetected = false;
-	mZValueDetected = false;
-	mTCodeDetected = false;
-
-		return OK;
-}
-
-void NcFanuc0TFileReader::buildG00Code()
-{
-	NcMachine::NcMachineInstance()->setMachineOperationalMode(RAPIDMOTION);
-
-	if(mTCodeDetected == true)
-		buildTCode();
-
-	if(mFCodeDetected == true)
-	{
-		NcMachine::NcMachineInstance()->mCurrentFeedRate = FValue;
-		NcMachine::NcMachineInstance()->buildFCodes();
-	}
-
-	if(mSCodeDetected == true)
-	{
-		NcMachine::NcMachineInstance()->mCurrentSpindleSpeed = SValue;
-		NcMachine::NcMachineInstance()->buildSCodes();
-	}
-
-	if(mXValueDetected == true)
-		NcMachine::NcMachineInstance()->setEndOfMotionXPosition(XValue);
-
-	if(mZValueDetected == true)
-		NcMachine::NcMachineInstance()->setEndOfMotionZPosition(ZValue);
-
-	NcMachine::NcMachineInstance()->buildGCodeList();
-}
-
-
-void NcFanuc0TFileReader::buildTCode()
-{
-	switch(TValue)
-	{
-	case 1:
-		{
-			NcMachine::NcMachineInstance()->mCurrentToolType = TURNINGTOOL;
-			break;
-		}
-	case 2:
-		{
-			NcMachine::NcMachineInstance()->mCurrentToolType = DRILLINGTOOL;
-			break;
-		}
-	case 3:
-		{
-			NcMachine::NcMachineInstance()->mCurrentToolType = PARTINGTOOL;
-			break;
-		}
-	case 4:
-		{
-			NcMachine::NcMachineInstance()->mCurrentToolType = BORINGTOOL;
-			break;
-		}
-	case 5:
-		{
-			NcMachine::NcMachineInstance()->mCurrentToolType = FACINGTOOL;
-			break;
-		}
-	case 6:
-		{
-			break;
-		}
-	case 7:
-		{
-			NcMachine::NcMachineInstance()->mCurrentToolType = THREADINGTOOL;
-			break;
-		}
-	case 8:
-		{
-			break;
-		}
-	}
-
-	NcMachine::NcMachineInstance()->buildTCodes();
-}
-
 
 STATUS NcFanuc0TFileReader::checkSyntaxOfPeckDrillCycle(QStringList codelist)
 {
@@ -1611,7 +796,6 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfPeckDrillCycle(QStringList codelist)
 	}
 	return OK;
 }
-
 
 STATUS NcFanuc0TFileReader::checkSecondLineForG74()
 {
@@ -1751,8 +935,6 @@ void NcFanuc0TFileReader::buildG74Code()
 	mRetractCodeDetected = false;
 }
 
-
-
 STATUS NcFanuc0TFileReader::checkSyntaxOfPartingGrooving(QStringList codelist)
 {
 	bool ok = true;
@@ -1804,7 +986,6 @@ STATUS NcFanuc0TFileReader::checkSyntaxOfPartingGrooving(QStringList codelist)
 	}
 	return OK;
 }
-
 
 STATUS NcFanuc0TFileReader::checkSecondLineForG75()
 {
@@ -1913,7 +1094,6 @@ STATUS NcFanuc0TFileReader::checkSecondLineForG75()
 
 	return OK;
 }
-
 
 void NcFanuc0TFileReader::buildG75Code()
 {

@@ -80,9 +80,11 @@
   <ItemGroup>
     <ClCompile Include="..\src\NcFileIO\NcFanuc0TFileReader.cpp" />
     <ClCompile Include="..\src\NcFileIO\NcFanuc10T11TFileReader.cpp" />
+    <ClCompile Include="..\src\NcFileIO\NcFileReader.cpp" />
     <ClCompile Include="..\src\NcFileIO\NcSinumerikFileReader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\NcFileIO\NcFileReader.h" />
     <CustomBuild Include="..\include\NcFileIO\NcFanuc0TFileReader.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </Message>

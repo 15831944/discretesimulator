@@ -13,10 +13,10 @@ cleanupReadWriteInstance::~cleanupReadWriteInstance()
 	//delete NcFanuc0TFileReader::mFanuc0TFileReaderInstance;
 	//NcFanuc0TFileReader::mFanuc0TFileReaderInstance = 0;
 
-	delete NcFanuc10T11TFileReader::mNcFileReaderInstance;
-	NcFanuc10T11TFileReader::mNcFileReaderInstance = 0;
+	//delete NcFanuc10T11TFileReader::mNcFileReaderInstance;
+	//NcFanuc10T11TFileReader::mNcFileReaderInstance = 0;
 
-	delete  NcSinumerikFileReader::mReaderInstance;
-	 NcSinumerikFileReader::mReaderInstance = 0;
+	//delete  NcSinumerikFileReader::mReaderInstance;
+	// NcSinumerikFileReader::mReaderInstance = 0;
 
 }

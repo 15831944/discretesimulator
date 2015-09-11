@@ -2,6 +2,7 @@
 #define NC_POLYGONBOOLEAN
 
 #include <stdio.h>
+#include <vector>
 #include "NcGeomKernel\NcGeomKernelGlobal.h"
 #include "NcUtility\NcGlobalDefinitions.h"
 #include "NcUtility\NcVector.h"

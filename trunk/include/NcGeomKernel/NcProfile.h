@@ -38,7 +38,7 @@ namespace DiscreteSimulator
 		QList<GLuint>	*mAssocitedDBDLIndexes;
 		QList<GLuint>	*mAssociated2DDLIndexes;
 		int				mNoOfDBDL;
-		void allocate();
+		/*void allocate();*/
 
 	private:
 		

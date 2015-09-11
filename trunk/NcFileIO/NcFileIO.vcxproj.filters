@@ -44,9 +44,15 @@
     <ClCompile Include="..\src\NcFileIO\NcSinumerikFileReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\NcFileIO\NcFileReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\NcFileIO\NcFileIOGlobal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\NcFileIO\NcFileReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

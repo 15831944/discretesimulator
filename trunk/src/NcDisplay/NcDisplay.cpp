@@ -207,11 +207,8 @@ void	NcDisplay::updateStockBoundingBox()
 STATUS	NcDisplay::displayStockProfile()
 {
 	stock->no_pts = 5;
-	
-	
-	stock->allocate();
-	
-	/*stock->P.resize(stock->no_pts);*/
+ /*   stock->allocate();*/
+	stock->P.resize(stock->no_pts);
 	stock->P[0][0] = mStockBoundingBox.zmin;		
 	stock->P[0][1] = mStockBoundingBox.xmin;	
 	stock->P[0][2] = 0;
@@ -247,6 +244,7 @@ STATUS	NcDisplay::createSurfaceOfRotation()
 	int i, j, k;
 	int no = 0; 
 	double dtheta =(double)(2.0 * NC_PI / MAX);
+	stock->S.resize(MAX+1,std::vector<NcVector>(stock->no_pts));
 	
 	for(double rotation_theta = 0; rotation_theta <= (2.0 * NC_PI); rotation_theta = rotation_theta + dtheta)
 	{
@@ -367,8 +365,8 @@ STATUS	NcDisplay::createDeformedBody(Profile* target, std::vector<vector2d> tool
 	{
 		//target->free_allocate();
 		target->no_pts = iTargetPoints;
-		/*target->P.resize(target->no_pts);*/
-		target->allocate();
+		target->P.resize(target->no_pts);
+		/*target->allocate();*/
 	}
 	for(int i=0; i < target->no_pts; i++)
 	{

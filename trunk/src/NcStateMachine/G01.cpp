@@ -52,7 +52,7 @@ STATUS	G01::generateDisplayList()
 	mPartProfileList->push_back(profile);
 	
 	int n = MAX_LINEAR_SUBDIV;
-	/*profile->P.resize(n);*/
+	profile->P.resize(n);
 	profile->no_pts = n;
 	//profile->allocate();
 
