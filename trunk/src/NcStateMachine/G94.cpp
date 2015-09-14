@@ -36,10 +36,10 @@ void	G94::reinitializeCode()
 
 STATUS	G94::generateDisplayList()
 {
-	Profile *profile = new Profile();
-	profile->type = CG94;
-	profile->typeTool = CT05;
-	mPartProfileList->push_back(profile);
+	Profile *gProfile = new Profile();
+	gProfile->type = CG94;
+	gProfile->typeTool = CT05;
+	mPartProfileList->push_back(gProfile);
 
 	//time in seconds taking units as turning length = mm, feedrate = mm/rev
 	//spindle speed = rev / min
@@ -57,47 +57,47 @@ STATUS	G94::generateDisplayList()
 	int sec = min % 60;
 	mSeconds = sec;
 
-	profile->no_pts=(1 + MAX_LINEAR_SUBDIV);
+	int no_pts = (1 + MAX_LINEAR_SUBDIV);
 	//profile->allocate();
-
-	profile->P[0][0] = mStartZ;
-	profile->P[0][1] = mStartX;
+	vector<NcVector> profile(no_pts);
+	profile[0]=NcVector(mStartZ,mStartX,0);
+	profile[MAX_LINEAR_SUBDIV] = NcVector(Z,X,0);
+	/*profile->P[0][1] = mStartX;
 	profile->P[0][2] = 0;
 
 	profile->P[MAX_LINEAR_SUBDIV][0] = Z;
 	profile->P[MAX_LINEAR_SUBDIV][1] = X;
-	profile->P[MAX_LINEAR_SUBDIV][2] = 0;
+	profile->P[MAX_LINEAR_SUBDIV][2] = 0;*/
 
 	double u = 0.0;
 	double du = 1.0 / (double)(MAX_LINEAR_SUBDIV - 1);
 
 	for(int i = 1; i < MAX_LINEAR_SUBDIV; i++, u += du)
 	{
-		for(int j = 0; j < 3; j++)	
-		{
-			profile->P[i][j] = profile->P[0][j] * (1-u) + profile->P[MAX_LINEAR_SUBDIV][j] * (u);
-		}
+		profile[i] = profile[0] * (1-u) + profile[MAX_LINEAR_SUBDIV] * (u);
 	}
 
 	GLuint newlistindex = glGenLists(1);
-	profile->mAssociated2DDLIndexes->push_back(newlistindex);
-
+	//gProfile->mAssociated2DDLIndexes->push_back(newlistindex);
+	gProfile->addProfileDisplayListIndex(newlistindex);
 	mCumulativeDLList.push_back(newlistindex);
 	mListIndex++;
 	mLocalIndex = mListIndex;
 
 	glNewList(newlistindex, GL_COMPILE);
-	for(int i = 0; i < profile->no_pts - 1; i++)
+	for(int i = 0; i < no_pts - 1; i++)
 	{
 	
 		glColor3d(0.0, 0.0, 1.0);		//turing color
 		glBegin(GL_LINES);
-			glVertex3f(profile->P[i][0], profile->P[i][1], 0.0); 
-			glVertex3f(profile->P[i+1][0], profile->P[i+1][1], 0.0); 		
+			glVertex3f(profile[i][0], profile[i][1], 0.0); 
+			glVertex3f(profile[i+1][0], profile[i+1][1], 0.0); 		
 		glEnd();
 		
 	}
 	glEndList();
+
+	gProfile->setProfile(profile);
 
 	//handle opengl error here 
 	return OK;

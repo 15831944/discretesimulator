@@ -13,7 +13,6 @@ namespace DiscreteSimulator
 	public:
 		static NcCodeEditor* NcCodeEditorInstance();
 		/*virtual ~NcCodeEditor();*/
-
 		void	highlightCodeLineInEditor(int lineno);
 
 	private:

@@ -149,7 +149,7 @@ void NcToolController::updateNcSpindleStatus(bool status)
 	emit updateSpindleStat(status);
 }
 
-void NcToolController::updateTPDisplay(int index) //pass tool position update signal to main window thru tool controller
+void NcToolController::updateTPDisplay(int index) //pass tool position update signal to main window through tool controller
 {
 	emit updateToolPathDisplayInTPWin(index);
 }
@@ -173,7 +173,7 @@ void NcToolController::changeTool(CODE_Type tooltype)
 
 	if(tooltype == CT02)
 		setCurrentToolType(CT02);
-
+	
 	if(tooltype == CT03)
 		setCurrentToolType(CT03);
 

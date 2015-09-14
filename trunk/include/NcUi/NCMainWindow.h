@@ -65,8 +65,6 @@ namespace DiscreteSimulator
 		void					userDefinedStockValues(double stockDiameter, double stockLength);
 		void					updateStockProperties();
 		void					updateBgcolor(QColor bgcolor);
-
-
 		void					OpenBackgroundColorDialog();
 		void					updateToolPDis(int index);
 

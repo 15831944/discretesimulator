@@ -90,10 +90,6 @@ NcDisplay* NcDisplay::getNcDisplayInstance()
 	return mNcDisplayInstance;
 }
 
-
-
-
-
 bool	NcDisplay::setStockBBFinalValues()
 {
 	mStockBoundingBox.xmin = mStockBoundingBox.xmin + 0.0001;							// This is to avoid zero area triangle in revolve
@@ -203,8 +199,6 @@ void	NcDisplay::updateStockBoundingBox()
 	firstcode = false;
 }
 
-
-
 STATUS	NcDisplay::displayStockProfile()
 {
 	stock->no_pts = 5;
@@ -231,7 +225,6 @@ STATUS	NcDisplay::displayStockProfile()
 	surfaceDisplay();
 	return OK;
 }	
-
 
 STATUS	NcDisplay::createPart()
 {
@@ -270,7 +263,6 @@ STATUS	NcDisplay::createSurfaceOfRotation()
 	return OK;
 }
 
-
 void	NcDisplay::surfaceDisplay()
 {
 	//Apply Material
@@ -305,7 +297,6 @@ void	NcDisplay::displayProfile(Profile *target)
 
 }
 
-
 STATUS	NcDisplay::compressArray(double target[][2], int &n)
 {
 	NcVector v1, v2, v3;
@@ -331,7 +322,6 @@ STATUS	NcDisplay::compressArray(double target[][2], int &n)
 	}
 	return OK;
 }
-
 
 STATUS	NcDisplay::createDeformedBody(Profile* target, std::vector<vector2d> tool, CUT cut)
 {	
@@ -389,7 +379,6 @@ STATUS	NcDisplay::createDeformedBody(Profile* target)
 	return OK;
 }
 
-
 void	NcDisplay::addDLIndexesToList(NcCode *code)
 {
 	QList<Profile *>::iterator profileItr = code->getCodePartProfileList()->begin();
@@ -411,7 +400,6 @@ void	NcDisplay::addProfilesToList(NcCode *code)
 		mPartProfileList.push_back(*proflistItr);
 	}	
 }
-
 
 void	NcDisplay::generateDisplayLists()
 {
@@ -592,7 +580,6 @@ void	NcDisplay::generateDisplayLists()
 			double stockbbox[2] = {0};
 			stockbbox[0] = mStockBoundingBox.zmax;
 			stockbbox[1] = mStockBoundingBox.xmax;
-
 			for(int j = 0; j < currentProfile->no_pts - 1; j++)
 			{
 				load_Cutting_Tool(tool, stockbbox, i, j);
@@ -685,7 +672,6 @@ GLuint	NcDisplay::getStockDisplayListIndex()
 	return stock->mAssocitedDBDLIndexes->at(0);
 }
 
-
 int		NcDisplay::spinDisplay(bool gstepmode, int goNextOperation, int& deformed_ds_count, int& DISPLAY_count)
 {	
 	//static int jc=0;
@@ -761,8 +747,6 @@ int		NcDisplay::spinDisplay(bool gstepmode, int goNextOperation, int& deformed_d
 	return 0;
 }
 
-
-
 STATUS	NcDisplay::load_Cutting_Tool(std::vector<vector2d> tool, double *P, int i, int j)
 {	
 	tool[0][0] = mPartProfileList.at(i)->P[j+1][0];
@@ -777,7 +761,6 @@ STATUS	NcDisplay::load_Cutting_Tool(std::vector<vector2d> tool, double *P, int i
 	tool[4][1] = tool[0][1];
 	return OK;
 }
-
 
 STATUS	NcDisplay::load_Parting_Tool(std::vector<vector2d> tool, int i, int j)
 {	
@@ -808,7 +791,6 @@ STATUS	NcDisplay::load_Parting_Tool(std::vector<vector2d> tool, int i, int j)
 	return OK;
 }
 
-
 STATUS	NcDisplay::load_Drilling_Tool(std::vector<vector2d> tool, const NcVector& P1, const NcVector& P2)
 {
 	tool[0][0] = P2[0];
@@ -835,8 +817,6 @@ void	NcDisplay::setIndex(int index)
 	dllistcount = index;
 }
 
-
-
 void	NcDisplay::callToolPathDL()
 {
 	for(int i = 0; i < dllistcount; i++)
@@ -845,13 +825,11 @@ void	NcDisplay::callToolPathDL()
 	}
 }
 
-
 //used in PaintGL of NcSimulationWindow to display the initial stock
 void	NcDisplay::callDeformedBodyDL(GLuint id) 
 {
 	glCallList(id);
 }
-
 
 void	NcDisplay::material_stock()
 {
@@ -867,11 +845,6 @@ void	NcDisplay::material_stock()
 	glMaterialfv(GL_BACK, GL_DIFFUSE, mat_solid);
 	glMaterialfv(GL_BACK, GL_EMISSION, mat_zero);
 }
-
-
-
-
-
 
 /***Pranit*******/
 

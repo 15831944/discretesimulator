@@ -420,7 +420,7 @@ void	NCMainWindow::prepareWindowForNewFile()
 
 	mMainWindowUI->actionBackground->setEnabled(true);
 	mMainWindowUI->actionBuild->setEnabled(true);
-	
+	setCurrentFile("");      /*sda*/
 }
 
 void	NCMainWindow::open()
@@ -634,8 +634,6 @@ bool	NCMainWindow::export_STL()
 	std::string fn = fileName.toStdString();
 	const char *file = fn.c_str();
 	writeSTLFile(file);
-	
-	
 	return true;
 }
 
@@ -656,7 +654,6 @@ void    NCMainWindow::setupGLWidgetWindows()
 	mMainWindowUI->ToolPathWindow->setWidget(m_toolPathWindow);
 	//mMainWindowUI->menuWindow->addAction(mMainWindowUI->ToolPathWindow->toggleViewAction());
 
-
 	connect(mMainWindowUI->actionFront_View, SIGNAL(triggered()), m_simulationWindow, SLOT(setFrontView()));
     connect(mMainWindowUI->actionTop_View, SIGNAL(triggered()), m_simulationWindow, SLOT(setTopView()));
     connect(mMainWindowUI->actionSide_View, SIGNAL(triggered()), m_simulationWindow, SLOT(setSideView()));
@@ -664,9 +661,6 @@ void    NCMainWindow::setupGLWidgetWindows()
 	connect(mMainWindowUI->actionZoomIn, SIGNAL(triggered()), m_simulationWindow, SLOT(zoomin()));
     connect(mMainWindowUI->actionZoomOut, SIGNAL(triggered()), m_simulationWindow, SLOT(zoomout()));
 }
-
-
-
 
 void	NCMainWindow::setupNcCodeEditor()
 {
@@ -686,8 +680,6 @@ void	NCMainWindow::setupNcCodeEditor()
 	//mMainWindowUI->menuWindow->addAction(mMainWindowUI->CodeWindow->toggleViewAction());
 }
 
-
-
 void	NCMainWindow::setupSimulationSpeedController()
 {
         QLabel *fasterLabel = new QLabel(tr("Fast"));
@@ -700,11 +692,8 @@ void	NCMainWindow::setupSimulationSpeedController()
         mSpeedControllerSlider->setMaximum(2000);
         mSpeedControllerSlider->setValue(1000);
         mSpeedControllerSlider->setTickInterval(200);
-
         QSize size = mSpeedControllerSlider->size();
-
         mSpeedControllerSlider->setMaximumSize(size.width() - 400, size.height());
-
 		mMainWindowUI->toolBar_5->addWidget(slowerLabel);
         mMainWindowUI->toolBar_5->addWidget(mSpeedControllerSlider);
         mMainWindowUI->toolBar_5->addWidget(fasterLabel);
@@ -718,13 +707,11 @@ void	NCMainWindow:: setupVideoCaptureWindow()
 	//NcVideoCapture::NcVideoCaptureInstance()->startCapture();
 }
 
-
 void	NCMainWindow::documentWasModified()
 {
 	bool mod = NcCodeEditor::NcCodeEditorInstance()->document()->isModified();
     setWindowModified(mod);
 }
-
 
 void	NCMainWindow::toggleGrpahicsWindow()	//toggle graphics window
 {
@@ -733,7 +720,6 @@ void	NCMainWindow::toggleGrpahicsWindow()	//toggle graphics window
 	else
 		mMainWindowUI->graphicsWindow->setVisible(true);*/
 }
-
 
 void	NCMainWindow::toggleNcCodeWindow()	//toggle Nc Code editor
 {
@@ -751,8 +737,6 @@ void	NCMainWindow::toggleToolPathWindow()
 	else
 		mMainWindowUI->ToolPathWindow->setVisible(true);
 }
-
-
 //for toggle the Property window 
 void	NCMainWindow::togglePropertyWindow()
 {
@@ -772,15 +756,10 @@ void	NCMainWindow::toggleToolWindow()
 		mMainWindowUI->toolWindow->setVisible(true);
 }
 
-
-
-
-
 void	NCMainWindow::changeSimulationSpeed(int interval)
 {
 	mUpdateTimer->setInterval(mSpeedControllerSlider->maximum() - interval);
 }
-
 
 void	NCMainWindow::run()
 {
@@ -835,47 +814,40 @@ void	NCMainWindow::next()
 	updateWidgets();
 }
 
-
-
-
 void	NCMainWindow::closeFile()
 {
-
-	cleanupNcMachineInstance cleanNcMachine;
-	cleanupStaticWindowInstances cleanup;
-	cleanupSimulationController cleanupSimController;
-
-	mMainWindowUI->toolWindow->setVisible(false);
-	mMainWindowUI->propertyWindow->setVisible(false);
-	m_simulationWindow->setVisible(false);
-	//mMainWindowUI->graphicsWindow->setVisible(false);
-	mMainWindowUI->CodeWindow->setVisible(false);
-	mMainWindowUI->ToolPathWindow->setVisible(false);
-
-	mMainWindowUI->action_Open->setEnabled(true);
-	mMainWindowUI->action_New->setEnabled(true);
-
-	mMainWindowUI->actionBackground->setEnabled(false);
-	mMainWindowUI->actionUndo->setEnabled(false);
-	mMainWindowUI->actionRedo->setEnabled(false);
-	mMainWindowUI->actionCu_t->setEnabled(false);
-	mMainWindowUI->actionFind->setEnabled(false);
-	mMainWindowUI->action_Copy_2->setEnabled(false);
-	mMainWindowUI->action_Paste_2->setEnabled(false);
-	mMainWindowUI->action_Print->setEnabled(false);
-	//mMainWindowUI->actionRewind->setEnabled(false);
-	mMainWindowUI->actionRun->setEnabled(false);
-	mMainWindowUI->actionPause->setEnabled(false);
-	mMainWindowUI->actionNext->setEnabled(false);
-
-	mMainWindowUI->actionBuild->setEnabled(false);// for disabling the Commit button 
-
+	if(isSaved())//sda
+	{
+		cleanUpData();
+		
+		mMainWindowUI->toolWindow->setVisible(false);
+		mMainWindowUI->propertyWindow->setVisible(false);
+		if(m_simulationWindow !=nullptr)
+			m_simulationWindow->setVisible(false);
+		//mMainWindowUI->graphicsWindow->setVisible(false);
+		mMainWindowUI->CodeWindow->setVisible(false);
+		mMainWindowUI->ToolPathWindow->setVisible(false);
+		mMainWindowUI->action_Open->setEnabled(true);
+		mMainWindowUI->action_New->setEnabled(true);
+		mMainWindowUI->actionBackground->setEnabled(false);
+		mMainWindowUI->actionUndo->setEnabled(false);
+		mMainWindowUI->actionRedo->setEnabled(false);
+		mMainWindowUI->actionCu_t->setEnabled(false);
+		mMainWindowUI->actionFind->setEnabled(false);
+		mMainWindowUI->action_Copy_2->setEnabled(false);
+		mMainWindowUI->action_Paste_2->setEnabled(false);
+		mMainWindowUI->action_Print->setEnabled(false);
+		mMainWindowUI->actionAction_Rewind->setEnabled(false);//sda
+		mMainWindowUI->actionRun->setEnabled(false);
+		mMainWindowUI->actionPause->setEnabled(false);
+		mMainWindowUI->actionNext->setEnabled(false);
+		mMainWindowUI->actionBuild->setEnabled(false);// for disabling the Commit button 
+	}
 }
-
 
 void NCMainWindow::closeEvent(QCloseEvent * ce)
 {
-	QString s = tr("Save changes ?");
+	QString s = tr("Do You want to Exit ?");//sda
 	switch( QMessageBox::information(this, tr("DiscreteSimulator"), s, tr("Yes"), tr("No"),
 				tr("Cancel"), 0, 2 ) )
 	{
@@ -892,7 +864,7 @@ void NCMainWindow::closeEvent(QCloseEvent * ce)
 		case 1:
 		default:
 			writeSettings();//the recent projects must be saved
-			ce->accept();
+			ce->ignore();//sda
 			break;
 
 		case 2:
@@ -900,7 +872,6 @@ void NCMainWindow::closeEvent(QCloseEvent * ce)
 			break;
 	}
 }
-
 
 static const char *settingsGroup	= "MainWindow";
 static const char *geometryKey		= "Geometry";
@@ -1096,4 +1067,12 @@ void	writeSTLFile(const char *file)
 
 	fclose(output_stl_handle);
 	
+}
+
+
+void NCMainWindow::cleanUpData()
+{
+	cleanupNcMachineInstance cleanNcMachine;
+	cleanupStaticWindowInstances cleanup;
+	cleanupSimulationController cleanupSimController;
 }
