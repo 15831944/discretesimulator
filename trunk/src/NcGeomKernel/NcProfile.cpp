@@ -8,16 +8,15 @@ using namespace DiscreteSimulator;
 
 Profile::Profile()
 {
-
-		
+		no_pts=0;
 		type = UNKNOWN;
 		coolant1 = false;
 		coolant2 = false;
 		typeTool = UNKNOWNTOOL;
+		feed=0.0;
 		//mMaterial = UNKNOWN;
-		mAssocitedDBDLIndexes = new QList<GLuint>;
+		mAssociatedDBDLIndexes = new QList<GLuint>;
 		mAssociated2DDLIndexes = new QList<GLuint>;
-
 		mNoOfDBDL = 0;	//number of deformed body display lists
 						//to avoid keeping track of no of DB DL in individual codes
 }
@@ -27,10 +26,27 @@ void Profile::addProfileDisplayListIndex(int newlistindex)
 	mAssociated2DDLIndexes->push_back(newlistindex);
 }
 
+void Profile::addProfileDBDLIndex(int newlistindex)
+{
+	mAssociatedDBDLIndexes->push_back(newlistindex);
+}
+
 void Profile::setProfile(std::vector<NcVector> profile)
 {
 	P=profile;
 }
+
+ GLuint Profile::getAssocitedDBDLIndexes(const int number)
+{
+	return mAssociatedDBDLIndexes->at(number);
+}
+
+int Profile::getAssocitedDBDLsize()
+{
+	return mAssociatedDBDLIndexes->size();
+}
+
+
 
 STATUS	Profile::normalvector()
 {
@@ -66,7 +82,9 @@ STATUS	Profile::normalvector()
 			if(length==0.0)
 				length=1.0;
 
-			this->unitnormal[j][k] = this->unitnormal[j][k] / length;
+			this->unitnormal[j][k][0] = this->unitnormal[j][k][0] / length;
+			this->unitnormal[j][k][1] = this->unitnormal[j][k][1] / length;
+			this->unitnormal[j][k][2] = this->unitnormal[j][k][2] / length;
 		}
 	}
 	return OK;

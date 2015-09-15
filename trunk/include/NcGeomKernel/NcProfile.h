@@ -19,10 +19,10 @@ namespace DiscreteSimulator
 	{
 	public:
 		Profile();
-	     
+	    QList<GLuint>	*mAssociated2DDLIndexes;
 		CODE_Type		type;
 		CODE_Type		typeTool;
-		
+		int				no_pts;
 		SpindleStatus	spindle;
 		double			feed;
 		
@@ -31,15 +31,20 @@ namespace DiscreteSimulator
 		std::vector <NcVector> P;
 		std::vector < std::vector<NcVector > > S;
 		std::vector < std::vector<NcVector> > unitnormal;
-
-		
 		int				mNoOfDBDL;
+
+		void addProfileDisplayListIndex(int newlistindex);
+		void addProfileDBDLIndex(int newlistindex);
+		void setProfile(std::vector<NcVector> profile);
+		GLuint getAssocitedDBDLIndexes(const int number);
+		int getAssocitedDBDLsize();
+
 		private:
 		//functions
-		QList<GLuint>	*mAssocitedDBDLIndexes;
-		QList<GLuint>	*mAssociated2DDLIndexes;
-	private:
+		QList<GLuint>	*mAssociatedDBDLIndexes;
 		
+		
+	private:
 		bool			coolant1;
 		bool			coolant2;
 		

@@ -2,7 +2,7 @@
 #include "NcStateMachine\NcToolController.h"
 #include "NcGeomKernel\NcProfile.h"
 #include <QtOpenGL>
-
+using namespace std;
 using namespace DiscreteSimulator;
 
 G92::G92()  //single pass threading cycle
@@ -39,10 +39,10 @@ void	G92::reinitializeCode()
 
 STATUS	G92::generateDisplayList()
 {	
-	Profile *profile = new Profile();
-	profile->type = CG92;
-	profile->typeTool = CT07;
-	mPartProfileList->push_back(profile);
+	Profile *gProfile = new Profile();
+	gProfile->type = CG92;
+	gProfile->typeTool = CT07;
+	mPartProfileList->push_back(gProfile);
 	
 	double X_dist = mStartZ;
 		
@@ -65,24 +65,24 @@ STATUS	G92::generateDisplayList()
 	int sec = min % 60;
 	mSeconds = sec;
 	
-	profile->no_pts=( 2 + (max_threads * 2 + 1));
+	int no_pts=( 2 + (max_threads * 2 + 1));
 	//profile->allocate();
+	vector<NcVector> profile(no_pts);
+	profile[0] = NcVector(mStartZ,mStartX,0);
+	//profile->P[0][1] = mStartX;
+	//profile->P[0][2] = 0;
 
-	profile->P[0][0] = mStartZ;
-	profile->P[0][1] = mStartX;
-	profile->P[0][2] = 0;
+	profile[1] = NcVector(mStartZ - p,X,0);
+	//profile->P[1][1] = X;
+	//profile->P[1][2] = 0;
 
-	profile->P[1][0] = mStartZ - p;
-	profile->P[1][1] = X;
-	profile->P[1][2] = 0;
+	profile[max_threads * 2 + 1] = NcVector(Z,X,0);
+	//profile->P[max_threads * 2 + 1][1] = X;
+	//profile->P[max_threads * 2 + 1][2] = 0;
 
-	profile->P[max_threads * 2 + 1][0] = Z;
-	profile->P[max_threads * 2 + 1][1] = X;
-	profile->P[max_threads * 2 + 1][2] = 0;
-
-	profile->P[1 + (max_threads * 2 + 1)][0] = Z;
-	profile->P[1 + (max_threads * 2 + 1)][1] = mStartX;
-	profile->P[1 + (max_threads * 2 + 1)][2] = 0;
+	profile[1 + (max_threads * 2 + 1)] = NcVector(Z,mStartX,0);
+	//profile->P[1 + (max_threads * 2 + 1)][1] = mStartX;
+	//profile->P[1 + (max_threads * 2 + 1)][2] = 0;
 
 	/*profile->P[2 + (max_threads * 2 + 1)][0] = mStartZ;
 	profile->P[2 + (max_threads * 2 + 1)][1] = mStartX;
@@ -91,25 +91,25 @@ STATUS	G92::generateDisplayList()
 	for(int i = 1; i < (max_threads * 2 + 1); i++)
 	{
 		X_dist = X_dist - p; 
-		profile->P[i][0] = X_dist;
+		profile[i][0] = X_dist;
 	}
 
 	for(int i = 1; i < (max_threads * 2 + 1); i++)
 	{
 		if(i % 2 == 1)
-			profile->P[i][1] = X;
+			profile[i][1] = X;
 		else
-			profile->P[i][1] = mStartX;
+			profile[i][1] = mStartX;
 	}
 
 	for(int i = 1; i < (max_threads * 2 + 1); i++)
 	{
-		profile->P[i][2] = 0;
+		profile[i][2] = 0;
 	}
 	
 	GLuint newlistindex = glGenLists(1);
-	profile->mAssociated2DDLIndexes->push_back(newlistindex);
-
+	/*profile->mAssociated2DDLIndexes->push_back(newlistindex);*/
+	gProfile->addProfileDisplayListIndex(newlistindex);
 	mCumulativeDLList.push_back(newlistindex);
 	mListIndex++;
 	mLocalIndex = mListIndex;
@@ -117,18 +117,18 @@ STATUS	G92::generateDisplayList()
 	mLastLocalIndexDL = mLocalIndex;
 
 	glNewList(newlistindex, GL_COMPILE);
-	for(int i = 0; i < profile->no_pts - 1; i++)
+	for(int i = 0; i < no_pts - 1; i++)
 	{
 		
 		glColor3d(1.0, 0.5, 0.5);
 		glBegin(GL_LINES);
-			glVertex3f(profile->P[i][0], profile->P[i][1], 0.0); 
-			glVertex3f(profile->P[i+1][0], profile->P[i+1][1], 0.0); 		
+			glVertex3f(profile[i][0], profile[i][1], 0.0); 
+			glVertex3f(profile[i+1][0], profile[i+1][1], 0.0); 		
 		glEnd();
 		
 	}
 	glEndList();
-
+	gProfile->setProfile(profile);
 	return OK;
 }
 
@@ -138,7 +138,7 @@ bool	G92::executeCode(SimulationState simstate, NcCode *code)
 	{
 		if(mPartProfileIndex < mPartProfileList->size())
 		{
-			if(noOfDL < mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->size())
+			if(noOfDL < mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLsize())
 			{				
 				noOfDL++; //to solve the problem of tool lagging behind the cut in simulation
 
@@ -150,9 +150,9 @@ bool	G92::executeCode(SimulationState simstate, NcCode *code)
 
 				noOfDL--;	//to solve the problem of tool lagging behind the cut in simulation
 				
-				glCallList(mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL));
+				glCallList(mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLIndexes(noOfDL));
 
-				mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL);
+				mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLIndexes(noOfDL);
 
 				for(int i = 0; i < mLocalIndex; i++)
 				{
@@ -172,9 +172,9 @@ bool	G92::executeCode(SimulationState simstate, NcCode *code)
 										 mPartProfileList->at(mPartProfileIndex)->P[mPartProfileList->at(mPartProfileIndex)->no_pts - 1][1],
 										 mPartProfileList->at(mPartProfileIndex)->P[mPartProfileList->at(mPartProfileIndex)->no_pts - 1][2]);
 
-				glCallList(mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL));
+				glCallList(mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLIndexes(noOfDL));
 
-				mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL);
+				mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLIndexes(noOfDL);
 
 				for(int i = 0; i < mLocalIndex; i++)
 				{
@@ -196,12 +196,12 @@ bool	G92::executeCode(SimulationState simstate, NcCode *code)
 
 
 			glCallList(mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->size() - 1));
+						->getAssocitedDBDLIndexes(mPartProfileList->at(mPartProfileList->size() - 1)
+						->getAssocitedDBDLsize() - 1));
 
 			mLastExecutedDL = mPartProfileList->at(mPartProfileList->size() - 1)
-								->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
-								->mAssocitedDBDLIndexes->size() - 1);
+								->getAssocitedDBDLIndexes(mPartProfileList->at(mPartProfileList->size() - 1)
+								->getAssocitedDBDLsize() - 1);
 
 			for(int i = 0; i < mLocalIndex; i++)
 			{
@@ -219,12 +219,12 @@ bool	G92::executeCode(SimulationState simstate, NcCode *code)
 					->updateToolPosition(mCycleStartZ, mCycleStartX, 0);
 
 		glCallList(mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->size() - 1));
+						->getAssocitedDBDLIndexes(mPartProfileList->at(mPartProfileList->size() - 1)
+						->getAssocitedDBDLsize() - 1));
 
 		mLastExecutedDL = mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->size() - 1);
+						->getAssocitedDBDLIndexes(mPartProfileList->at(mPartProfileList->size() - 1)
+						->getAssocitedDBDLsize() - 1);
 
 		for(int i = 0; i < mLocalIndex; i++)
 		{
@@ -240,9 +240,9 @@ bool	G92::executeCode(SimulationState simstate, NcCode *code)
 										 mPartProfileList->at(mPartProfileIndex)->P[noOfDL][1],
 										 mPartProfileList->at(mPartProfileIndex)->P[noOfDL][2]);
 
-		glCallList(mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL));
+		glCallList(mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLIndexes(noOfDL));
 
-		mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL);
+		mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLIndexes(noOfDL);
 
 		for(int i = 0; i < mLocalIndex; i++)
 		{
@@ -258,8 +258,8 @@ bool	G92::executeCode(SimulationState simstate, NcCode *code)
 bool	G92::executeLastDLForCode()
 {
 	glCallList(mPartProfileList->at(mPartProfileList->size() - 1)
-				->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
-				->mAssocitedDBDLIndexes->size() -1));
+				->getAssocitedDBDLIndexes(mPartProfileList->at(mPartProfileList->size() - 1)
+				->getAssocitedDBDLsize() -1));
 
 	for(int i = 0; i < mLocalIndex; i++)  
 	{
@@ -268,8 +268,8 @@ bool	G92::executeLastDLForCode()
 
 	//used in simulation controller when simulation is paused so that last executed DL is displayed continuously
 	mLastExecutedDL = mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->size() -1);
+						->getAssocitedDBDLIndexes(mPartProfileList->at(mPartProfileList->size() - 1)
+						->getAssocitedDBDLsize() -1);
 
 	return true;
 }

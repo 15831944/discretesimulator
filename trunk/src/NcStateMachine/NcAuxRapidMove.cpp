@@ -29,37 +29,38 @@ STATUS	NcAuxRapidMove::generateDisplayList()
 
 	mTotalCycleTime = mTotalCycleTime + mCodeExecutionTime;	
 	
-	Profile *profile = new Profile();
-	profile->type = CGAUX;
-	profile->typeTool = CT00;
-	mPartProfileList->push_back(profile);
+	Profile *gProfile = new Profile();
+	gProfile->type = CGAUX;
+	gProfile->typeTool = CT00;
+	mPartProfileList->push_back(gProfile);
 
 	int n = MAX_LINEAR_SUBDIV;
-	profile->no_pts=(n);
-	profile->P.resize(profile->no_pts);
+	int no_pts=(n);
+	vector<NcVector> profile(no_pts);
+	//profile->P.resize(profile->no_pts);
 	/*profile->allocate();*/
 
-	profile->P[0][0] = mStartZ;
-	profile->P[0][1] = mStartX;
-	profile->P[0][2] = 0;
+	profile[0] = NcVector(mStartZ,mStartX,0);
+	//profile->P[0][1] = mStartX;
+	//profile->P[0][2] = 0;
 
 	
-	profile->P[n-1][0] = Z;
-	profile->P[n-1][1] = X;
-	profile->P[n-1][2] = 0;
+	profile[n-1] = NcVector(Z,X,0);
+	//profile->P[n-1][1] = X;
+	//profile->P[n-1][2] = 0;
 
 	double u = 0.0;
 	double du = 1.0 / (double)(n-1);
 
 	for(int i=0; i < n-1; i++, u+=du)
 	{
-		for(int j = 0; j < 3; j++)	
-			profile->P[i][j] = profile->P[0][j] * (1-u) + profile->P[n-1][j] * (u);
+			
+			profile[i] = profile[0] * (1-u) + profile[n-1] * (u);
 	}
 
 	GLuint newlistindex = glGenLists(1);
-	profile->mAssociated2DDLIndexes->push_back(newlistindex);
-
+	/*profile->mAssociated2DDLIndexes->push_back(newlistindex);*/
+	gProfile->addProfileDisplayListIndex(newlistindex);
 	mCumulativeDLList.push_back(newlistindex);
 	mListIndex++;
 	mLocalIndex = mListIndex;
@@ -69,12 +70,12 @@ STATUS	NcAuxRapidMove::generateDisplayList()
 		glColor3d(1.0, 0.0, 0.0);
 		glBegin(GL_LINE_STRIP);
 			for(int i = 0; i < n; i++)
-				glVertex3f(profile->P[i][0], profile->P[i][1], profile->P[i][2]);
+				glVertex3f(profile[i][0], profile[i][1], profile[i][2]);
 		glEnd();
 
 		
 	glEndList();
-	
+	gProfile->setProfile(profile);
 	return OK;
 }
 

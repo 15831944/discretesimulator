@@ -348,7 +348,7 @@ STATUS	NcDisplay::createDeformedBody(Profile* target, std::vector<vector2d> tool
 	}
 
 	NcPolygonBoolean polyboolean;
-	polyboolean.boolean_main(target->P/*, target->no_pts*/, tool, /*5,*/ modi_target, iTargetPoints); /*~TODO*/
+	polyboolean.boolean_main(target->P/*, target->no_pts*/, tool, /*5,*/ modi_target, iTargetPoints); 
 
 	compressArray(modi_target, iTargetPoints);		
 
@@ -388,7 +388,7 @@ void	NcDisplay::addDLIndexesToList(NcCode *code)
 		for(; gllistItr != (*profileItr)->mAssociated2DDLIndexes->end(); gllistItr++)
 		{
 			mDisplayListIndexes.push_back(*gllistItr);
-		}
+		}//TODO
 	}
 }
 
@@ -436,11 +436,11 @@ void	NcDisplay::generateDisplayLists()
 		{
 			for(int j = 0; j < currentProfile->no_pts - 1; j += 2)
 			{
-				//load_Drilling_Tool(tool, mPartProfileList.at(i)->P[j], mPartProfileList.at(i)->P[j+1]); /*~TODO*/
+				load_Drilling_Tool(tool, mPartProfileList.at(i)->P[j], mPartProfileList.at(i)->P[j+1]); 
 				
 				GLuint dlId = glGenLists(1);
 
-				currentProfile->mAssocitedDBDLIndexes->push_back(dlId);
+				currentProfile->addProfileDBDLIndex(dlId);
 
 				currentProfile->mNoOfDBDL++;
 
@@ -462,7 +462,7 @@ void	NcDisplay::generateDisplayLists()
 				
 				GLuint dlId = glGenLists(1);
 				
-				currentProfile->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
+				currentProfile->addProfileDBDLIndex(dlId); //keeping related DL indexes with the profile
 
 				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
@@ -490,7 +490,7 @@ void	NcDisplay::generateDisplayLists()
 				
 				GLuint dlId = glGenLists(1);
 				
-				currentProfile->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
+				currentProfile->addProfileDBDLIndex(dlId); //keeping related DL indexes with the profile
 
 				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
@@ -521,7 +521,7 @@ void	NcDisplay::generateDisplayLists()
 				
 				GLuint dlId = glGenLists(1);
 				
-				currentProfile->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
+				currentProfile->addProfileDBDLIndex(dlId); //keeping related DL indexes with the profile
 
 				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
@@ -554,7 +554,7 @@ void	NcDisplay::generateDisplayLists()
 				
 				GLuint dlId = glGenLists(1);
 				
-				currentProfile->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
+				currentProfile->addProfileDBDLIndex(dlId); //keeping related DL indexes with the profile
 
 				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
@@ -586,7 +586,7 @@ void	NcDisplay::generateDisplayLists()
 				
 				GLuint dlId = glGenLists(1);
 				
-				currentProfile->mAssocitedDBDLIndexes->push_back(dlId); //keeping related DL indexes with the profile
+				currentProfile->addProfileDBDLIndex(dlId); //keeping related DL indexes with the profile
 
 				currentProfile->mNoOfDBDL++;							//keeping related DB DL count with the profile
 
@@ -659,7 +659,7 @@ void	NcDisplay::generateStartupDLForStock()
 	
 	mPartProfileList.push_back(stock);
 
-	stock->mAssocitedDBDLIndexes->push_back(mStartupDLForStock);
+	stock->addProfileDBDLIndex(mStartupDLForStock);
 
 	glNewList(mStartupDLForStock, GL_COMPILE);
 		displayStockProfile();
@@ -669,7 +669,7 @@ void	NcDisplay::generateStartupDLForStock()
 
 GLuint	NcDisplay::getStockDisplayListIndex()
 {
-	return stock->mAssocitedDBDLIndexes->at(0);
+	return stock->getAssocitedDBDLIndexes(0);
 }
 
 int		NcDisplay::spinDisplay(bool gstepmode, int goNextOperation, int& deformed_ds_count, int& DISPLAY_count)

@@ -178,36 +178,34 @@ void G74::initializePath()
 
 STATUS	G74::generateDisplayList()
 {	
-	Profile *profile = new Profile();
-	profile->type = CG74;
-	profile->typeTool = CT02;
-	mPartProfileList->push_back(profile);
+	Profile *gProfile = new Profile();
+	gProfile->type = CG74;
+	gProfile->typeTool = CT02;
+	mPartProfileList->push_back(gProfile);
 
-	profile->no_pts = 2;
-	profile->P = P;
-	
-
+	int no_pts = 2;
+	 vector<NcVector> profile(no_pts);
+	 profile=P;
 	GLuint newlistindex = glGenLists(1);
-	profile->mAssociated2DDLIndexes->push_back(newlistindex);
-
+	/*profile->mAssociated2DDLIndexes->push_back(newlistindex);*/
+	gProfile->addProfileDisplayListIndex(newlistindex);
 	mCumulativeDLList.push_back(newlistindex);
 	mListIndex++;
 	mLocalIndex = mListIndex;
 
 	glNewList(newlistindex, GL_COMPILE);
-		for(int i = 0; i < profile->no_pts - 1; i += 2)
-		{int x=profile->P.size();
-		int n=profile->P.capacity();
+		for(int i = 0; i < no_pts - 1; i += 2)
+		{
 			
 			glColor3d(0.0, 1.0, 1.0);				//1,1,0 cyan color
 			glBegin(GL_LINES);
-				glVertex3f(profile->P[i][0], profile->P[i][1], 0.0); 
-				glVertex3f(profile->P[i+1][0], profile->P[i+1][1], 0.0); 		
+				glVertex3f(profile[i][0], profile[i][1], 0.0); 
+				glVertex3f(profile[i+1][0], profile[i+1][1], 0.0); 		
 			glEnd();
 			
 		}
 	glEndList();
-	
+	gProfile->setProfile(profile);
 	return OK;
 }
 
@@ -271,16 +269,16 @@ bool	G74::executeCode(SimulationState simstate, NcCode *code)	//return true when
 	{
 		if(mPartProfileIndex < mPartProfileList->size())
 		{
-			if(noOfDL < mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->size())
+			if(noOfDL < mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLsize())
 			{	
 				NcToolController::getToolControllerInstance()
 					->updateToolPosition(mPartProfileList->at(mPartProfileIndex)->P[noOfDL][0],
 										 mPartProfileList->at(mPartProfileIndex)->P[noOfDL][1],
 										 mPartProfileList->at(mPartProfileIndex)->P[noOfDL][2]);
 
-				glCallList(mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL));
+				glCallList(mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLIndexes(noOfDL));
 
-				mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL);
+				mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLIndexes(noOfDL);
 
 				for(int i = 0; i < mLocalIndex; i++)
 				{
@@ -302,9 +300,9 @@ bool	G74::executeCode(SimulationState simstate, NcCode *code)	//return true when
 										 mPartProfileList->at(mPartProfileIndex)->P[mPartProfileList->at(mPartProfileIndex)->no_pts - 2][1],
 										 mPartProfileList->at(mPartProfileIndex)->P[mPartProfileList->at(mPartProfileIndex)->no_pts - 2][2]);
 
-				glCallList(mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL));
+				glCallList(mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLIndexes(noOfDL));
 
-				mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL);
+				mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLIndexes(noOfDL);
 
 				for(int i = 0; i < mLocalIndex; i++)
 				{
@@ -324,12 +322,12 @@ bool	G74::executeCode(SimulationState simstate, NcCode *code)	//return true when
 										 mPartProfileList->at(mPartProfileList->size() - 1)->P[mPartProfileList->at(mPartProfileList->size() - 1)->no_pts - 2][2]);
 
 			glCallList(mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->size() - 1));
+						->getAssocitedDBDLIndexes(mPartProfileList->at(mPartProfileList->size() - 1)
+						->getAssocitedDBDLsize() - 1));
 
 			mLastExecutedDL = mPartProfileList->at(mPartProfileList->size() - 1)
-								->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
-								->mAssocitedDBDLIndexes->size() - 1);
+								->getAssocitedDBDLIndexes(mPartProfileList->at(mPartProfileList->size() - 1)
+								->getAssocitedDBDLsize() - 1);
 
 			for(int i = 0; i < mLocalIndex; i++)
 			{
@@ -346,12 +344,12 @@ bool	G74::executeCode(SimulationState simstate, NcCode *code)	//return true when
 		NcToolController::getToolControllerInstance()->updateToolPosition(mCycleStartZ, mCycleStartX, 0);
 
 		glCallList(mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->size() - 1));
+						->getAssocitedDBDLIndexes(mPartProfileList->at(mPartProfileList->size() - 1)
+						->getAssocitedDBDLsize() - 1));
 
 		mLastExecutedDL = mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->size() - 1);
+						->getAssocitedDBDLIndexes(mPartProfileList->at(mPartProfileList->size() - 1)
+						->getAssocitedDBDLsize() - 1);
 
 		for(int i = 0; i < mLocalIndex; i++)
 		{
@@ -367,9 +365,9 @@ bool	G74::executeCode(SimulationState simstate, NcCode *code)	//return true when
 										 mPartProfileList->at(mPartProfileIndex)->P[noOfDL][1],
 										 mPartProfileList->at(mPartProfileIndex)->P[noOfDL][2]);
 
-		glCallList(mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL));
+		glCallList(mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLIndexes(noOfDL));
 
-		mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->mAssocitedDBDLIndexes->at(noOfDL);
+		mLastExecutedDL = mPartProfileList->at(mPartProfileIndex)->getAssocitedDBDLIndexes(noOfDL);
 
 		for(int i = 0; i < mLocalIndex; i++)
 		{
@@ -385,8 +383,8 @@ bool	G74::executeCode(SimulationState simstate, NcCode *code)	//return true when
 bool	G74::executeLastDLForCode()
 {
 	glCallList(mPartProfileList->at(mPartProfileList->size() - 1)
-				->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
-				->mAssocitedDBDLIndexes->size() -1));
+				->getAssocitedDBDLIndexes(mPartProfileList->at(mPartProfileList->size() - 1)
+				->getAssocitedDBDLsize() -1));
 
 	for(int i = 0; i < mLocalIndex; i++)  
 	{
@@ -395,8 +393,8 @@ bool	G74::executeLastDLForCode()
 
 	//used in simulation controller when simulation is paused so that last executed DL is displayed continuously
 	mLastExecutedDL = mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->at(mPartProfileList->at(mPartProfileList->size() - 1)
-						->mAssocitedDBDLIndexes->size() -1);
+						->getAssocitedDBDLIndexes(mPartProfileList->at(mPartProfileList->size() - 1)
+						->getAssocitedDBDLsize() -1);
 
 
 	return true;
