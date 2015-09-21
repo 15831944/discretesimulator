@@ -21,7 +21,7 @@ namespace DiscreteSimulator
 	
 		
 		virtual		~NcStatusWindow();
-		void		updateToolPosition(double mCurrentToolZPos, double mCurrentToolXPos, double mCurrentToolYPos);
+		void		updateToolPosition(double mCurrentToolZPos, double mCurrentToolXPos);
 		void		updateFeedRate(int feed);
 		void		updateSpindleSpeed(double speed);
 		void		updateSpindleStatus(bool status);

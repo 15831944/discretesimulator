@@ -54,7 +54,7 @@ namespace DiscreteSimulator
 		void					executeMDIMode();
 		void					executeJOGMode();
 		void					updateCodeEditor(int);
-		void					updateToolPos(double mCurrentToolZPos, double mCurrentToolXPos, double mCurrentToolYPos);
+		void					updateToolPos(double mCurrentToolZPos, double mCurrentToolXPos);
 		void					updateFeedRate(int feed);
 		void					updateSpeed(double);
 		void					updateSpindleStatus(bool status);

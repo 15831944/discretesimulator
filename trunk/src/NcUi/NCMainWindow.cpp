@@ -136,7 +136,7 @@ void	NCMainWindow::createConnections()
 			this, SLOT(enableRewind()));
 
 	connect(NcToolController::getToolControllerInstance(), SIGNAL(updateToolPosInStatusWindow(double, double, double)),
-		    this, SLOT(updateToolPos(double, double, double)));
+		    this, SLOT(updateToolPos(double, double)));
 
 	connect(NcToolController::getToolControllerInstance(), SIGNAL(updateFeedRateInStatusWindow(int)),
 			this, SLOT(updateFeedRate(int)));
@@ -270,9 +270,9 @@ void	NCMainWindow::updateFeedRate(int feed)
 }
 
 
-void	NCMainWindow::updateToolPos(double mCurrentToolZPos, double mCurrentToolXPos, double mCurrentToolYPos)
+void	NCMainWindow::updateToolPos(double mCurrentToolZPos, double mCurrentToolXPos)
 {
-	NcStatusWindow::StatusWindowInstance()->updateToolPosition(mCurrentToolZPos, mCurrentToolXPos, mCurrentToolYPos);
+	NcStatusWindow::StatusWindowInstance()->updateToolPosition(mCurrentToolZPos, mCurrentToolXPos);
 }
 
 

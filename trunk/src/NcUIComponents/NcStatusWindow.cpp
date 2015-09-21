@@ -30,13 +30,15 @@ NcStatusWindow::~NcStatusWindow()
 	delete mStatusWidget;
 }
 
-void NcStatusWindow::updateToolPosition(double mCurrentToolZPos, double mCurrentToolXPos, double mCurrentToolYPos)
+void NcStatusWindow::updateToolPosition(double mCurrentToolZPos, double mCurrentToolXPos)
 {	
 	QString coordval;
-	QTextStream(&coordval) << mCurrentToolXPos;
 
+	QTextStream(&coordval) << mCurrentToolXPos;
 	mStatusWidget->xcoord->setText(coordval);
+
 	coordval.clear();
+
 	QTextStream(&coordval) << mCurrentToolZPos;
 	mStatusWidget->zcoord->setText(coordval);
 }

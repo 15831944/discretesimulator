@@ -21,14 +21,15 @@ Profile::Profile()
 						//to avoid keeping track of no of DB DL in individual codes
 }
 
-void Profile::addProfileDisplayListIndex(int newlistindex)
+void Profile::addProfileDisplayListIndex( int newlistindex)
 {
 	mAssociated2DDLIndexes->push_back(newlistindex);
 }
 
 void Profile::addProfileDBDLIndex(int newlistindex)
-{
+{ 
 	mAssociatedDBDLIndexes->push_back(newlistindex);
+	
 }
 
 void Profile::setProfile(std::vector<NcVector> profile)
@@ -36,17 +37,25 @@ void Profile::setProfile(std::vector<NcVector> profile)
 	P=profile;
 }
 
- GLuint Profile::getAssocitedDBDLIndexes(const int number)
+ GLuint Profile::getAssocitedDBDLIndexes(int number)
 {
 	return mAssociatedDBDLIndexes->at(number);
 }
+
+ GLuint Profile::getAssociated2DDLIndexes(int number)
+ {
+	 return mAssociated2DDLIndexes->at(number);
+ }
 
 int Profile::getAssocitedDBDLsize()
 {
 	return mAssociatedDBDLIndexes->size();
 }
 
-
+int Profile::getAssociated2DDLsize()
+{
+	return mAssociated2DDLIndexes->size();
+}
 
 STATUS	Profile::normalvector()
 {

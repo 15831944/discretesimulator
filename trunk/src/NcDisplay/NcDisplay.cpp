@@ -384,11 +384,15 @@ void	NcDisplay::addDLIndexesToList(NcCode *code)
 	QList<Profile *>::iterator profileItr = code->getCodePartProfileList()->begin();
 	for(; profileItr != code->getCodePartProfileList()->end(); profileItr++)
 	{
-		QList<GLuint>::iterator gllistItr = (*profileItr)->mAssociated2DDLIndexes->begin();
+		/*QList<GLuint>::iterator gllistItr = (*profileItr)->mAssociated2DDLIndexes->begin();
 		for(; gllistItr != (*profileItr)->mAssociated2DDLIndexes->end(); gllistItr++)
 		{
 			mDisplayListIndexes.push_back(*gllistItr);
-		}//TODO
+		}*/
+		for(int i=0; i<stock->getAssociated2DDLsize(); i++)
+		{
+			mDisplayListIndexes.push_back(stock->getAssociated2DDLIndexes(i));
+		}//sda
 	}
 }
 
@@ -406,7 +410,7 @@ void	NcDisplay::generateDisplayLists()
 	generateStartupDLForStock();
 
 	NcStartupStockDisplay::getStockDisplayInstance()
-		  ->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());
+		  ->setDLForStartupStock(NcDisplay::getNcDisplayInstance()->getStockDisplayListIndex());//sda
 
 	QList<NcCode *>::iterator codeItr = NcMachine::NcMachineInstance()->mGCodeList->begin();
 
@@ -654,13 +658,13 @@ STATUS	NcDisplay::load_CG00_Tool(std::vector<vector2d> tool)
 }
 
 void	NcDisplay::generateStartupDLForStock()
-{
+{	
 	mStartupDLForStock = glGenLists(1);
 	
 	mPartProfileList.push_back(stock);
 
 	stock->addProfileDBDLIndex(mStartupDLForStock);
-
+	
 	glNewList(mStartupDLForStock, GL_COMPILE);
 		displayStockProfile();
 	glEndList();
